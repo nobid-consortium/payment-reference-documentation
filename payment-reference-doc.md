@@ -52,7 +52,7 @@ In order to be able to combine payment with other EAAs in a synergetic manner, t
 ## Registration
 The (one-time) registration process links the holders wallet instance and their PSP managing the account used for payments. It also allows the PSP to establish a trust relationship to the wallet by verifying its authenticity as described in more detail in ARF, section 6.6.2[^arf].
 
-During registration, the PSP aka issuer issues a dedicated EAA (hereinafter called A2Pay - Attestation to pay) to the wallet using OpenID4VCI [^openid4vci] according to the OpenID4VC High Assurance Interoperability Profile using SD-JWT VC (HAIP) [^openid4vc_hip]. OpenID4VCI allows the issuer to issue an EAA within an authenticated / authorized context. Exactly how this context is establish is left to the issuer and is out of the scope of this document, however possible options and combinations of them are:
+During registration, the PSP aka issuer issues a dedicated EAA (hereinafter called A2Pay - Attestation to pay) to the wallet using OpenID4VCI [^openid4vci] according to the OpenID4VC High Assurance Interoperability Profile using SD-JWT VC (HAIP) [^openid4vc_hip]. OpenID4VCI allows the issuer to issue an EAA within an authenticated / authorized context. Exactly how this context is establish is left to the issuer and is out-of-scope of this document, however possible options and combinations of them are:
 
 - Login credentials (OnlineBanking e.g.)
 - OTP
@@ -70,7 +70,7 @@ See also requirement specification ARF Annex 2 A.2.3.6 Topic 6 - User Approval R
 
 ### Attestation to pay - A2Pay
 
-The A2Pay is used to identify the holders PSP and the account the attestation is connected with. In addition to that, the attestation may also state a payment rail along with required metadata that a relying party (merchant e.g.) might use to initiate a payment transaction.  
+The A2Pay is used to identify the holders PSP and the account the attestation is linked to. In addition to that, the attestation may also state a payment rail along with required metadata that a relying party (merchant e.g.) might use to initiate a payment transaction.  
 
 The data schema for A2Pay is described in detail within the json schema file [a2pay-schema.json](a2pay-schema.json).
 
@@ -113,7 +113,7 @@ eyJ0eXAiOiJzZCtqd3QiLCJhbGciOiJFUzI1NiJ9.eyJpc3MiOiJodHRwczovL2JhbmsuY29tL2lzc3V
 
 ## Presentation
 
-Authenticating and authorizing a payment is implemented by presenting a signed presentation of the A2Pay (hereafter A2Pay') to a PSP using OpenID4VP[^openid4vp] according to (HAIP) [^openid4vc_hip]. ARF section 6.6.3[^arf] explains this process in detail and also elaborates on how trust is established between the wallet and the PSP. A positive verification of an A2Pay' by the PSP authorizes the given payment transaction.
+Authenticating and authorizing a payment is implemented by presenting a signed presentation of the A2Pay (hereafter A2Pay') to a PSP using OpenID4VP[^openid4vp] according to OpenID4VC High Assurance Interoperability Profile with SD-JWT VC (HAIP) [^openid4vc_hip]. ARF section 6.6.3[^arf] explains this process in detail and also elaborates on how trust is established between the wallet and the PSP. A positive verification of an A2Pay' by the PSP authorizes the given payment transaction.
 
 ### Dynamic linking
 
@@ -148,7 +148,7 @@ The presentation process described above can be applied in various real-world us
 
 In this scenario, the relying party is the PSP (usually a bank) of the holder themself. The holder is requesting a payment transaction using an out-of-band mechanism like the banks mobile app, online banking portal or even a third party provider for payment initiation according to PSD2 (PISP). The holders PSP is initiating the flow by requesting the A2Pay' they have previously issued to the wallet themself in the prior registration flow. 
 
-This scenario applies to the obligations of PSPs regarding accepting the wallet for SCA with regards to the eIDAS2 regulation.
+This scenario applies to the obligations for PSPs to accept the wallet for SCA with regards to the eIDAS2 regulation.
 
 ```mermaid
 
@@ -171,7 +171,7 @@ sequenceDiagram
 
 #### Extended Payment flow
 
-In this scenario, the relying party is a third party like a merchant or a merchant's PSP (PSP' hereafter) which is requesting the A2Pay' issued by the the holders PSP. After receiving the A2Pay', the relying party must forward it to the issuing PSP for verification and or exceution of the payment transaction.
+In this scenario, the relying party is a third party like a merchant or a merchant's PSP (PSP' hereafter) which is requesting the A2Pay' issued by the the holders PSP. After receiving the A2Pay', the PSP' must forward it to the issuing PSP for verification and/or execution of the payment transaction.
 
 ```mermaid
 
