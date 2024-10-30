@@ -117,13 +117,13 @@ Authenticating and authorizing a payment is implemented by presenting a signed p
 
 ### Dynamic linking
 
-As SCA also requires dynamic linking, the A2Pay' must also include the transaction details of the payment (payment request hereafter). The OpenID Foundation is currently developing an extension[^openid4vp_td] to the OpenID4VP[^openid4vp] specification to enable a relying party to incorporate dynamic data into the authorization request using the `transaction_data` parameter. The data contained within this parameter must always be included in the user approval dialogue of the wallet specified further in ARF section 6.6.3.4[^arf] and ARF Annex 2 A.2.3.6 Topic 6[^arf_annex2].
+As SCA also requires dynamic linking, the A2Pay' must also include the transaction details of the payment (payment request hereafter). The OpenID Foundation is currently developing an extension[^openid4vp_td] to the OpenID4VP[^openid4vp] specification to enable a relying party to incorporate dynamic data into the authorization request using the `transaction_data` parameter. A hash of this data will than be included into the key-binding JWK of the A2Pay' and represents the authentication code required by PSD2. The data contained within this parameter must also be included in the user approval dialogue of the wallet specified further in ARF section 6.6.3.4[^arf] and ARF Annex 2 A.2.3.6 Topic 6[^arf_annex2]. 
 
 Since the support for transaction data is not part of the official OpenID4VP specification yet, refer to the `transaction_data` proposal branch on GithHub[^openid4vp_td] for implementation details.
 
 ### Payment transaction data
 
-The data schema for the payment transaction data to be included in the `transaction_data` parameter is defined in detail within the json schema file [payment-request-schema.json](payment-request-schema.json). 
+The data schema for the payment request is defined in detail within the json schema file [payment-request-schema.json](payment-request-schema.json). 
 
 Non-normative example of a payment request:
 
@@ -138,6 +138,38 @@ Non-normative example of a payment request:
     "creditor-name": "Merchant A",
     "purpose": "Shopping at Merchant A"
 }
+```
+
+According to the transaction data specifications [^openid4vp_td], the following properties also have to be added to the object before base64url encoding to include it within the `transaction_data` array.
+
+* `type`
+* `credential_ids`
+* `transaction_data_hashes_alg`
+
+```json
+{
+  "type": "A2Pay",
+  "credential_ids": "A2Pay",
+  "transaction_data_hashes_alg": "sha-256",
+  "payment-id": "7D8AC610-566D-3EF0-9C22-186B2A5ED793",
+  "creditor-account": {
+    "iban": "DE75512108001245126199"
+  },
+  "instructed-amount": "15.49",
+  "currency": "EUR",
+  "creditor-name": "Merchant A",
+  "purpose": "Shopping at Merchant A"
+}
+```
+
+Non-normative example of the `transaction_data` parameter within the authorization request:
+
+```json
+{
+  "transaction_data": ["ew0KICAidHlwZSI6ICJBMlBheSIsDQogICJjcmVkZW50aWFsX2lkcyI6ICJBMlBheSIsDQogICJ0cmFuc2FjdGlvbl9kYXRhX2hhc2hlc19hbGciOiAic2hhLTI1NiIsDQogICJwYXltZW50LWlkIjogIjdEOEFDNjEwLTU2NkQtM0VGMC05QzIyLTE4NkIyQTVFRDc5MyIsDQogICJjcmVkaXRvci1hY2NvdW50Ijogew0KICAgICJpYmFuIjogIkRFNzU1MTIxMDgwMDEyNDUxMjYxOTkiDQogIH0sDQogICJpbnN0cnVjdGVkLWFtb3VudCI6ICIxNS40OSIsDQogICJjdXJyZW5jeSI6ICJFVVIiLA0KICAiY3JlZGl0b3ItbmFtZSI6ICJNZXJjaGFudCBBIiwNCiAgInB1cnBvc2UiOiAiU2hvcHBpbmcgYXQgTWVyY2hhbnQgQSINCn0"],
+  ...
+}
+
 ```
 
 ### Initiation scenarios 
@@ -233,7 +265,7 @@ Same-device screenflow of the payment process:
 [^xs2a]: [NextGenPSD2 XS2A Framework Implementation Guidelines](https://www.berlin-group.org/_files/ugd/c2914b_fec1852ec9c640568f5c0b420acf67d2.pdf)
 [^payment_data_model]: [Payment Data Model for Version 2.0 of the
 openFinance API Framework](https://www.berlin-group.org/_files/ugd/c2914b_f8cab18ec71e476a9685c9a5f5260fda.pdf)
-[^openid4vp]: [OpenID4VP - draft 20](https://openid.net/specs/openid-4-verifiable-presentations-1_0.html)
+[^openid4vp]: [OpenID4VP](https://openid.net/specs/openid-4-verifiable-presentations-1_0.html)
 [^openid4vp_td]: [OpenID4VP - Transaction Data Proposal](https://github.com/openid/OpenID4VP/blob/transaction_data/openid-4-verifiable-presentations-1_0.md)
 [^openid4vci]: [OpenID4VCI](https://openid.github.io/OpenID4VCI/openid-4-verifiable-credential-issuance-wg-draft.html)
 [^arf]:[Architecture Reference Framework](https://github.com/eu-digital-identity-wallet/eudi-doc-architecture-and-reference-framework/blob/main/docs/arf.md)
