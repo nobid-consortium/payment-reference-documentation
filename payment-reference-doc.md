@@ -230,11 +230,11 @@ sequenceDiagram
 
 ```
 
-The details of forwarding the A2Pay' is out-of-scope of this document as it must be handled by according payment rails and schemes, which  must implement additional support for processing the A2Pay data structures and signatures. It may also include additional actors like payment platforms or aquirers e.g.. Possible solutions include the usage of existing OpenBanking API, payment networks or domestic schemes.
+The details of forwarding the A2Pay' is out-of-scope of this document as it must be handled by according payment rails and schemes, which must implement additional support for processing the A2Pay data structures and signatures. It may also include additional actors like payment platforms or aquirers e.g.. Possible solutions include the usage of existing OpenBanking API, payment networks or domestic schemes.
 
 In order to support the extended payment flow and allow a PSP' to route an authorized payment request, the A2Pay must always provide the following details defined by the [A2Pay schema](a2pay-schema.json): 
 - `payment-product`: The payment instrument or scheme to use.
-- `accountReference`: The account / account alias the A2Pay is linked to. This can be an IBAN / BIC, a PAN or a mobile phone number.
+- `accountReference`: The account / account alias the A2Pay is linked to. This can be an IBAN / BIC, a PAN or a mobile phone number e.g..
 
 ![Payment](wallet_payment.svg)
 
@@ -248,7 +248,7 @@ TODO
 
 ### Combined presentations
 
-Relying on the presentation flows described above and also the requirements defined for the wallet in ARF Annex 2 section A.2.3.18 Topic 18[^arf_annex2], the PSP' may combine the request for an A2Pay' with additional attributes that may reside in the wallet. Therby they can leverage the additional information to build more advanced use-case like combining a payment with an proof of age e.g..
+Relying on the presentation flows described above and also the requirements defined for the wallet in ARF Annex 2 section A.2.3.18 Topic 18[^arf_annex2], the PSP' may combine the request for an A2Pay' with additional attributes that may reside in the wallet. Therby they can leverage the additional information to build more advanced use-case like combining payment with proof of age e.g..
 
 ### Screenflow
 
