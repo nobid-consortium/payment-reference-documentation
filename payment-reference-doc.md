@@ -117,7 +117,7 @@ Authenticating and authorizing a payment is implemented by presenting a signed p
 
 ### Dynamic linking
 
-As SCA also requires dynamic linking, the A2Pay' must also include the transaction details of the payment (payment request hereafter). The OpenID Foundation is currently developing an extension[^openid4vp_td] to the OpenID4VP[^openid4vp] specification to enable a relying party to incorporate dynamic data into the authorization request using the `transaction_data` parameter. A hash of this data will than be included into the key-binding JWK of the A2Pay' and represents the authentication code required by PSD2. The data contained within this parameter must also be included in the user approval dialogue of the wallet specified further in ARF section 6.6.3.4[^arf] and ARF Annex 2 A.2.3.6 Topic 6[^arf_annex2]. 
+As SCA also requires dynamic linking, the A2Pay' must also include the transaction details of the payment (payment request hereafter). The OpenID Foundation is currently developing an extension[^openid4vp_td] to the OpenID4VP[^openid4vp] specification to enable a relying party to incorporate dynamic data into the authorization request using the `transaction_data` parameter. The wallet must include a hash of this data into the key-binding JWK of the A2Pay' that is send back to the PSD' along with the authorization response. The hash value represents the authentication code required by PSD2. The data contained within this parameter must also be included in the user approval dialogue of the wallet specified further in ARF section 6.6.3.4[^arf] and ARF Annex 2 A.2.3.6 Topic 6[^arf_annex2]. 
 
 Since the support for transaction data is not part of the official OpenID4VP specification yet, refer to the `transaction_data` proposal branch on GithHub[^openid4vp_td] for implementation details.
 
@@ -203,7 +203,7 @@ sequenceDiagram
 
 #### Extended Payment flow
 
-In this scenario, the relying party is a third party like a merchant or a merchant's PSP (PSP' hereafter) which is requesting the A2Pay' issued by the the holders PSP. After receiving the A2Pay', the PSP' must forward it to the issuing PSP for verification and/or execution of the payment transaction.
+In this scenario, the relying party is a third party like a merchant or a merchant's PSP (PSP' hereafter) which is requesting the A2Pay' issued by the the holders PSP. After receiving the A2Pay', the PSP' must forward it along with the original payment request object to the issuing PSP for verification and/or execution of the payment transaction.
 
 ```mermaid
 
