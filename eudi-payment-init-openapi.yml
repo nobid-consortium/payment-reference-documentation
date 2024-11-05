@@ -1,0 +1,43 @@
+openapi: 3.1.0
+info:
+  title: EUDI payment initiation
+  description: |-
+    The API allows to send A2pay presentation to the issuer of an A2Pay.
+  version: 0.0.1
+externalDocs:
+  description: Find out more on GitHub
+  url: https://github.com/nobid-consortium/payment-reference-documentation
+servers:
+  - url: https://bank.example.com
+tags:
+  - name: payment initiation
+    description: Payment Initiation
+paths:
+  /payment-initiation/{id}:
+    post:
+      tags:
+        - payment initiation
+      summary: Initiate a payment authorization
+      description: Initiate a payment authorization by providing a payment credential presentation and the payment details. the 
+      operationId: initPaymentAuth
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+          description: ID of the issued A2Pay
+      requestBody:
+        description: Payment initiation request
+        content:
+          application/jwt:
+            schema:
+              type: "string"
+        required: true
+      responses:
+        '200':
+          description: Payment accepted
+        '400':
+          description: Invalid input
+        '422':
+          description: Validation exception

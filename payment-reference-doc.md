@@ -113,7 +113,7 @@ eyJ0eXAiOiJzZCtqd3QiLCJhbGciOiJFUzI1NiJ9.eyJpc3MiOiJodHRwczovL2JhbmsuY29tL2lzc3V
 
 ## Presentation
 
-Authenticating and authorizing a payment is implemented by presenting a signed presentation of the A2Pay (hereafter A2Pay') to a PSP using OpenID4VP[^openid4vp] according to OpenID4VC High Assurance Interoperability Profile with SD-JWT VC (HAIP) [^openid4vc_hip]. ARF section 6.6.3[^arf] explains this process in detail and also elaborates on how trust is established between the wallet and the PSP. A positive verification of an A2Pay' by the PSP authorizes the given payment transaction.
+Authenticating and authorizing a payment is implemented by presenting a signed and key/device bounded presentation of the A2Pay (hereafter A2Pay') to a PSP using OpenID4VP[^openid4vp] according to OpenID4VC High Assurance Interoperability Profile with SD-JWT VC (HAIP) [^openid4vc_hip]. ARF section 6.6.3[^arf] explains this process in detail and also elaborates on how trust is established between the wallet and the PSP. A positive verification of an A2Pay' by the PSP authorizes the given payment transaction.
 
 ### Dynamic linking
 
@@ -140,7 +140,7 @@ Non-normative example of a payment request:
 }
 ```
 
-According to the transaction data specifications [^openid4vp_td], the following properties also have to be added to the object before base64url encoding to include it within the `transaction_data` array.
+According to the transaction data specifications [^openid4vp_td], the following properties also have to be added to the object prior to base64url encoding to include it within the `transaction_data` array.
 
 * `type`
 * `credential_ids`
@@ -230,15 +230,28 @@ sequenceDiagram
 
 ```
 
-The details of forwarding the A2Pay' is out-of-scope of this document as it must be handled by according payment rails and schemes, which must implement additional support for processing the A2Pay data structures and signatures. It may also include additional actors like payment platforms or aquirers e.g.. Possible solutions include the usage of existing OpenBanking API, payment networks or domestic schemes.
-
 In order to support the extended payment flow and allow a PSP' to route an authorized payment request, the A2Pay must always provide the following details defined by the [A2Pay schema](a2pay-schema.json): 
 - `payment-product`: The payment instrument or scheme to use.
-- `accountReference`: The account / account alias the A2Pay is linked to. This can be an IBAN / BIC, a PAN or a mobile phone number e.g..
+- `account-reference`: The account / account alias the A2Pay is linked to. This can be an IBAN / BIC, a PAN or a mobile phone number e.g..
+
+The transport of the A2Pay' must be handled by according payment rails and schemes (OpenBanking, domestic schemes e.g.), which must implement additional support for processing the A2Pay data structures, signatures etc., and may also include additional actors like payment platforms or aquirers e.g..
 
 ![Payment](wallet_payment.svg)
 
-##### PSD2 Berlin Group 
+##### EUDI Payment Initiation Endpoint
+
+As a possiple option to support the A2Pay' transport, this document is proposing the usage of a standardized payment initiation endpoint for the EUDI wallet ecosystem, which allows third parties to send an A2Pay' to the issuing PSP using a HTTP POST endpoint.
+
+The details for this endpoint are described in the OpenAPI specification file [A2Pay schema](eudi-payment-init-openapi.yml.)
+
+The payload of the request must be a JWT according to [rfc7519](https://datatracker.ietf.org/doc/html/rfc7519) and its payload MUST contain the following claims:
+
+* `transaction_data`: Payment request according to [payment-request-schema.json](payment-request-schema.json)
+* `a2pay` REQUIRED: Base64 URL encoded signed A2Pay presentation
+* `format` REQUIRED: Format of the A2Pay containing the hash of the payment request (`kb-jwt` e.g.)
+
+
+##### Openbanking using Berlin Group 
 
 Although currently there is no out of-the-box support for payment initiation using an A2Pay in the existing Berlin Group specification yet, they already specify very similar concepts using a so called "signed payment request" within their Protocol Functions and Security Measures document for the  OpenFinance framework, section 7.1[^bg_sec]. A possible option would be to define an additional body signing profile for the `Body-Sig-Profile` parameter. The profile would define the requirements for wrapping the payment initiation requests into a verifiable presentation similar to the existing / forseen profiles `JAdES_JS`, `XAdES` and `EMV_AC`.
 
@@ -249,6 +262,7 @@ TODO
 ### Combined presentations
 
 Relying on the presentation flows described above and also the requirements defined for the wallet in ARF Annex 2 section A.2.3.18 Topic 18[^arf_annex2], the PSP' may combine the request for an A2Pay' with additional attributes that may reside in the wallet. Therby they can leverage the additional information to build more advanced use-case like combining payment with proof of age e.g..
+
 
 ### Screenflow
 
