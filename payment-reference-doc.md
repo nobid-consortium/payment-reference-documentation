@@ -148,7 +148,7 @@ According to the transaction data specifications [^openid4vp_td], the following 
 
 ```json
 {
-  "type": "A2Pay",
+  "type": "PaymentRequest",
   "credential_ids": "A2Pay",
   "transaction_data_hashes_alg": "sha-256",
   "payment-id": "7D8AC610-566D-3EF0-9C22-186B2A5ED793",
