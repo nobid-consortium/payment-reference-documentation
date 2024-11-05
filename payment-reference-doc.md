@@ -246,10 +246,11 @@ The details for this endpoint are described in the OpenAPI specification file [A
 
 The payload of the request must be a JWT according to [rfc7519](https://datatracker.ietf.org/doc/html/rfc7519) and its payload MUST contain the following claims:
 
-* `transaction_data`: Payment request according to [payment-request-schema.json](payment-request-schema.json)
-* `a2pay` REQUIRED: Base64 URL encoded signed A2Pay presentation
-* `format` REQUIRED: Format of the A2Pay containing the hash of the payment request (`kb-jwt` e.g.)
+* `payment-request`: Payment request according to [payment-request-schema.json](payment-request-schema.json)
+* `a2pay` REQUIRED: Base64 URL encoded A2Pay' containing the hash of the payment request
+* `format` REQUIRED: Format of the A2Pay' (`kb-jwt` e.g.)
 
+The JWT must be signed by the PSP' using the key belonging to the relying party access certificate issued by a Relying Party Access Certificate Authority (CA) described in ARF section 6.4[^arf] and ARF Annex 2 A.2.3.27 Topic 27[^arf_annex2].
 
 ##### Openbanking using Berlin Group 
 
