@@ -113,7 +113,7 @@ eyJ0eXAiOiJzZCtqd3QiLCJhbGciOiJFUzI1NiJ9.eyJpc3MiOiJodHRwczovL2JhbmsuY29tL2lzc3V
 
 ## Presentation
 
-Authenticating and authorizing a payment is implemented by presenting the A2Pay (hereafter A2Pay') to a PSP using OpenID4VP[^openid4vp] according to section 5 of the OpenID4VC High Assurance Interoperability Profile with SD-JWT VC (HAIP) [^openid4vc_hip]. ARF section 6.6.3[^arf] explains this process in detail and also elaborates on how trust is established between the wallet and the PSP. A positive verification of the A2Pay presentation by the PSP authorizes the given payment transaction.
+Authenticating and authorizing a payment is implemented by presenting the A2Pay (hereafter A2Pay') to a PSP using OpenID4VP[^openid4vp] according to section 5 of the OpenID4VC High Assurance Interoperability Profile with SD-JWT VC (HAIP) [^openid4vc_hip]. ARF section 6.6.3[^arf] explains this process in detail and also elaborates on how trust is established between the wallet and the PSP. A positive verification of the A2Pay' by the PSP authorizes the given payment transaction.
 
 ### Dynamic linking
 
@@ -244,12 +244,29 @@ As a possible option to support the A2Pay' transport from PSP' to PSP, this docu
 
 The modification made to this endpoint is, that instead of a complete authorization response, the body of the POST request must include a JWT according to [rfc7519](https://datatracker.ietf.org/doc/html/rfc7519) having the following claims:
 
-* `payment-request`: Original payment request according to [payment-request-schema.json](payment-request-schema.json)
-* `a2pay` REQUIRED: A2Pay' as base64 URL encoded JWT containing the matching hash of the payment request given in `payment-request` claim. 
+* `payment-request` REQUIRED: Original payment request according to [payment-request-schema.json](payment-request-schema.json)
+* `a2pay` REQUIRED: A2Pay' as base64 URL encoded SD-JWT containing tthe matching hash of the payment request given in `payment-request` claim within the key-binding JWT. 
 
 The JWT must be signed by the PSP' using the key belonging to the relying party access certificate issued by a Relying Party Access Certificate Authority (CA) described in ARF section 6.4[^arf] and ARF Annex 2 A.2.3.27 Topic 27[^arf_annex2].
 
 The details for this endpoint are described in the OpenAPI specification file [A2Pay schema](eudi-payment-init-openapi.yml.)
+
+Example of the JWT payload:
+```json
+{
+  "payment-request": {
+    "payment-id": "7D8AC610-566D-3EF0-9C22-186B2A5ED793",
+    "creditor-account": {
+      "iban": "DE75512108001245126199"
+    },
+    "instructed-amount": "15.49",
+    "currency": "EUR",
+    "creditor-name": "Merchant A",
+    "purpose": "Shopping at Merchant A"
+  },
+  "a2pay": "ew0KIC..."
+}
+```
 
 ##### Openbanking using Berlin Group 
 
