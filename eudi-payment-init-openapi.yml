@@ -30,7 +30,7 @@ paths:
       requestBody:
         description: Payment initiation request
         content:
-          application/jwt:
+          application/x-www-form-urlencoded:
             schema:
               type: "string"
         required: true
