@@ -113,11 +113,11 @@ eyJ0eXAiOiJzZCtqd3QiLCJhbGciOiJFUzI1NiJ9.eyJpc3MiOiJodHRwczovL2JhbmsuY29tL2lzc3V
 
 ## Presentation
 
-Authenticating and authorizing a payment is implemented by presenting the A2Pay to a PSP using OpenID4VP[^openid4vp] according to section 5 of the OpenID4VC High Assurance Interoperability Profile with SD-JWT VC (HAIP) [^openid4vc_hip]. ARF section 6.6.3[^arf] explains this process in detail and also elaborates on how trust is established between the wallet and the PSP. A positive verification of the A2Pay presentation by the PSP authorizes the given payment transaction.
+Authenticating and authorizing a payment is implemented by presenting the A2Pay (hereafter A2Pay') to a PSP using OpenID4VP[^openid4vp] according to section 5 of the OpenID4VC High Assurance Interoperability Profile with SD-JWT VC (HAIP) [^openid4vc_hip]. ARF section 6.6.3[^arf] explains this process in detail and also elaborates on how trust is established between the wallet and the PSP. A positive verification of the A2Pay presentation by the PSP authorizes the given payment transaction.
 
 ### Dynamic linking
 
-As SCA also requires dynamic linking, the presentation of the A2Pay must also include the transaction details of the payment (payment request hereafter) signed by the wallet. The OpenID Foundation is currently developing an extension[^openid4vp_td] to the OpenID4VP[^openid4vp] specification to enable a relying party to incorporate dynamic data into the authorization request using the `transaction_data` parameter. The specification[^openid4vp_td] requests the wallet to include a hash of this data into the key-binding JWT (hereafter A2Pay') of the A2Pay presentation that is send back to the PSD' along with the authorization response. The hash value represents the authentication code required by PSD2. The `transaction_data` values contained within the authorization request must also be included in the user approval dialogue of the wallet specified further in ARF section 6.6.3.4[^arf] and ARF Annex 2 A.2.3.6 Topic 6[^arf_annex2]. 
+As SCA also requires dynamic linking, A2Pay' must also include the transaction details of the payment (payment request hereafter) signed by the wallet. The OpenID Foundation is currently developing an extension[^openid4vp_td] to the OpenID4VP[^openid4vp] specification to enable a relying party to incorporate dynamic data into the authorization request using the `transaction_data` parameter. The specification[^openid4vp_td] requests the wallet to include a hash of this data into the key-binding JWT  of the A2Pay' that is send back to the PSD' along with the authorization response. The hash value represents the authentication code required by PSD2. The `transaction_data` values contained within the authorization request must also be included in the user approval dialogue of the wallet specified further in ARF section 6.6.3.4[^arf] and ARF Annex 2 A.2.3.6 Topic 6[^arf_annex2]. 
 
 Since the support for transaction data is not part of the official OpenID4VP specification yet, refer to the `transaction_data` proposal branch on GithHub[^openid4vp_td] for implementation details.
 
@@ -174,7 +174,7 @@ Non-normative example of the `transaction_data` parameter within the authorizati
 
 ### Initiation scenarios 
 
-The presentation process described above can be applied in various real-world use-cases that differ depending on the role of the relying party requesting the A2pay.
+The presentation process described above can be applied in various real-world use-cases that differ depending on the role of the relying party requesting the A2pay'.
 
 #### Direct Payment flow
 
@@ -203,7 +203,7 @@ sequenceDiagram
 
 #### Extended Payment flow
 
-In this scenario, the relying party is a third party like a merchant or a merchant's PSP (PSP' hereafter) which is requesting the A2Pay issued by the the holders PSP. After receiving the presentation including the A2Pay', the PSP' must forward it along with the original payment request object to the issuing PSP for verification and/or execution of the payment transaction.
+In this scenario, the relying party is a third party like a merchant or a merchant's PSP (PSP' hereafter) which is requesting the A2Pay issued by the the holders PSP. After receiving the A2Pay', the PSP' must forward it along with the original payment request object to the issuing PSP for verification and/or execution of the payment transaction.
 
 ```mermaid
 
@@ -245,7 +245,7 @@ As a possible option to support the A2Pay' transport from PSP' to PSP, this docu
 The modification made to this endpoint is, that instead of a complete authorization response, the body of the POST request must include a JWT according to [rfc7519](https://datatracker.ietf.org/doc/html/rfc7519) having the following claims:
 
 * `payment-request`: Original payment request according to [payment-request-schema.json](payment-request-schema.json)
-* `kb-jwt` REQUIRED: A2Pay' as base64 URL encoded `kb-jwt` containing the matching hash of the payment request given in `payment-request` claim. 
+* `a2pay` REQUIRED: A2Pay' as base64 URL encoded JWT containing the matching hash of the payment request given in `payment-request` claim. 
 
 The JWT must be signed by the PSP' using the key belonging to the relying party access certificate issued by a Relying Party Access Certificate Authority (CA) described in ARF section 6.4[^arf] and ARF Annex 2 A.2.3.27 Topic 27[^arf_annex2].
 
