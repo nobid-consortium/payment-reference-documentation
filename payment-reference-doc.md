@@ -247,7 +247,9 @@ The modification made to this endpoint is, that instead of a complete authorizat
 
 The JWT must be signed by the PSP' using the key belonging to the relying party access certificate issued by a Relying Party Access Certificate Authority (CA) described in ARF section 6.4[^arf] and ARF Annex 2 A.2.3.27 Topic 27[^arf_annex2].
 
-The details for this endpoint are described in the OpenAPI specification file [A2Pay schema](eudi-payment-init-openapi.yml.)
+In order to communicate the URL of the endpoint to a third party, it must be included in the A2Pay issued by the PSP using the `initiation-url` property. 
+
+The details for this endpoint are described in the [OpenAPI specification file](eudi-payment-init-openapi.yml.)
 
 Example of the JWT payload:
 ```json
