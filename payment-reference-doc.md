@@ -117,9 +117,7 @@ Authenticating and authorizing a payment is implemented by presenting the A2Pay 
 
 ### Dynamic linking
 
-As SCA also requires dynamic linking, A2Pay' must also include the transaction details of the payment (payment request hereafter) signed by the wallet. The OpenID Foundation is currently developing an extension[^openid4vp_td] to the OpenID4VP[^openid4vp] specification to enable a relying party to incorporate dynamic data into the authorization request using the `transaction_data` parameter. The specification[^openid4vp_td] requests the wallet to include a hash of this data into the key-binding JWT  of the A2Pay' that is send back to the PSD' along with the authorization response. The hash value represents the authentication code required by PSD2. The `transaction_data` values contained within the authorization request must also be included in the user approval dialogue of the wallet specified further in ARF section 6.6.3.4[^arf] and ARF Annex 2 A.2.3.6 Topic 6[^arf_annex2]. 
-
-Since the support for transaction data is not part of the official OpenID4VP specification yet, refer to the `transaction_data` proposal branch on GithHub[^openid4vp_td] for implementation details.
+As SCA also requires dynamic linking, A2Pay' must also include the transaction details of the payment (payment request hereafter) signed by the wallet. OpenID4VP[^openid4vp] enables a relying party to incorporate dynamic data into the authorization request using the `transaction_data` parameter. The wallet is requested to include a hash of this data into the key-binding JWT  of the A2Pay' that is send back to the PSD' along with the authorization response. The hash value represents the authentication code required by PSD2. The `transaction_data` values contained within the authorization request must also be included in the user approval dialogue of the wallet specified further in ARF section 6.6.3.4[^arf] and ARF Annex 2 A.2.3.6 Topic 6[^arf_annex2]. 
 
 ### Payment request
 
@@ -140,7 +138,7 @@ Non-normative example of a payment request:
 }
 ```
 
-According to the transaction data specifications [^openid4vp_td], the following properties also have to be added to the object prior to base64url encoding to include it within the `transaction_data` array.
+According to the specifications [^openid4vp], the following properties also have to be added to the object prior to base64url encoding to include it within the `transaction_data` array.
 
 * `type`
 * `credential_ids`
@@ -294,10 +292,8 @@ Same-device screenflow of the payment process:
 
 
 [^xs2a]: [NextGenPSD2 XS2A Framework Implementation Guidelines](https://www.berlin-group.org/_files/ugd/c2914b_fec1852ec9c640568f5c0b420acf67d2.pdf)
-[^payment_data_model]: [Payment Data Model for Version 2.0 of the
 openFinance API Framework](https://www.berlin-group.org/_files/ugd/c2914b_f8cab18ec71e476a9685c9a5f5260fda.pdf)
 [^openid4vp]: [OpenID4VP](https://openid.net/specs/openid-4-verifiable-presentations-1_0.html)
-[^openid4vp_td]: [OpenID4VP - Transaction Data Proposal](https://github.com/openid/OpenID4VP/blob/transaction_data/openid-4-verifiable-presentations-1_0.md)
 [^openid4vci]: [OpenID4VCI](https://openid.github.io/OpenID4VCI/openid-4-verifiable-credential-issuance-wg-draft.html)
 [^arf]:[Architecture Reference Framework](https://github.com/eu-digital-identity-wallet/eudi-doc-architecture-and-reference-framework/blob/main/docs/arf.md)
 [^arf_annex1]: [ARF Annex 1](https://github.com/eu-digital-identity-wallet/eudi-doc-architecture-and-reference-framework/blob/main/docs/annexes/annex-1/annex-1-definitions.md)
