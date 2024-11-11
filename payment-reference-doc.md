@@ -111,7 +111,7 @@ Non-normative example of an A2Pay as `sd-jwt-vc` according to SD-JWT-based Verif
 eyJ0eXAiOiJzZCtqd3QiLCJhbGciOiJFUzI1NiJ9.eyJpc3MiOiJodHRwczovL2JhbmsuY29tL2lzc3VlciIsImV4cCI6MTg4MzAwMDAwMCwibmJmIjoxNzE4MTk4NDMzLCJpYXQiOjE3MTgxOTg0MzMsInZjdCI6Imh0dHBzOi8vY3JlZGVudGlhbHMuZXhhbXBsZS5jb20vYTJwYXkiLCJpZCI6IjhEOEFDNjEwLTU2NkQtNEVGMC05QzIyLTE4NkIyQTVFRDc5MyIsInBheW1lbnQtcHJvZHVjdCI6InNjdC1pbnN0LWV1IiwiaW5pdGlhdGlvbi11cmwiOiJodHRwczovL2JhbmsuY29tL3BheS83ZGZlNTQ4NGc3OC9pbml0IiwiYWNjb3VudC1yZWZlcmVuY2UiOnsiaWJhbiI6IkRFNzU1MTIxMDgwMDEyNDUxMjYxOTkifSwiY3VycmVuY3kiOiJFVVIiLCJuYW1lIjoiQWNjb3VudCBKb2huIFNtaXRoIiwiZGlzcGxheS1uYW1lIjoiTXkgQWNjb3VudCIsImNuZiI6eyJqd2siOnsiY3J2IjoiUC0yNTYiLCJrdHkiOiJFQyIsIngiOiJOQVNKMkFEdWFnT3ZyYUxmN080VnhjQk1iYW50ekw5ZGQwanB2TUxuQmZzIiwieSI6Ik9KWTZwcUNxUkl6cEV0NzhPWGFzV0hHZ3FWNVpHcmVfM2NIdHBOSDgyZ2cifX19.vOwJu9CY40M84-_0oamO5oNMCymhzje9wYT6dxmt5SilzA11MIz-Bjn6tqhuCYQeQN0ZQLRGU5ilufP1b5mgAA~
 ```
 
-## Presentation
+## Payment
 
 Authenticating and authorizing a payment is implemented by presenting the A2Pay (hereafter A2Pay') to a PSP using OpenID4VP[^openid4vp] according to section 5 of the OpenID4VC High Assurance Interoperability Profile with SD-JWT VC (HAIP) [^openid4vc_hip]. ARF section 6.6.3[^arf] explains this process in detail and also elaborates on how trust is established between the wallet and the PSP. A positive verification of the A2Pay' by the PSP authorizes the given payment transaction.
 
@@ -138,7 +138,7 @@ Non-normative example of a payment request:
 }
 ```
 
-According to the specifications [^openid4vp], the following properties also have to be added to the object prior to base64url encoding to include it within the `transaction_data` array.
+According to the OpenID4VP [^openid4vp], the following properties also have to be added to the object prior to base64url encoding to include it within the `transaction_data` array.
 
 * `type`
 * `credential_ids`
@@ -232,27 +232,32 @@ In order to support the extended payment flow and allow a PSP' to route an autho
 - `payment-product`: The payment instrument or scheme to use.
 - `account-reference`: The account / account alias the A2Pay is linked to. This can be an IBAN / BIC, a PAN or a mobile phone number e.g..
 
-The transport of the A2Pay' and the related payment request must be handled by according payment rails and schemes (OpenBanking, domestic schemes e.g.), which must implement additional support for processing the A2Pay data structures, signatures etc., and may also include additional actors like payment platforms or aquirers e.g..
+The transport of the A2Pay' and the related payment request is either done using the [EUDI Payment Initiation Endpoint](#eidas-direct-payment-endpoint) and / or an according payment rail or scheme (OpenBanking, domestic schemes e.g.), which must implement additional support for processing the A2Pay data structures, signatures etc., and may also include additional actors like payment platforms or aquirers e.g..
 
 ![Payment](wallet_payment.svg)
 
-##### EUDI Payment Initiation Endpoint
+##### EIDAS Direct Payment endpoint
 
-As a possible option to support the A2Pay' transport from PSP' to PSP, this document is proposing the extension of the `direct_post` endpoint defined by OpenID4VP, Section 6.2[^openid4vp] and required by the HAIP[^openid4vc_hip] already used in the [Direct Payment flow](#direct-payment-flow). 
+In order to comply with the eIDAS 2.0 regulation with respect to SCA, a PSP is already obliged to support the [Direct Payment flow](#direct-payment-flow), which uses the `direct_post` endpoint defined by OpenID4VP, Section 7.2[^openid4vp] as it is required by the HAIP[^openid4vc_hip]. The EIDAS Direct Payment endpoint (EDP) extends this endpoint for the `direct_post` mode to support a Payment Authorization Object besides the Authorization Request Object as payload in order to reduce any additional implementation efforts for PSPs. 
 
-The modification made to this endpoint is, that instead of a complete authorization response, the body of the POST request must include a JWT according to [rfc7519](https://datatracker.ietf.org/doc/html/rfc7519) having the following claims:
+The Payment Authorization Object is defined as a JWT according to [rfc7519](https://datatracker.ietf.org/doc/html/rfc7519) having the following claims:
 
 * `payment-request` REQUIRED: Original payment request according to [payment-request-schema.json](payment-request-schema.json)
-* `a2pay` REQUIRED: A2Pay' as base64 URL encoded SD-JWT containing tthe matching hash of the payment request given in `payment-request` claim within the key-binding JWT. 
+* `transaction_data_hashes_alg` OPTIONAL: String representing the hash algorithm identifier used to calculate the hash of the payment request.  "Hash Name String" column in the [IANA "Named Information Hash Algorithm"](https://www.iana.org/assignments/named-information/named-information.xhtml). Default value is `sha-256`.
+* `a2pay` REQUIRED: A2Pay' as base64 URL encoded SD-JWT containing the matching hash of the payment request given in `payment-request` claim within the key-binding JWT. 
 
 The JWT must be signed by the PSP' using the key belonging to the relying party access certificate issued by a Relying Party Access Certificate Authority (CA) described in ARF section 6.4[^arf] and ARF Annex 2 A.2.3.27 Topic 27[^arf_annex2].
 
-In order to communicate the URL of the endpoint to a third party, it must be included in the A2Pay issued by the PSP using the `initiation-url` property. 
+In order for a PSP to support the Extended Payment Flow using the EDP, they must include the `initiation-url` property within the A2Pay during registration. The value must be the URL a PSP' can use to send the Payment Authorization Object to.
 
-The details for this endpoint are described in the [OpenAPI specification file](eudi-payment-init-openapi.yml.)
+Details for this endpoint are described in the [OpenAPI specification file](eudi-payment-init-openapi.yml.)
 
 Example of the JWT payload:
 ```json
+POST /post HTTP/1.1
+Host: bank.example.com/payment-initiation
+Content-Type: application/x-www-form-urlencoded
+
 {
   "payment-request": {
     "payment-id": "7D8AC610-566D-3EF0-9C22-186B2A5ED793",
@@ -264,6 +269,7 @@ Example of the JWT payload:
     "creditor-name": "Merchant A",
     "purpose": "Shopping at Merchant A"
   },
+  "transaction_data_hashes_alg": "sha-256",
   "a2pay": "ew0KIC..."
 }
 ```
@@ -279,7 +285,6 @@ TODO
 ### Combined presentations
 
 Relying on the presentation flows described above and also the requirements defined for the wallet in ARF Annex 2 section A.2.3.18 Topic 18[^arf_annex2], the PSP' may combine the request for an A2Pay' with additional attributes that may reside in the wallet. Therby they can leverage the additional information to build more advanced use-case like combining payment with proof of age e.g..
-
 
 ### Screenflow
 
