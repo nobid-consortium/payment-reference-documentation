@@ -238,7 +238,7 @@ The transport of the A2Pay' and the related payment request is either done using
 
 ##### eIDAS Direct Payment endpoint
 
-In order to comply with the eIDAS 2.0 regulation with respect to SCA, a PSP is already obliged to support the [Direct Payment flow](#direct-payment-flow), which uses the `direct_post` endpoint defined by OpenID4VP, Section 7.2[^openid4vp] as it is required by the HAIP[^openid4vc_hip]. The EIDAS Direct Payment endpoint (EDP) extends this endpoint for the `direct_post` mode to support a Payment Authorization Object besides the Authorization Request Object as payload in order to reduce any additional implementation efforts for PSPs. 
+In order to comply with the eIDAS 2.0 regulation with respect to SCA, a PSP is already obliged to support the [Direct Payment flow](#direct-payment-flow), which uses the `direct_post` endpoint defined by OpenID4VP, Section 7.2[^openid4vp] as it is required by the HAIP[^openid4vc_hip]. The eIDAS Direct Payment endpoint (EDP) extends this endpoint for the `direct_post` mode to support a Payment Authorization Object besides the Authorization Response Object as payload in order to reduce any additional implementation efforts for PSPs. 
 
 The Payment Authorization Object is defined as a JWT according to [rfc7519](https://datatracker.ietf.org/doc/html/rfc7519) having the following claims:
 
