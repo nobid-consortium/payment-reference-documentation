@@ -35,9 +35,5 @@ paths:
               type: "string"
         required: true
       responses:
-        '200':
-          description: Payment accepted
-        '400':
-          description: Invalid input
-        '422':
-          description: Validation exception
+        '302':
+          description: URL to query the status of the payment

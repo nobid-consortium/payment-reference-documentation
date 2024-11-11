@@ -113,7 +113,7 @@ eyJ0eXAiOiJzZCtqd3QiLCJhbGciOiJFUzI1NiJ9.eyJpc3MiOiJodHRwczovL2JhbmsuY29tL2lzc3V
 
 ## Payment
 
-Authenticating and authorizing a payment is implemented by presenting the A2Pay (hereafter A2Pay') to a PSP using OpenID4VP[^openid4vp] according to section 5 of the OpenID4VC High Assurance Interoperability Profile with SD-JWT VC (HAIP) [^openid4vc_hip]. ARF section 6.6.3[^arf] explains this process in detail and also elaborates on how trust is established between the wallet and the PSP. A positive verification of the A2Pay' by the PSP authorizes the given payment transaction.
+Authenticating and authorizing a payment is implemented by presenting the A2Pay (hereafter A2Pay') to a PSP using OpenID4VP[^openid4vp] according to section 5 of the OpenID4VC High Assurance Interoperability Profile with SD-JWT VC (HAIP) [^openid4vc_hip]. A2Pay' is thereby defined an SD-JWT presentation according to Self Diclosure for JWTs[^sd-jwt].  ARF section 6.6.3[^arf] explains this process in detail and also elaborates on how trust is established between the wallet and the PSP. A positive verification of the A2Pay' by the PSP authorizes the given payment transaction.
 
 ### Dynamic linking
 
@@ -138,7 +138,7 @@ Non-normative example of a payment request:
 }
 ```
 
-According to the OpenID4VP [^openid4vp], the following properties also have to be added to the object prior to base64url encoding to include it within the `transaction_data` array.
+According to OpenID4VP [^openid4vp], the following properties also have to be added to the object prior to base64url encoding to include it within the `transaction_data` array.
 
 * `type`
 * `credential_ids`
@@ -236,7 +236,7 @@ The transport of the A2Pay' and the related payment request is either done using
 
 ![Payment](wallet_payment.svg)
 
-##### EIDAS Direct Payment endpoint
+##### eIDAS Direct Payment endpoint
 
 In order to comply with the eIDAS 2.0 regulation with respect to SCA, a PSP is already obliged to support the [Direct Payment flow](#direct-payment-flow), which uses the `direct_post` endpoint defined by OpenID4VP, Section 7.2[^openid4vp] as it is required by the HAIP[^openid4vc_hip]. The EIDAS Direct Payment endpoint (EDP) extends this endpoint for the `direct_post` mode to support a Payment Authorization Object besides the Authorization Request Object as payload in order to reduce any additional implementation efforts for PSPs. 
 
@@ -244,7 +244,7 @@ The Payment Authorization Object is defined as a JWT according to [rfc7519](http
 
 * `payment-request` REQUIRED: Original payment request according to [payment-request-schema.json](payment-request-schema.json)
 * `transaction_data_hashes_alg` OPTIONAL: String representing the hash algorithm identifier used to calculate the hash of the payment request.  "Hash Name String" column in the [IANA "Named Information Hash Algorithm"](https://www.iana.org/assignments/named-information/named-information.xhtml). Default value is `sha-256`.
-* `a2pay` REQUIRED: A2Pay' as base64 URL encoded SD-JWT containing the matching hash of the payment request given in `payment-request` claim within the key-binding JWT. 
+* `a2pay` REQUIRED: A2Pay' as base64 URL encoded SD-JWT containing the matching hash of the payment request given in `payment-request` claim within the key-binding JWT (see OpenID4VP section B4.5 [^openid4vp]). 
 
 The JWT must be signed by the PSP' using the key belonging to the relying party access certificate issued by a Relying Party Access Certificate Authority (CA) described in ARF section 6.4[^arf] and ARF Annex 2 A.2.3.27 Topic 27[^arf_annex2].
 
@@ -309,3 +309,4 @@ openFinance API Framework](https://www.berlin-group.org/_files/ugd/c2914b_f8cab1
 [^bg_sec]: [openFinance API Framework Implementation Guidelines, Protocol Functions and Security Measures](https://c2914bdb-1b7a-4d22-b792-c58ac5d6648e.usrfiles.com/archives/c2914b_db4be6e61a4e4581897d5758d2a4c8de.zip)
 [^openid4vc_hip]: [OpenID4VC High Assurance Interoperability Profile with SD-JWT VC ](https://openid.net/specs/openid4vc-high-assurance-interoperability-profile-sd-jwt-vc-1_0.html)
 [^sd-jwt-vc]: [SD-JWT-based Verifiable Credentials](https://datatracker.ietf.org/doc/draft-ietf-oauth-sd-jwt-vc/05/)
+[^sd-jwt]: [Selective Disclosure for JWTs](https://datatracker.ietf.org/doc/draft-ietf-oauth-selective-disclosure-jwt/13/)
