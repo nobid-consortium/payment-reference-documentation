@@ -236,9 +236,9 @@ The transport of the A2Pay' and the related payment request is either done using
 
 ![Payment](wallet_payment.svg)
 
-##### eIDAS Direct Payment endpoint
+##### eIDAS POST Payment endpoint
 
-In order to comply with the eIDAS 2.0 regulation with respect to SCA, a PSP is already obliged to support the [Direct Payment flow](#direct-payment-flow), which uses the `direct_post` endpoint defined by OpenID4VP, Section 7.2[^openid4vp] as it is required by the HAIP[^openid4vc_hip]. The eIDAS Direct Payment endpoint (EDP) extends this endpoint for the `direct_post` mode to support a Payment Authorization Object besides the Authorization Response Object as payload in order to reduce any additional implementation efforts for PSPs. 
+In order to comply with the eIDAS 2.0 regulation with respect to SCA, a PSP is already obliged to support the [Direct Payment flow](#direct-payment-flow), which uses the `direct_post` endpoint defined by OpenID4VP, Section 7.2[^openid4vp] as it is required by the HAIP[^openid4vc_hip]. The eIDAS POST Payment endpoint (ePP) extends this endpoint for the `direct_post` mode to support a Payment Authorization Object besides the Authorization Response Object as payload in order to reduce any additional implementation efforts for PSPs. 
 
 The Payment Authorization Object is defined as a JWT according to [rfc7519](https://datatracker.ietf.org/doc/html/rfc7519) having the following claims:
 
@@ -248,7 +248,7 @@ The Payment Authorization Object is defined as a JWT according to [rfc7519](http
 
 The JWT must be signed by the PSP' using the key belonging to the relying party access certificate issued by a Relying Party Access Certificate Authority (CA) described in ARF section 6.4[^arf] and ARF Annex 2 A.2.3.27 Topic 27[^arf_annex2].
 
-In order for a PSP to support the Extended Payment Flow using the EDP, they must include the `initiation-url` property within the A2Pay during registration. The value must be the URL a PSP' can use to send the Payment Authorization Object to.
+In order for a PSP to support the Extended Payment Flow using the ePP, they must include the `initiation-url` property within the A2Pay during registration. The value must be the URL a PSP' can use to send the Payment Authorization Object to.
 
 Details for this endpoint are described in the [OpenAPI specification file](eudi-payment-init-openapi.yml.)
 
