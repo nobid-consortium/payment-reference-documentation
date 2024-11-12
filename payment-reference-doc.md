@@ -250,7 +250,7 @@ The JWT must be signed by the PSP' using the key belonging to the relying party 
 
 In order for a PSP to support the Extended PaymentAuth Flow using the A2Pay Direct endpoint, they must include the `initiation-url` property within the A2Pay during registration. The value must be the URL a PSP' can use to send the Payment Authorization Object to.
 
-Details for this endpoint are described in the [OpenAPI specification file](eudi-payment-init-openapi.yml.)
+Details for this endpoint are described in the [OpenAPI specification file](eudi-payment-init-openapi.yml)
 
 Example of the JWT payload:
 ```json
