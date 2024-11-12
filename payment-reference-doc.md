@@ -232,7 +232,7 @@ In order to support the Extended PaymentAuth Flow and allow a PSP' to route an a
 - `payment-product`: The payment instrument or scheme to use.
 - `account-reference`: The account / account alias the A2Pay is linked to. This can be an IBAN / BIC, a PAN or a mobile phone number e.g..
 
-The transport of the A2Pay' and the related payment request is either done using the [A2Pay Directirect endpoint](#a2pay-direct-endpoint) and / or an according payment rail or scheme (OpenBanking, domestic schemes e.g.), which must implement additional support for processing the A2Pay data structures, signatures etc., and may also include additional actors like payment platforms or aquirers e.g..
+The transport of the A2Pay' and the related payment request is either done using the [A2Pay Direct endpoint](#a2pay-direct-endpoint) and / or an according payment rail or scheme (OpenBanking, domestic schemes e.g.), which must implement additional support for processing the A2Pay data structures, signatures etc., and may also include additional actors like payment platforms or aquirers e.g..
 
 ![Payment](wallet_payment.svg)
 
