@@ -1,4 +1,4 @@
-<mxfile host="Electron" modified="2024-11-11T11:16:14.492Z" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/24.4.7 Chrome/124.0.6367.207 Electron/30.0.6 Safari/537.36" etag="ySn7pcwIGw4BXuY6KmyM" version="24.4.7" type="device" pages="4">
+<mxfile host="Electron" modified="2024-11-12T07:30:05.908Z" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/24.4.7 Chrome/124.0.6367.207 Electron/30.0.6 Safari/537.36" etag="9n2w3EuoqSHHYhySGrph" version="24.4.7" type="device" pages="4">
   <diagram id="cqYvKdAepv__yFrMovRP" name="Screenflow">
     <mxGraphModel dx="1775" dy="1266" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
       <root>
@@ -969,7 +969,7 @@
         <mxCell id="nUFZgWoifcnqG-G36BuG-36" value="Settlement" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
           <mxGeometry x="548.51" y="634.17" width="60" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="nUFZgWoifcnqG-G36BuG-37" value="Extended Payment Flow&lt;div style=&quot;font-size: 16px;&quot;&gt;OpenID4VP&lt;/div&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;startArrow=classic;startFill=1;strokeWidth=4;fontSize=16;fontStyle=1" parent="1" source="nUFZgWoifcnqG-G36BuG-2" target="nUFZgWoifcnqG-G36BuG-28" edge="1">
+        <mxCell id="nUFZgWoifcnqG-G36BuG-37" value="Extended PaymentAuth Flow&lt;div style=&quot;font-size: 16px;&quot;&gt;OpenID4VP&lt;/div&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;startArrow=classic;startFill=1;strokeWidth=4;fontSize=16;fontStyle=1" parent="1" source="nUFZgWoifcnqG-G36BuG-2" target="nUFZgWoifcnqG-G36BuG-28" edge="1">
           <mxGeometry x="0.3747" y="32" relative="1" as="geometry">
             <mxPoint as="offset" />
           </mxGeometry>
@@ -1073,8 +1073,8 @@
         <mxCell id="nUFZgWoifcnqG-G36BuG-38" value="" style="points=[[0,0.5,0],[0.24,0,0],[0.5,0.28,0],[0.995,0.475,0],[0.5,0.72,0],[0.24,1,0]];verticalLabelPosition=bottom;sketch=0;html=1;verticalAlign=top;aspect=fixed;align=center;pointerEvents=1;shape=mxgraph.cisco19.key;fillColor=#d80073;fontColor=#ffffff;strokeColor=none;" parent="1" vertex="1">
           <mxGeometry x="931.64" y="62.16" width="22.04" height="9.92" as="geometry" />
         </mxCell>
-        <mxCell id="nUFZgWoifcnqG-G36BuG-193" value="eIDAS POST Payment" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeWidth=4;exitX=0.25;exitY=1;exitDx=0;exitDy=0;strokeColor=#FF0080;fontSize=16;fontStyle=1" parent="1" source="nUFZgWoifcnqG-G36BuG-28" target="O3Fb8VXHoRHBbUNWUWsP-23" edge="1">
-          <mxGeometry relative="1" as="geometry">
+        <mxCell id="nUFZgWoifcnqG-G36BuG-193" value="A2Pay Direct" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeWidth=4;exitX=0.25;exitY=1;exitDx=0;exitDy=0;strokeColor=#FF0080;fontSize=16;fontStyle=1" parent="1" source="nUFZgWoifcnqG-G36BuG-28" target="O3Fb8VXHoRHBbUNWUWsP-23" edge="1">
+          <mxGeometry x="-0.0001" relative="1" as="geometry">
             <mxPoint x="790" y="380" as="sourcePoint" />
             <Array as="points">
               <mxPoint x="875" y="340" />
@@ -1082,6 +1082,7 @@
               <mxPoint x="273" y="470" />
               <mxPoint x="273" y="470" />
             </Array>
+            <mxPoint as="offset" />
           </mxGeometry>
         </mxCell>
         <mxCell id="nUFZgWoifcnqG-G36BuG-388" value="" style="group" parent="1" vertex="1" connectable="0">
@@ -1113,7 +1114,7 @@
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="O3Fb8VXHoRHBbUNWUWsP-3" value="Direct Payment Flow&lt;div&gt;OpenID4VP&lt;/div&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=16;rotation=-90;fontStyle=1" vertex="1" connectable="0" parent="O3Fb8VXHoRHBbUNWUWsP-2">
+        <mxCell id="O3Fb8VXHoRHBbUNWUWsP-3" value="Basic PaymentAuth Flow&lt;div&gt;OpenID4VP&lt;/div&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=16;rotation=-90;fontStyle=1" vertex="1" connectable="0" parent="O3Fb8VXHoRHBbUNWUWsP-2">
           <mxGeometry x="-0.3628" relative="1" as="geometry">
             <mxPoint x="-29" y="145" as="offset" />
           </mxGeometry>

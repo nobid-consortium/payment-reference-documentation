@@ -174,7 +174,7 @@ Non-normative example of the `transaction_data` parameter within the authorizati
 
 The presentation process described above can be applied in various real-world use-cases that differ depending on the role of the relying party requesting the A2pay'.
 
-#### Direct Payment flow
+#### Basic PaymentAuth flow
 
 In this scenario, the relying party is the PSP (usually a bank) of the holder themself. The holder is requesting a payment transaction using an out-of-band mechanism like the banks mobile app, online banking portal or even a third party provider for payment initiation according to PSD2 (PISP). The holders PSP is initiating the flow by requesting the A2Pay' they have previously issued to the wallet themself in the prior registration flow. 
 
@@ -199,7 +199,7 @@ sequenceDiagram
     wallet ->> user: payment status
 ```
 
-#### Extended Payment flow
+#### Extended PaymentAuth flow
 
 In this scenario, the relying party is a third party like a merchant or a merchant's PSP (PSP' hereafter) which is requesting the A2Pay issued by the the holders PSP. After receiving the A2Pay', the PSP' must forward it along with the original payment request object to the issuing PSP for verification and/or execution of the payment transaction.
 
@@ -228,17 +228,17 @@ sequenceDiagram
 
 ```
 
-In order to support the extended payment flow and allow a PSP' to route an authorized payment request, the A2Pay must always provide the following details defined by the [A2Pay schema](a2pay-schema.json): 
+In order to support the Extended PaymentAuth Flow and allow a PSP' to route an authorized payment request, the A2Pay must always provide the following details defined by the [A2Pay schema](a2pay-schema.json): 
 - `payment-product`: The payment instrument or scheme to use.
 - `account-reference`: The account / account alias the A2Pay is linked to. This can be an IBAN / BIC, a PAN or a mobile phone number e.g..
 
-The transport of the A2Pay' and the related payment request is either done using the [EUDI Payment Initiation Endpoint](#eidas-direct-payment-endpoint) and / or an according payment rail or scheme (OpenBanking, domestic schemes e.g.), which must implement additional support for processing the A2Pay data structures, signatures etc., and may also include additional actors like payment platforms or aquirers e.g..
+The transport of the A2Pay' and the related payment request is either done using the [A2Pay Directirect endpoint](#a2pay-direct-endpoint) and / or an according payment rail or scheme (OpenBanking, domestic schemes e.g.), which must implement additional support for processing the A2Pay data structures, signatures etc., and may also include additional actors like payment platforms or aquirers e.g..
 
 ![Payment](wallet_payment.svg)
 
-##### eIDAS POST Payment endpoint
+##### A2Pay Direct Endpoint
 
-In order to comply with the eIDAS 2.0 regulation with respect to SCA, a PSP is already obliged to support the [Direct Payment flow](#direct-payment-flow), which uses the `direct_post` endpoint defined by OpenID4VP, Section 7.2[^openid4vp] as it is required by the HAIP[^openid4vc_hip]. The eIDAS POST Payment endpoint (ePP) extends this endpoint for the `direct_post` mode to support a Payment Authorization Object besides the Authorization Response Object as payload in order to reduce any additional implementation efforts for PSPs. 
+In order to comply with the eIDAS 2.0 regulation with respect to SCA, a PSP is already obliged to support the [Direct Payment flow](#direct-payment-flow), which uses the `direct_post` endpoint defined by OpenID4VP, Section 7.2[^openid4vp] as it is required by the HAIP[^openid4vc_hip]. A2Pay Direct extends this endpoint for the `direct_post` mode to support a Payment Authorization Object besides the Authorization Response Object as payload in order to reduce any additional implementation efforts for PSPs. 
 
 The Payment Authorization Object is defined as a JWT according to [rfc7519](https://datatracker.ietf.org/doc/html/rfc7519) having the following claims:
 
@@ -248,7 +248,7 @@ The Payment Authorization Object is defined as a JWT according to [rfc7519](http
 
 The JWT must be signed by the PSP' using the key belonging to the relying party access certificate issued by a Relying Party Access Certificate Authority (CA) described in ARF section 6.4[^arf] and ARF Annex 2 A.2.3.27 Topic 27[^arf_annex2].
 
-In order for a PSP to support the Extended Payment Flow using the ePP, they must include the `initiation-url` property within the A2Pay during registration. The value must be the URL a PSP' can use to send the Payment Authorization Object to.
+In order for a PSP to support the Extended PaymentAuth Flow using the A2Pay Direct endpoint, they must include the `initiation-url` property within the A2Pay during registration. The value must be the URL a PSP' can use to send the Payment Authorization Object to.
 
 Details for this endpoint are described in the [OpenAPI specification file](eudi-payment-init-openapi.yml.)
 

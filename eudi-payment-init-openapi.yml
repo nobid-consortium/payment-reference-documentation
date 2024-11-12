@@ -1,6 +1,6 @@
 openapi: 3.1.0
 info:
-  title: EUDI payment initiation
+  title: A2Pay Direct
   description: |-
     The API allows to send A2pay presentation to the issuer of an A2Pay.
   version: 0.0.1
