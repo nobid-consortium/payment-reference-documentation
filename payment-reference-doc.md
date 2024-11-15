@@ -190,7 +190,21 @@ Cache-Control: no-store
 }
 ```
 
-The redirect URI is used to query the status of the payment as it must implement the payment status endpoint defined in [EUDIW payment API specification](eudi-payment-api.yml).
+The redirect URI is used to query the status of the payment as it must implement the payment status endpoint defined in [EUDIW payment API specification](eudi-payment-api.yml). The status of the payment is defined as [ISO 20022](https://www.iso20022.org/catalogue-messages/additional-content-messages/external-code-sets) payment status code.
+
+| Type |               Name              |                                                            Explanation                                                           |   |   |
+|:----:|:-------------------------------:|:--------------------------------------------------------------------------------------------------------------------------------:|---|---|
+| RCVD | Received                        | The payment has been received and is awaiting Strong Customer Authentication                                                     |   |   |
+| ACCP | AcceptedCustomerProfile         | The preceding check of technical validation was successful. The customer profile check was also successful.                      |   |   |
+| ACSP | Accepted Settlement In Progress | The payment has been sent by the bank but is not yet settled in the creditor account.                                            |   |   |
+| ACSC | Accepted Settlement Completed   | The payment has been sent by the bank and settled in the creditor's account.                                                     |   |   |
+| NAUT | NotAuthorized                   | The end-user has cancelled the payment authorization.                                                                            |   |   |
+| RJCT | Rejected                        | The payment has failed due to insufficient funds in the debtor's account                                                         |   |   |
+| PDNG | Pending                         | The debtor account holder has edited the payment in their online banking and a new Strong Customer Authentication is now pending |   |   |
+| CANC | Cancelled                       | The payment has been deleted by the end-user                                                                                     |   |   |
+| PRSY | OnHold                          | The payment initiation was put on hold by the bank                                                                               |   |   |
+| PATC | Partially Accepted              | The payment requires a second authorization                                                                                      |   |   |
+
 
 ### Initiation scenarios 
 
@@ -301,14 +315,6 @@ Content-Type: application/x-www-form-urlencoded
   "a2pay": "ew0KIC..."
 }
 ```
-
-##### Openbanking using Berlin Group 
-
-Although currently there is no out of-the-box support for payment initiation using an A2Pay in the existing Berlin Group specification yet, they already specify very similar concepts using a so called "signed payment request" within their Protocol Functions and Security Measures document for the  OpenFinance framework, section 7.1[^bg_sec]. A possible option would be to define an additional body signing profile for the `Body-Sig-Profile` parameter. The profile would define the requirements for wrapping the payment initiation requests into a verifiable presentation similar to the existing / forseen profiles `JAdES_JS`, `XAdES` and `EMV_AC`.
-
-##### Domestic Scheme Bancomat
-
-TODO
 
 ### Combined presentations
 
