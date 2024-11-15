@@ -23,16 +23,6 @@
         "bancomat-pay"
       ]
     },
-    "initiation-url": {
-      "type": "string",
-      "maxLength": 200,
-      "description": "URL to send the signed A2Pay presentation to.",
-      "minLength": 1,
-      "format": "url",
-      "examples": [
-        "https://bank.com/pay/7dfe5484g78/init"
-      ]
-    },
     "account-reference": {
       "type": "object",
       "properties": {
@@ -87,6 +77,16 @@
             "me@example.com"
           ]
         },
+        "init-url": {
+          "type": "string",
+          "maxLength": 200,
+          "description": "A2Pay Direct URL to send the signed A2Pay presentation to.",
+          "minLength": 1,
+          "format": "url",
+          "examples": [
+            "https://bank.com/pay/7dfe5484g78/init"
+          ]
+        },
         "other": {
           "type": "string",
           "description": "An alias with proprietary coding.",
@@ -118,6 +118,11 @@
         {
           "required": [
             "email"
+          ]
+        },
+        {
+          "required": [
+            "init-url"
           ]
         },
         {

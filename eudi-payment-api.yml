@@ -1,6 +1,6 @@
 openapi: 3.1.0
 info:
-  title: A2Pay Direct
+  title: EUDI payment API
   description: |-
     The API allows to send A2pay presentation to the issuer of an A2Pay.
   version: 0.0.1
@@ -35,5 +35,32 @@ paths:
               type: "string"
         required: true
       responses:
-        '302':
-          description: URL to query the status of the payment
+        '200':
+          description: Payment accepted
+  /payment-status/{id}:
+    get:
+      tags:
+        - payment status
+      summary: Initiate a payment authorization
+      description: Initiate a payment authorization by providing a payment credential presentation and the payment details. the 
+      operationId: paymentStatus
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+          description: payment ID
+      responses:
+        '200':
+          description: Payment status code
+          content:
+            application/json: 
+              schema: 
+                type: "object"
+                properties: 
+                  status-code:
+                   type: "string"
+                   summary: "ISO 20022 payment status code"
+                   examples: 
+                     - "ACSC"
