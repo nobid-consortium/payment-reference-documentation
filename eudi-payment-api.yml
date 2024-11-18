@@ -1,8 +1,8 @@
 openapi: 3.1.0
 info:
-  title: EUDI payment API
+  title: A2Pay API
   description: |-
-    The API allows to send A2pay presentation to the issuer of an A2Pay.
+    API supporting payment initation and authorization using the European Digital Identity Wallet.
   version: 0.0.1
 externalDocs:
   description: Find out more on GitHub
@@ -17,8 +17,7 @@ paths:
     post:
       tags:
         - payment initiation
-      summary: Initiate a payment authorization
-      description: Initiate a payment authorization by providing a payment credential presentation and the payment details. the 
+      summary: Post a payment request that has been authorized through the wallet.
       operationId: initPaymentAuth
       parameters:
         - in: path
@@ -26,7 +25,7 @@ paths:
           schema:
             type: string
           required: true
-          description: ID of the issued A2Pay
+          description: ID of the issued A2Pay.
       requestBody:
         description: Payment initiation request
         content:
@@ -36,13 +35,21 @@ paths:
         required: true
       responses:
         '200':
-          description: Payment accepted
+          description:  Payment request received.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  redirect_uri:
+                    type: string
+                    examples:
+                      - "https://bank.example.org/payment-status/id=091535f699ea575c7937fa5f0f454aee"
   /payment-status/{id}:
     get:
       tags:
         - payment status
-      summary: Initiate a payment authorization
-      description: Initiate a payment authorization by providing a payment credential presentation and the payment details. the 
+      summary: Query the status of a payment.
       operationId: paymentStatus
       parameters:
         - in: path
@@ -50,7 +57,7 @@ paths:
           schema:
             type: string
           required: true
-          description: payment ID
+          description: ID of the payment as given in the response to the payment initiation request. 
       responses:
         '200':
           description: Payment status code
@@ -64,3 +71,4 @@ paths:
                    summary: "ISO 20022 payment status code"
                    examples: 
                      - "ACSC"
+                     - "RJCT"

@@ -180,7 +180,7 @@ Non-normative example of the `transaction_data` parameter within the authorizati
 
 The A2Pay' is send to the PSP using the HTTP POST request defined by the `direct_post` response mode in OpenID4VP[^openid4vp]. The PSP must then respond with an HTTP code 200 and a JSON object containing the `redirect_uri` parameter.
 
-```
+```json
 HTTP/1.1 200 OK
 Content-Type: application/json
 Cache-Control: no-store
@@ -205,6 +205,18 @@ The redirect URI is used to query the status of the payment as it must implement
 | PRSY | OnHold                          | The payment initiation was put on hold by the bank                                                                               |   |   |
 | PATC | Partially Accepted              | The payment requires a second authorization                                                                                      |   |   |
 
+Example of a payment status response:
+
+```json
+HTTP/1.1 200 OK
+Content-Type: application/json
+Cache-Control: no-store
+
+{
+  "status-code": "ACSC"
+}
+
+```
 
 ### Initiation scenarios 
 
@@ -274,7 +286,7 @@ In order to support the Extended PaymentAuth Flow and allow a PSP' to route an a
 - `payment-product`: The payment instrument or scheme to use.
 - `account-reference`: The account / account alias the A2Pay is linked to. This can be an IBAN / BIC, a PAN or a mobile phone number e.g..
 
-The transport of the A2Pay' and the related payment request is either done using the [A2Pay Direct endpoint](#a2pay-direct-endpoint) and / or an according payment rail or scheme (OpenBanking, domestic schemes e.g.), which must implement additional support for processing the A2Pay data structures, signatures etc., and may also include additional actors like payment platforms or aquirers e.g..
+The transport of the A2Pay' and the related payment request is done using the [A2Pay Direct endpoint](#a2pay-direct-endpoint) and / or an according payment rail or scheme (OpenBanking, domestic schemes e.g.), which must implement additional support for processing the A2Pay data structures, signatures etc., and may also include additional actors like payment platforms or aquirers e.g..
 
 ![Payment](wallet_payment.svg)
 
