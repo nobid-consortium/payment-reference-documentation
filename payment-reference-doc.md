@@ -186,11 +186,13 @@ Content-Type: application/json
 Cache-Control: no-store
 
 {
-  "redirect_uri": "https://bank.example.org/payment-status/payment_id=091535f699ea575c7937fa5f0f454aee"
+  "redirect_uri": "https://bank.example.org/payment-status/091535f699ea575c7937fa5f0f454aee"
 }
 ```
 
 The redirect URI is used to query the status of the payment as it must implement the payment status endpoint defined in [EUDIW payment API specification](eudi-payment-api.yml). The status of the payment is defined as [ISO 20022](https://www.iso20022.org/catalogue-messages/additional-content-messages/external-code-sets) payment status code.
+
+
 
 | Type |               Name              |                                                            Explanation                                                           |   |   |
 |:----:|:-------------------------------:|:--------------------------------------------------------------------------------------------------------------------------------:|---|---|
@@ -272,6 +274,7 @@ sequenceDiagram
     wallet -->> user: status presentation
     critical payment rails implementation
     psp2 ->> psp: forwarding A2Pay'
+    psp -->> psp2: receiving A2Pay' OK
     psp ->> psp: verify A2Pay' and execute transaction
     end
     wallet ->> psp2: query payment status
