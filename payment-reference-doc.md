@@ -1,78 +1,93 @@
 # Strong-customer-authentication for electronic payments for the eIDAS2 EUDI Wallet
 
 ## Background
-Strong Customer Authentication (SCA) is a crucial requirement under the Revised Payment Service Directive (PSD2) aimed at enhancing the security of electronic payments. To meet SCA standards in open banking, banks must implement multi-factor authentication, typically involving two out of three factors: 
+Strong Customer Authentication (SCA) is a security protocol required under the European Union’s PSD2 directive to protect electronic payments. Its purpose is to reduce fraud by ensuring that electronic transactions are conducted securely and only by authorized users. SCA relies on a combination of two out of three independent authentication factors:
 
-- knowledge (e.g., password or PIN)
-- possession (e.g., mobile phone)
-- and inherence (e.g., biometrics like fingerprint or facial recognition). 
+1. Something the customer knows, such as a password or PIN.
+2.	Something the customer possesses, such as a smartphone, card reader, or token.
+3.	Something the customer is, like a fingerprint, facial recognition, or other biometric data.
 
-This additional layer of security is essential to combat fraud in online transactions and protect both financial institutions and consumers. Today there exist multiple ways on how SCA can be performed. 
+The process requires that these factors are independent of one another, ensuring a higher level of security for online payments. While some payments, such as recurring subscriptions or low-value transactions, may be exempt from SCA, most will trigger its implementation.
 
-- **Redirected**: The Redirected SCA approach described in XS2A section 5.1.1[^xs2a] involves redirecting users to their bank's authentication interface during a payment transaction to complete the authorization process. This method presents a pre-populated credit transfer screen for the user's confirmation, making it a semi-automated process where the flow is controlled by the user, initiating the payment themselves Embedded
-- **Embedded**: The Embedded SCA approach described in XS2A section 5.1.8[^xs2a] involves a fully automated process where the payment is initiated on behalf of the Payment Service User (PSU) by the Third-Party Provider (TPP). In this method, the user shares their credentials with the TPP, who then authenticates and initiates the payment in the background, embedding the authentication process seamlessly within the transaction flow.
-- **Decoupled**: The Decoupled approach described in XS2A section 5.1.7[^xs2a] offers a convenient method to obtain SCA approval with minimal effort from the merchant or cardholder. This approach allows transactions to occur without the cardholder being actively engaged with the merchant's website or mobile application. Instead, authentication is conducted through alternative channels, such as mobile push notifications within banking apps, email, or other methods chosen by the Issuer bank to inform the cardholder of an authentication request from a merchant.
+When a customer initiates a transaction, their payment provider determines whether SCA is necessary. If it is, the customer will authenticate the payment using the required factors. Once authenticated, the bank or payment service verifies the information before approving the transaction.
 
-Dynamic linking is another key requirement under the Strong Customer Authentication (SCA) rules of the PSD2 for remote electronic payment transactions. It aims to ensure the integrity of the transaction by cryptographically linking the payment details to the customer's authentication. Here's how it works:
+**Dynamic linking** is a crucial component of SCA, particularly for transactions involving specific payees. It ensures that authentication is directly tied to the transaction details, such as the recipient and payment amount, and that these details are protected from tampering.
 
-Dynamic linking requires at least two elements to be used for SCA compliance:
+For dynamic linking, the customer must be shown the relevant payment details—such as the payee and amount—at the time of authentication. A unique code is then generated for the transaction. This code is dynamically linked to the transaction’s details, meaning that any attempt to alter the amount or recipient will invalidate the code, and the payment will not be processed.
 
-1. An authentication code or cryptogram that is uniquely linked to the specific payment amount and payee account. This is typically generated using the customer's authentication factors (e.g. biometrics, PIN, etc.)
+For example, if a customer authorizes a payment of €100 to a specific vendor, the system generates an authentication code tied to this exact transaction. If an attacker tries to intercept and modify the transaction to pay €500 instead, the code becomes invalid, and the bank will decline the payment. This ensures that the transaction cannot be tampered with during the process.
 
-2. The payment details themselves, including the amount and payee account details.
+When a payment is initiated, SCA ensures the transaction is secure through multi-factor authentication. Dynamic linking further secures the payment by binding the transaction details to the authentication process. The customer authenticates using their credentials, which could include biometrics or a PIN, while reviewing the transaction details. The system then verifies both the customer and the specific payment details. If everything checks out, the transaction is approved; if anything is altered, the system automatically flags and rejects the payment.
 
-These two elements must be dynamically presented to the customer during authentication, ensuring they are verifying the actual payment details. The authentication code cryptographically binds the customer's identity to those payment specifics.
-
-This prevents man-in-the-middle attacks where payment details could be modified after authentication. It also stops replay attacks reusing authentication codes across multiple transactions.
-
-The dynamic linking process varies by authentication method, but often involves the customer's mobile app displaying the payment amount and merchant details alongside the authentication prompt. The authentication response then includes a cryptogram calculated over those payment details, dynamically linking them.
-
-Article 5(1) of the Delegated Regulation (EU) 2018/389 states that: Where payment service providers apply strong customer authentication in accordance with Article 97(2) of Directive (EU) 2015/2366, in addition to the requirements of Article 4, they shall adopt security measures that meet each of the following requirements: 
-1. the payer is made aware of the amount of the payment transaction and of the payee; 
-2. the authentication code generated is specific to the amount of the payment transaction and the payee agreed to by the payer when initiating the transaction; 
-3. the authentication code accepted by the payment service provider corresponds to the original specific amount of the payment transaction and to the identity of the payee agreed to by the payer; 
-4. any change to the amount or the payee results in the invalidation of the authentication code generated.
-
-In summary, dynamic linking is crucial for ensuring SCA provides true transaction integrity and non-repudiation under PSD2's remote electronic payment rules.
+Dynamic linking enhances transparency for customers by displaying transaction-specific details during authentication and adds a critical layer of protection against fraud by ensuring that any alteration in payment data invalidates the authorization. Together, SCA and dynamic linking significantly improve the security of electronic payments while ensuring compliance with regulatory requirements.
 
 ### eIDAS 2.0
 
-The European Digital Identity Regulation (Regulation (EU) 2024/1183) obliges European payment service providers (PSP) to accept the EU Digital Identity Wallet (EUDIW) for SCA as [this paper](https://lange-hausstein.de/wp-content/uploads/2023/11/231120_DP-No.-1_EUDIW-for-SCA_EN_public.pdf) discusses in more detail.
+eIDAS 2.0 (Electronic Identification, Authentication, and Trust Services) is an updated framework by the European Union to enhance secure digital identity and trust services across member states. Building on the original eIDAS regulation (2014), eIDAS 2.0 introduces the European Digital Identity Wallet, a standardized and interoperable digital identity tool that empowers individuals and businesses to authenticate their identity, sign documents, and access online services securely across the EU.
+
+The European Identity Wallet is a mobile or digital application provided by EU member states. It allows citizens to store and manage their verified personal information, credentials, and certificates securely. Users can employ the wallet for various purposes, including accessing government services, sharing ID details, and performing secure electronic transactions.
+
+In the context of electronic payments and Strong Customer Authentication, the regulation obliges European payment service providers (PSP) to accept the European Identity Wallet (EUDIW) as a secure mean for authenticatiion and authorization providing:
+
+2. **Multi-Factor Authentication:** The wallet can integrate with biometrics (e.g., facial recognition or fingerprints) and possessive factors (e.g., a secure digital key), fulfilling the two-factor authentication mandate for SCA.
+3. **Dynamic Linking:** When processing a payment, the wallet ensures dynamic linking by displaying transaction-specific details, such as the recipient and payment amount, and cryptographically linking them to the transaction.
+
+Integrating payment and SCA processes into the wallet may offer a high level of security and interoperability across the EU fostering trust and efficiency in cross-border electronic transactions.
+
+Further details regarding acceptance of the wallet for SCA is discussed within [this paper](https://lange-hausstein.de/wp-content/uploads/2023/11/231120_DP-No.-1_EUDIW-for-SCA_EN_public.pdf). 
 
 ### Architecture Reference Framework
 
-Along with the regulation, the European Commision provides a set of technical specification and recommondations regarding the development of the European Digital Identity Wallet infrastructure through the Architecture Reference Framework (ARF)[^arf]. The ARF specifically proposes the following protocols for the remote issuing and presentation of Electronic Attestations of Attributes (EAA, see ARF Annex 1[^arf_annex1]). 
+The Architecture Reference Framework (ARF)[^arf] is a foundational document developed under the eIDAS 2.0 initiative to guide the implementation of the European Digital Identity Wallet. It provides a structured framework to ensure interoperability, security, and trust throughout the lifecycle of digital identity interactions, particularly when relying parties (e.g., service providers) interact with the wallet.
 
-- **OpenID4VCI[^openid4vci]**
-- **OpenID4VP[^openid4vp]** 
+The ARF emphasizes:
 
-In order to be able to combine payment with other EAAs in a synergetic manner, this document in focusing on leveraging these specification to perform SCA and authorize electronic payment transactions as also referenced in ARF, section A.2.3.20 Topic 20[^arf_annex2].
+*	Trust Establishment and Maintenance: Ensuring that all entities interacting with the wallet, such as identity issuers and relying parties, operate within a secure and trusted ecosystem.
+*	Interoperability: Facilitating seamless interactions across EU member states by standardizing communication protocols and ensuring cross-border compatibility.
+*	User-Centric Design: Enabling users to maintain control of their data while ensuring security and privacy.
 
+A key aspect of the ARF[^arf] is managing trust throughout the lifecycle of a relying party, ensuring that entities like banks, government portals, or e-commerce sites can reliably interact with the wallet to authenticate users, verify Electronic Attestations of Attributes (EAA, see ARF Annex 1[^arf_annex1]), and process transactions.
+
+The European Identity Wallet relies on modern, standardized protocols to manage the secure issuance and presentation of attestations. Two crucial protocols extensions of the OAuth2 framework tailored for verifiable attestations.
+
+**OpenID4VCI** for securely issuing verifiable credentials to a user’s digital wallet, enabling cryptographically protected, tamper-proof storage and future use of those credentials for authentication or sharing.
+
+**OpenID4VP** enables users to securely present verifiable attestation from their digital wallet to relying parties, ensuring cryptographic verification and selective disclosure of information.
+ 
+This document focuses on presenting a structured approach to leverage the existing technical standards alongside the eIDAS 2.0 trust infrastructure. The goal is not only to develop and standardize a solution for Strong Customer Authentication (SCA) and electronic payments utilizing the European Identity Wallet but also to integrate payments with other forms of attestations as referenced in ARF, section A.2.3.20 Topic 20[^arf_annex2]. By doing so, it seeks to unlock the vast potential of the eIDAS ecosystem, enabling seamless interoperability, enhanced trust, and innovative use cases that extend beyond traditional payment processes.
 
 ## Registration
-The (one-time) registration process links the holders wallet instance and their PSP managing the account used for payments. It also allows the PSP to establish a trust relationship to the wallet by verifying its authenticity as described in more detail in ARF, section 6.6.2[^arf].
+Before the wallet can be used to authorize payments, a registration process must be completed. The registration process, which typically occurs as a one-time setup, establishes a link between the user’s wallet instance and their Payment Service Provider (PSP) responsible for managing the payment account. This process is crucial as it allows the PSP to authenticate the wallet and verify its legitimacy, thereby establishing a secure and trusted relationship between the two entities. The details of this verification process and the mechanisms for building this trust are further outlined in the Architecture Reference Framework (ARF), Section 6.6.2[^arf].
 
-During registration, the PSP aka issuer issues a dedicated EAA (hereinafter called A2Pay - Attestation to pay) to the wallet using OpenID4VCI [^openid4vci] according to the OpenID4VC High Assurance Interoperability Profile using SD-JWT VC (HAIP) [^openid4vc_hip]. OpenID4VCI allows the issuer to issue an EAA within an authenticated / authorized context. Exactly how this context is establish is left to the issuer and is out-of-scope of this document, however possible options and combinations of them are:
+During the registration process, the Payment Service Provider (PSP), also referred to as the issuer, issues a dedicated EAA (Attestation to Pay, A2Pay) to the wallet. This is achieved using the OpenID4VCI protocol [^openid4vci] in accordance with the OpenID4VC High Assurance Interoperability Profile (HAIP) and utilizing SD-JWT VC (Selective Disclosure JSON Web Token Verifiable Credential) [^openid4vc_hip]. OpenID4VCI enables the issuer to issue the A2Pay credential within an authenticated and authorized context. While the exact method of establishing this context is determined by the issuer and is outside the scope of this document, it can be achieved through mechanisms such as:
 
-- Login credentials (OnlineBanking e.g.)
-- OTP
-- 2FA Apps (Propriatary Banking Apps e.g.)
+* Login credentials (e.g., Online Banking credentials),
+* One-Time Passwords (OTPs),
+* Two-Factor Authentication (2FA) apps, including proprietary banking applications.
 
-As stated in ARF section 6.6.6.3, 6.6.3.7[^arf] and also ARF Annex 2 section A.2.3.9 Topic 9[^arf_annex2], the issued A2Pay is cryptographically linked to a private key protected by the Wallet Secure Cryptographic Application(s) (WSCA) and the corresponding Wallet Secure Cryptographic Device(s) (WSCD). During the issuing process, the corresponding public key is handed to the PSP which must store it along with the holders account data, as it must be used to verify payment transactions authorized / signed by the holder.
+As outlined in ARF sections 6.6.6.3 and 6.6.3.7 [^arf] as well as Annex 2, Section A.2.3.9 Topic 9 [^arf_annex2], the issued A2Pay is cryptographically tied to a private key safeguarded by the wallet’s Secure Cryptographic Applications (WSCA) and Secure Cryptographic Devices (WSCD). During the credential issuance process, the corresponding public key is securely transmitted to the PSP, which must store it along with the holder’s account details. This public key is essential for verifying payment transactions that the wallet holder authorizes or digitally signs using their private key.
 
-The private key constitutes the major factor to implement SCA within the wallet. Regarding its security, the following assumptions are made.
-- the key to sign payment transactions is bound to the WSCD of the wallet and cannnot be extraxted. Therefor the key provides the factor possesion for SCA. AND
-- the access to the key is always protected by a PIN only known to the holder OR biometrics providing the factors knowledge OR inherence. 
+
+The private key serves as the primary element for implementing Strong Customer Authentication (SCA) within the wallet. Its security is based on the following assumptions:
+
+1.	Binding to the Wallet’s Secure Cryptographic Device (WSCD):
+The private key used to sign payment transactions is securely bound to the WSCD of the wallet and cannot be extracted. This ensures that the private key inherently provides the possession factor required for SCA, as it is uniquely tied to the holder’s wallet.
+2.	Access Protection:
+Access to the private key is always safeguarded by an additional authentication layer, which may include:
+    - A PIN, known only to the holder, providing the knowledge factor for SCA, or
+    - Biometric verification, such as fingerprint or facial recognition, fulfilling the inherence factor for SCA.
+
+These security measures collectively ensure that the private key remains protected and can only be accessed by the authorized wallet holder, thus meeting the multi-factor requirements of SCA.
 
 See also requirement specification ARF Annex 2 A.2.3.6 Topic 6 - User Approval RBA10[^arf_annex2] for details. 
 
 ![Registration](wallet_onboarding.svg)
 
-### Attestation to pay - A2Pay
+### A2Pay - Attestation to pay
 
-The A2Pay is used to identify the holders PSP and the account the attestation is linked to. In addition to that, the attestation may also state a payment rail along with required metadata that a relying party (merchant e.g.) might use to initiate a payment transaction.  
+The A2Pay (Attestation to Pay) serves as a key component for identifying the wallet holder’s Payment Service Provider (PSP) and the specific account to which the attestation is linked. Beyond merely associating the holder with their PSP and account, the A2Pay can also specify a payment rail—the network or system used to process the payment—along with the associated metadata. This metadata can be utilized by relying parties, such as merchants, to initiate and process payment transactions seamlessly.
 
-The data schema for A2Pay is described in detail within the json schema file [a2pay-schema.json](a2pay-schema.json).
+The structure and detailed specifications of the A2Pay are defined in the JSON schema file [a2pay-schema.json](a2pay-schema.json), which outlines all required attributes and their formats. This schema ensures interoperability and standardization of the attestation across different implementations and use cases.
 
 Non-normative example of an A2Pay payload:
 
@@ -112,18 +127,26 @@ eyJ0eXAiOiJzZCtqd3QiLCJhbGciOiJFUzI1NiJ9.eyJpc3MiOiJodHRwczovL2JhbmsuY29tL2lzc3V
 
 ## Payment
 
-Authenticating and authorizing a payment is implemented by presenting the A2Pay (hereafter A2Pay') to a PSP using OpenID4VP[^openid4vp] according to section 5 of the OpenID4VC High Assurance Interoperability Profile with SD-JWT VC (HAIP) [^openid4vc_hip] which mandates the following among other things: 
-* A2Pay' is defined as a SD-JWT presentation according to Self Diclosure for JWTs[^sd-jwt].  
-* A2Pay' is always send to the PSP by an HTTP POST request using the `response_mode` `direct_post`. See the payment initiation endpoint in the [EUDIW payment API specification](eudi-payment-api.yml) for details.
-* PSP must reply to the HTTP POST request with HTTP 200 including a JSON object containing the `redirect_uri` which must be used to query the status of the payment.
+The process of authenticating and authorizing a payment is carried out by presenting the A2Pay (called A2Pay' hereafter) to the Payment Service Provider (PSP) using the OpenID4VP protocol [^openid4vp]. This is implemented following Section 5 of the OpenID4VC High Assurance Interoperability Profile (HAIP) with SD-JWT VC [^openid4vc_hip], which specifies the following key requirements:
 
-See OpenID4VP[^openid4vp] section 7.2 for details on the `direct_post` response mode.
+1.	Presentation Format: A2Pay' is formatted as a Self-Disclosure JWT (SD-JWT) presentation, adhering to the standards defined by Self Diclosure for JWTs[^sd-jwt].
+2.	Delivery Mechanism: The A2Pay' is transmitted to the PSP using an HTTP POST request with the `response_mode` set to `direct_post`. Details regarding the payment initiation endpoint and how the HTTP POST request is structured can be found in the [A2Pay API specification](eudi-payment-api.yml) and in Section 7.2 of OpenID4VP [^openid4vp].
+3.	Response Handling by PSP: Upon successful receipt and processing of the HTTP POST request, the PSP responds with an `HTTP 200` status. The response includes a JSON object containing the `redirect_uri` property. The given URI must be used by the wallet to query the [payment status](#payment-status).
 
-Also ARF section 6.6.3[^arf] explains the presentation process in more detail and also elaborates on how trust is established between the wallet and the PSP. A positive verification of the A2Pay' by the PSP authorizes the given payment transaction.
+The verification of A2Pay' by the PSP not only authenticates the holder but also authorizes the payment transaction. Trust between the wallet and the PSP during this process is established as outlined in ARF Section 6.6.3 [^arf], which elaborates on the mechanisms for mutual authentication and the secure exchange of information. A successful verification signals the PSP to proceed with executing the authorized payment transaction.
 
 ### Dynamic linking
 
-As SCA also requires dynamic linking, A2Pay' must also include the transaction details of the payment (payment request hereafter) signed by the wallet. OpenID4VP[^openid4vp] enables a relying party to incorporate dynamic data into the authorization request using the `transaction_data` parameter. The wallet is requested to include a hash of this data into the key-binding JWT  of the A2Pay' that is send back to the PSD' along with the authorization response. The hash value represents the authentication code required by PSD2. The `transaction_data` values contained within the authorization request must also be included in the user approval dialogue of the wallet specified further in ARF section 6.6.3.4[^arf] and ARF Annex 2 A.2.3.6 Topic 6[^arf_annex2]. 
+To fulfill the requirement for dynamic linking under Strong Customer Authentication (SCA), the A2Pay' must include the transaction details of the payment (referred to as the payment request), signed by the wallet. This ensures that the authentication process is securely tied to the specific payment transaction, as mandated by PSD2.
+
+The OpenID4VP protocol [^openid4vp] supports the inclusion of dynamic transaction data in the authorization process using the `transaction_data` parameter. The flow operates as follows:
+
+1.	The relying party includes the transaction-specific details (e.g., payment amount, payee information) in the authorization request using the transaction_data parameter.
+2. The wallet processes the `transaction_data` values and computes a cryptographic hash of this data. This hash is embedded into the key-binding JWT of the A2Pay', which is then sent back to the PSP along with the authorization response.
+3.	Authentication Code Generation: The computed hash serves as the authentication code required under PSD2 for dynamic linking, tieing the authorization response to the specific payment transaction details.
+4.	User Approval Dialogue: To ensure transparency and user consent, the payment request details must be presented to the user within the wallet’s approval interface. This allows the user to review and approve the specific payment details. The user approval dialogue must comply with the requirements specified in ARF Section 6.6.3.4 [^arf] and ARF Annex 2, Section A.2.3.6 Topic 6 [^arf_annex2].
+
+This process ensures compliance with PSD2’s requirement for dynamic linking by securely binding the transaction details to the authentication process. By incorporating the transaction hash into the key-binding JWT of the A2Pay', the wallet guarantees that any tampering with the transaction data invalidates the authentication. The reliance on OpenID4VP `transaction_data` feature ensures a standardized and secure implementation of this critical SCA requirement.
 
 ### Payment request
 
@@ -190,7 +213,7 @@ Cache-Control: no-store
 }
 ```
 
-The redirect URI is used to query the status of the payment as it must implement the payment status endpoint defined in [EUDIW payment API specification](eudi-payment-api.yml). The status of the payment is defined as [ISO 20022](https://www.iso20022.org/catalogue-messages/additional-content-messages/external-code-sets) payment status code.
+The redirect URI is used to query the status of the payment as it must implement the payment status endpoint defined in [A2Pay API specification](eudi-payment-api.yml). The status of the payment is defined as [ISO 20022](https://www.iso20022.org/catalogue-messages/additional-content-messages/external-code-sets) payment status code.
 
 
 
@@ -295,7 +318,7 @@ The transport of the A2Pay' and the related payment request is done using the [A
 
 ##### A2Pay Direct Endpoint
 
-In order to comply with the eIDAS 2.0 regulation with respect to SCA, a PSP is already obliged to support the [Basic PaymentAuth flow](#direct-payment-flow), which uses the `direct_post` endpoint defined by OpenID4VP, Section 7.2[^openid4vp] as it is required by the HAIP[^openid4vc_hip]. A2Pay Direct extends this endpoint for the `direct_post` mode to support a Payment Authorization Object besides the Authorization Response Object as payload in order to reduce any additional implementation efforts for PSPs. 
+In order to comply with the eIDAS 2.0 regulation with respect to SCA, a PSP is already obliged to support the [Basic PaymentAuth flow](#direct-payment-flow), which uses the `direct_post` endpoint defined by OpenID4VP, Section 7.2[^openid4vp] as it is required by the HAIP[^openid4vc_hip]. A2Pay Direct extends this endpoint for the `direct_post` mode to support a Payment Authorization Object besides the Authorization Response Object as payload in order to simplify implementation efforts for PSPs. 
 
 The Payment Authorization Object is defined as a JWT according to [rfc7519](https://datatracker.ietf.org/doc/html/rfc7519) having the following claims:
 
@@ -307,7 +330,7 @@ The JWT must be signed by the PSP' using the key belonging to the relying party 
 
 In order for a PSP to support the Extended PaymentAuth Flow using the A2Pay Direct endpoint, they must include the `init-url` property within the A2Pay during registration. The value must be the URL a PSP' can use to send the Payment Authorization Object to.
 
-Details for this endpoint are described in the [OpenAPI specification file](eudi-payment-api.yml)
+Details for this endpoint are described in the [A2Pay API specification](eudi-payment-api.yml)
 
 Example of the JWT payload:
 ```json
