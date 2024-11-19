@@ -131,7 +131,7 @@ The process of authenticating and authorizing a payment is carried out by presen
 
 1.	Presentation Format: A2Pay' is formatted as a Self-Disclosure JWT (SD-JWT) presentation, adhering to the standards defined by Self Diclosure for JWTs[^sd-jwt].
 2.	Delivery Mechanism: The A2Pay' is transmitted to the PSP using an HTTP POST request with the `response_mode` set to `direct_post`. Details regarding the payment initiation endpoint and how the HTTP POST request is structured can be found in the [A2Pay API specification](eudi-payment-api.yml) and in Section 7.2 of OpenID4VP [^openid4vp].
-3.	Response Handling by PSP: Upon successful receipt and processing of the HTTP POST request, the PSP responds with an `HTTP 200` status. The response includes a JSON object containing the `redirect_uri` property. The given URI must be used by the wallet to query the [payment status](#payment-status).
+3.	Response Handling by PSP: Upon successful receipt and processing of the HTTP POST request, the PSP responds with an `HTTP 200` status. The response includes a JSON object containing the `redirect_uri` property. The given URI must be used to query the [payment status](#payment-status).
 
 The verification of A2Pay' by the PSP not only authenticates the holder but also authorizes the payment transaction. Trust between the wallet and the PSP during this process is established as outlined in ARF Section 6.6.3 [^arf], which elaborates on the mechanisms for mutual authentication and the secure exchange of information. A successful verification signals the PSP to proceed with executing the authorized payment transaction.
 
@@ -276,7 +276,7 @@ sequenceDiagram
 Out-of-band payment initiation:
 The payment process is initiated through an out-of-band mechanism, such as a mobile app, online banking portal, or third-party provider.
 1.	PSP requests A2Pay:
-The Payment Service Provider (PSP) sends an authorization request including the `transaction_data` with the payment request to the user’s wallet to obtain the A2Pay credential required for the transaction.
+The Payment Service Provider (PSP) sends an authorization request including the `transaction_data` with the payment request to the user’s wallet to obtain the A2Pay credential required for the transaction. Note: *Details of passing the authorization request by reference are omitted for readability reasons.*
 2.	Wallet asks user for approval:
 The wallet prompts the user to review and approve the transaction.
 3.	User reviews the transaction:
@@ -334,7 +334,7 @@ sequenceDiagram
 Here’s a step-by-step textual description of the sequence diagram:
 
 1.	PSP' requests A2Pay:
-The merchant’s PSP (PSP') sends an authorization request including the `transaction_data` with the payment request to the user’s wallet to obtain the A2Pay issued by the user’s PSP.
+The merchant’s PSP (PSP') sends an authorization request including the `transaction_data` with the payment request to the user’s wallet to obtain the A2Pay issued by the user’s PSP. *Note: Details of passing the authorization request by reference are omitted for readability reasons.*
 2.	Wallet asks user for approval:
 The wallet prompts the user to review the payment request and approve the presentation of the A2Pay.
 3.	User reviews the transaction:
@@ -348,15 +348,15 @@ PSP’ confirms that the A2Pay has been successfully received and sends back the
 7.	Wallet updates user on status presentation:
 The wallet provides the user with a status update, indicating that the A2Pay has been successfully sent.
 8.	PSP' forwards A2Pay to issuing PSP:
-PSP’ forwards the A2Pay credential along with the original payment request object to the user’s PSP for verification and/or execution of the payment.
+PSP’ sends a [payment authorization object](#payment-authorization-object) including the the A2Pay' and the original payment request object to the user’s PSP for verification and/or execution of the payment using the A2Pay Direct endpoint.
 9.	Issuing PSP acknowledges receipt of A2Pay:
-The user’s PSP confirms receipt of the forwarded A2Pay'.
+The user’s PSP confirms receipt of the forwarded A2Pay' and sends back the `redirect_uri` to the PSP'.
 10.	Issuing PSP verifies A2Pay' and executes the transaction:
 The user’s PSP validates the authenticity and integrity of the A2Pay'. If valid, it executes the payment transaction.
 11.	Wallet queries payment status from PSP':
-The wallet initiates a query to PSP' to retrieve the current status of the payment.
+The wallet initiates a query to PSP' using the `redirect_uri` to retrieve the current status of the payment.
 12.	PSP' queries payment status from issuing PSP:
-PSP' forwards the wallet’s query to the user’s PSP to obtain the payment status.
+PSP' initiates a query to PSP using the `redirect_uri` to retrieve the current status of the payment.
 13.	Issuing PSP responds with payment status to PSP':
 The user’s PSP sends the payment status back to PSP'.
 14.	PSP' forwards payment status to wallet:
@@ -378,8 +378,13 @@ The transport of the A2Pay' and the related payment request is done using the [A
 
 ##### A2Pay Direct Endpoint
 
-In order to comply with the eIDAS 2.0 regulation with respect to SCA, a PSP is already obliged to support the [Basic PaymentAuth flow](#direct-payment-flow), which uses the `direct_post` endpoint defined by OpenID4VP, Section 7.2[^openid4vp] as it is required by the HAIP[^openid4vc_hip]. A2Pay Direct extends this endpoint for the `direct_post` mode to support a Payment Authorization Object besides the Authorization Response Object as payload in order to simplify implementation efforts for PSPs. 
+In order to comply with the eIDAS 2.0 regulation with respect to SCA, a PSP is already obliged to support the [Basic PaymentAuth flow](#direct-payment-flow), which uses the `direct_post` endpoint defined by OpenID4VP, Section 7.2[^openid4vp] as it is required by the HAIP[^openid4vc_hip]. A2Pay Direct extends this endpoint for the `direct_post` mode to support a [Payment Authorization Object](#payment-authorization-object) besides the Authorization Response Object as payload in order to simplify implementation efforts for PSPs. 
 
+In order for a PSP to support the Extended PaymentAuth Flow using the A2Pay Direct endpoint, they must include the `init-url` property within the A2Pay during registration. The value must be the URL a PSP' can use to send the Payment Authorization Object to.
+
+Details for this endpoint are described in the [A2Pay API specification](eudi-payment-api.yml)
+
+###### Payment Authorization Object
 The Payment Authorization Object is defined as a JWT according to [rfc7519](https://datatracker.ietf.org/doc/html/rfc7519) having the following claims:
 
 * `payment-request` REQUIRED: Original payment request according to [payment-request-schema.json](payment-request-schema.json)
@@ -388,9 +393,6 @@ The Payment Authorization Object is defined as a JWT according to [rfc7519](http
 
 The JWT must be signed by the PSP' using the key belonging to the relying party access certificate issued by a Relying Party Access Certificate Authority (CA) described in ARF section 6.4[^arf] and ARF Annex 2 A.2.3.27 Topic 27[^arf_annex2].
 
-In order for a PSP to support the Extended PaymentAuth Flow using the A2Pay Direct endpoint, they must include the `init-url` property within the A2Pay during registration. The value must be the URL a PSP' can use to send the Payment Authorization Object to.
-
-Details for this endpoint are described in the [A2Pay API specification](eudi-payment-api.yml)
 
 Example of the JWT payload:
 ```json
