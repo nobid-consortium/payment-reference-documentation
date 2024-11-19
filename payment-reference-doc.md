@@ -201,7 +201,7 @@ Non-normative example of the `transaction_data` parameter within the authorizati
 
 ### Payment status
 
-The A2Pay is transmitted to the PSP via an HTTP POST request, as specified by the `direct_post` response mode in OpenID4VP[^openid4vp]. To communicate the status of the payment back to the PSP is required to respond with an HTTP 200 status code and a JSON object that includes the `redirect_uri` parameter.
+The A2Pay is transmitted to the PSP via an HTTP POST request, as specified by the `direct_post` response mode in OpenID4VP[^openid4vp]. To communicate the status of the payment, the PSP is required to respond with an HTTP 200 status code and a JSON object that includes the `redirect_uri` parameter as specified in section 7.4 of OpenID4VP[^openid4vp].
 
 ```json
 HTTP/1.1 200 OK
