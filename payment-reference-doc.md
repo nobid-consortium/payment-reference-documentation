@@ -213,7 +213,7 @@ Cache-Control: no-store
 }
 ```
 
-The redirect URI is used to query the status of the payment as it must implement the payment status endpoint defined in [A2Pay API specification](eudi-payment-api.yml). The status of the payment is defined as [ISO 20022](https://www.iso20022.org/catalogue-messages/additional-content-messages/external-code-sets) payment status code.
+The redirect URI can subsequently be utilized to query the payment status, as it must adhere to the payment status endpoint specified in the [A2Pay API specification](eudi-payment-api.yml). The payment status is represented using [ISO 20022](https://www.iso20022.org/catalogue-messages/additional-content-messages/external-code-sets) payment status codes.
 
 | Type |               Name              |                                                            Explanation                                                           |
 |:----:|:-------------------------------:|:--------------------------------------------------------------------------------------------------------------------------------:|
@@ -241,11 +241,9 @@ Cache-Control: no-store
 
 ```
 
-
-
 ### Initiation scenarios 
 
-The presentation process described above can be applied in various real-world use-cases that differ depending on the role of the relying party requesting the A2pay'.
+The presentation process outlined above can be adapted to various real-world use cases, depending on the specific role of the relying party requesting the A2Pay'.
 
 #### Basic PaymentAuth flow
 
@@ -274,6 +272,31 @@ sequenceDiagram
     wallet -->> user: payment status
     psp -->> user: payment status
 ```
+
+Out-of-band payment initiation:
+The payment process is initiated through an out-of-band mechanism, such as a mobile app, online banking portal, or third-party provider.
+1.	PSP requests A2Pay:
+The Payment Service Provider (PSP) sends an authorization request including the `transaction_data` with the payment request to the user’s wallet to obtain the A2Pay credential required for the transaction.
+2.	Wallet asks user for approval:
+The wallet prompts the user to review and approve the transaction.
+3.	User reviews the transaction:
+The user evaluates the details of the transaction to ensure its accuracy and validity.
+4.	User approves the presentation:
+After reviewing, the user provides their approval to proceed with the transaction by confirming it in the wallet.
+5.	Wallet sends A2Pay' to PSP:
+The wallet presents the A2Pay' along with the authorisation response to the PSP as requested.
+6.	PSP acknowledges receipt of A2Pay':
+The PSP confirms that the authorization response with the A2Pay' has been received successfully and sends back the `redirect_uri` to the wallet.
+7.	PSP verifies A2Pay and executes the transaction:
+The PSP validates the authenticity and integrity of the A2Pay'. If valid, the PSP proceeds to execute the payment transaction.
+8.	Wallet queries payment status:
+The wallet initiates a query to the PSP using the `redirect_uri` to retrieve the current status of the payment.
+9.	PSP provides payment status to wallet:
+The PSP responds to the wallet with the payment status, indicating whether the transaction was successful or if any issues occurred.
+10.	Wallet updates user with payment status:
+The wallet communicates the payment status to the user, providing confirmation or detailing any errors.
+11.	PSP updates user with payment status:
+As an additional step, the PSP also informs the user of the payment status, offering direct confirmation from their side.
 
 #### Extended PaymentAuth flow
 
