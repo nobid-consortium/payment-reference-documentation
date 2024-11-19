@@ -150,7 +150,7 @@ This process ensures compliance with PSD2’s requirement for dynamic linking by
 
 ### Payment request
 
-The data schema for the payment request is defined in detail within the json schema file [payment-request-schema.json](payment-request-schema.json). 
+The data schema for the payment request is comprehensively specified in the JSON schema file, [payment-request-schema.json](payment-request-schema.json). 
 
 Non-normative example of a payment request:
 
@@ -167,7 +167,7 @@ Non-normative example of a payment request:
 }
 ```
 
-According to OpenID4VP [^openid4vp], the following properties also have to be added to the object prior to base64url encoding to include it within the `transaction_data` array.
+Based on the OpenID4VP specification [^openid4vp], additional properties must be appended to the object before performing base64url encoding to ensure its proper inclusion within the `transaction_data` array.
 
 * `type`
 * `credential_ids`
@@ -201,7 +201,7 @@ Non-normative example of the `transaction_data` parameter within the authorizati
 
 ### Payment status
 
-The A2Pay' is send to the PSP using the HTTP POST request defined by the `direct_post` response mode in OpenID4VP[^openid4vp]. The PSP must then respond with an HTTP code 200 and a JSON object containing the `redirect_uri` parameter.
+The A2Pay is transmitted to the PSP via an HTTP POST request, as specified by the `direct_post` response mode in OpenID4VP[^openid4vp]. To communicate the status of the payment back to the PSP is required to respond with an HTTP 200 status code and a JSON object that includes the `redirect_uri` parameter.
 
 ```json
 HTTP/1.1 200 OK
@@ -215,20 +215,18 @@ Cache-Control: no-store
 
 The redirect URI is used to query the status of the payment as it must implement the payment status endpoint defined in [A2Pay API specification](eudi-payment-api.yml). The status of the payment is defined as [ISO 20022](https://www.iso20022.org/catalogue-messages/additional-content-messages/external-code-sets) payment status code.
 
-
-
-| Type |               Name              |                                                            Explanation                                                           |   |   |
-|:----:|:-------------------------------:|:--------------------------------------------------------------------------------------------------------------------------------:|---|---|
-| RCVD | Received                        | The payment has been received and is awaiting Strong Customer Authentication                                                     |   |   |
-| ACCP | AcceptedCustomerProfile         | The preceding check of technical validation was successful. The customer profile check was also successful.                      |   |   |
-| ACSP | Accepted Settlement In Progress | The payment has been sent by the bank but is not yet settled in the creditor account.                                            |   |   |
-| ACSC | Accepted Settlement Completed   | The payment has been sent by the bank and settled in the creditor's account.                                                     |   |   |
-| NAUT | NotAuthorized                   | The end-user has cancelled the payment authorization.                                                                            |   |   |
-| RJCT | Rejected                        | The payment has failed due to insufficient funds in the debtor's account                                                         |   |   |
-| PDNG | Pending                         | The debtor account holder has edited the payment in their online banking and a new Strong Customer Authentication is now pending |   |   |
-| CANC | Cancelled                       | The payment has been deleted by the end-user                                                                                     |   |   |
-| PRSY | OnHold                          | The payment initiation was put on hold by the bank                                                                               |   |   |
-| PATC | Partially Accepted              | The payment requires a second authorization                                                                                      |   |   |
+| Type |               Name              |                                                            Explanation                                                           |
+|:----:|:-------------------------------:|:--------------------------------------------------------------------------------------------------------------------------------:|
+| RCVD | Received                        | The payment has been received and is awaiting Strong Customer Authentication                                                     |
+| ACCP | AcceptedCustomerProfile         | The preceding check of technical validation was successful. The customer profile check was also successful.                      |
+| ACSP | Accepted Settlement In Progress | The payment has been sent by the bank but is not yet settled in the creditor account.                                            |
+| ACSC | Accepted Settlement Completed   | The payment has been sent by the bank and settled in the creditor's account.                                                     |
+| NAUT | NotAuthorized                   | The end-user has cancelled the payment authorization.                                                                            |
+| RJCT | Rejected                        | The payment has failed due to insufficient funds in the debtor's account                                                         |
+| PDNG | Pending                         | The debtor account holder has edited the payment in their online banking and a new Strong Customer Authentication is now pending |
+| CANC | Cancelled                       | The payment has been deleted by the end-user                                                                                     |
+| PRSY | OnHold                          | The payment initiation was put on hold by the bank                                                                               |
+| PATC | Partially Accepted              | The payment requires a second authorization                                                                                      |                                                                               |   |   |
 
 Example of a payment status response:
 
@@ -242,6 +240,8 @@ Cache-Control: no-store
 }
 
 ```
+
+
 
 ### Initiation scenarios 
 
