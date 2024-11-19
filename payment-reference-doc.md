@@ -1,4 +1,4 @@
-# Strong-customer-authentication for electronic payments for the eIDAS2 EUDI Wallet
+# Strong-customer-authentication for electronic payments done with the European Digital Identity Wallet
 
 ## Background
 Strong Customer Authentication (SCA) is a security protocol required under the European Union’s PSD2 directive to protect electronic payments. Its purpose is to reduce fraud by ensuring that electronic transactions are conducted securely and only by authorized users. SCA relies on a combination of two out of three independent authentication factors:
@@ -284,7 +284,7 @@ The user evaluates the details of the transaction to ensure its accuracy and val
 4.	User approves the presentation:
 After reviewing, the user provides their approval to proceed with the transaction by confirming it in the wallet.
 5.	Wallet sends A2Pay' to PSP:
-The wallet presents the A2Pay' along with the authorisation response to the PSP as requested.
+The wallet presents the A2Pay' including the `transaction_data_hashes` along with the authorisation response to the PSP as requested.
 6.	PSP acknowledges receipt of A2Pay':
 The PSP confirms that the authorization response with the A2Pay' has been received successfully and sends back the `redirect_uri` to the wallet.
 7.	PSP verifies A2Pay and executes the transaction:
@@ -300,7 +300,7 @@ As an additional step, the PSP also informs the user of the payment status, offe
 
 #### Extended PaymentAuth flow
 
-In this scenario, the relying party is a third party like a merchant or a merchant's PSP (PSP' hereafter) which is requesting the A2Pay issued by the the holders PSP. After receiving the A2Pay', the PSP' must forward it along with the original payment request object to the issuing PSP for verification and/or execution of the payment transaction.
+In this scenario, the relying party is a third party, such as a merchant or the merchant’s Payment Service Provider (referred to as PSP’ hereafter). PSP' initiates the process by requesting the A2Pay issued by the holder’s PSP. Once PSP' receives the A2Pay', it is obligated to forward it, along with the original payment request object, to the issuing PSP. The issuing PSP then performs the necessary verification and/or executes the payment transaction.
 
 ```mermaid
 
@@ -331,9 +331,46 @@ sequenceDiagram
     psp2 -->> user: payment status
 ```
 
-In order to support the Extended PaymentAuth Flow and allow a PSP' to route an authorized payment request, the A2Pay must always provide the following details defined by the [A2Pay schema](a2pay-schema.json): 
-- `payment-product`: The payment instrument or scheme to use.
-- `account-reference`: The account / account alias the A2Pay is linked to. This can be an IBAN / BIC, a PAN or a mobile phone number e.g..
+Here’s a step-by-step textual description of the sequence diagram:
+
+1.	PSP' requests A2Pay:
+The merchant’s PSP (PSP') sends an authorization request including the `transaction_data` with the payment request to the user’s wallet to obtain the A2Pay issued by the user’s PSP.
+2.	Wallet asks user for approval:
+The wallet prompts the user to review the payment request and approve the presentation of the A2Pay.
+3.	User reviews the transaction:
+The user evaluates the details of the payment request to ensure its accuracy and validity.
+4.	User approves the presentation:
+After reviewing the transaction details, the user confirms the request in the wallet, granting approval to present the A2Pay.
+5.	Wallet sends A2Pay' to PSP':
+The wallet presents the A2Pay' including the `transaction_data_hashes` along with the authorisation response to PSP' as requested.
+6.	PSP' acknowledges receipt of A2Pay':
+PSP’ confirms that the A2Pay has been successfully received and sends back the `redirect_uri` to the wallet.
+7.	Wallet updates user on status presentation:
+The wallet provides the user with a status update, indicating that the A2Pay has been successfully sent.
+8.	PSP' forwards A2Pay to issuing PSP:
+PSP’ forwards the A2Pay credential along with the original payment request object to the user’s PSP for verification and/or execution of the payment.
+9.	Issuing PSP acknowledges receipt of A2Pay:
+The user’s PSP confirms receipt of the forwarded A2Pay'.
+10.	Issuing PSP verifies A2Pay' and executes the transaction:
+The user’s PSP validates the authenticity and integrity of the A2Pay'. If valid, it executes the payment transaction.
+11.	Wallet queries payment status from PSP':
+The wallet initiates a query to PSP' to retrieve the current status of the payment.
+12.	PSP' queries payment status from issuing PSP:
+PSP' forwards the wallet’s query to the user’s PSP to obtain the payment status.
+13.	Issuing PSP responds with payment status to PSP':
+The user’s PSP sends the payment status back to PSP'.
+14.	PSP' forwards payment status to wallet:
+PSP' relays the payment status received from the issuing PSP to the wallet.
+15.	Wallet updates user with payment status:
+The wallet provides the user with the payment status, indicating whether the transaction was successful or if any issues occurred.
+16.	PSP' updates user with payment status:
+PSP' provides an additional confirmation of the payment status to the user, ensuring they are informed directly.
+
+
+To enable the Extended PaymentAuth Flow and allow a PSP' to properly route an authorized payment request, the A2Pay must include the following mandatory details as defined in the [A2Pay schema](a2pay-schema.json):
+
+- `payment-product`: Specifies the payment instrument or scheme to be utilized for the transaction.
+- `account-reference`: Identifies the account or account alias linked to the A2Pay. This can be represented by an IBAN/BIC, a PAN (Primary Account Number), or even a mobile phone number.
 
 The transport of the A2Pay' and the related payment request is done using the [A2Pay Direct endpoint](#a2pay-direct-endpoint) and / or an according payment rail or scheme (OpenBanking, domestic schemes e.g.), which must implement additional support for processing the A2Pay data structures, signatures etc., and may also include additional actors like payment platforms or aquirers e.g..
 
