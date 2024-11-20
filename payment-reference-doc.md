@@ -337,8 +337,6 @@ sequenceDiagram
     psp2 -->> user: payment status
 ```
 
-Here’s a step-by-step textual description of the sequence diagram:
-
 1.	PSP' requests A2Pay:
 The merchant’s PSP (PSP') sends an authorization request including the `transaction_data` with the payment request to the user’s wallet to obtain the A2Pay issued by the user’s PSP. *Note: Details of passing the authorization request by reference are omitted for readability reasons.*
 2.	Wallet asks user for approval:
