@@ -202,7 +202,9 @@ Non-normative example of the `transaction_data` parameter within the authorizati
 
 ### Payment status
 
-The A2Pay is transmitted to the PSP via an HTTP POST request, as specified by the `direct_post` response mode in OpenID4VP[^openid4vp]. To communicate the status of the payment, the PSP is required to respond with an HTTP 200 status code and a JSON object that includes the `redirect_uri` parameter as specified in section 7.4 of OpenID4VP[^openid4vp].
+The A2Pay is transmitted to the PSP via an HTTP POST request, as specified by the `direct_post` response mode in OpenID4VP[^openid4vp]. The PSP must  respond with a JSON object containing  the `redirect_uri` property as descibed in section 7.2, which allows the PSP to continue the interaction with the End-User on the device where the Wallet resides after the Wallet has sent the Authorization Response.
+
+To communicate the actual status of the payment, the PSP must include an additional `payment_status_uri` parameter.  
 
 ```json
 HTTP/1.1 200 OK
@@ -210,11 +212,12 @@ Content-Type: application/json
 Cache-Control: no-store
 
 {
-  "redirect_uri": "https://bank.example.org/payment-status/091535f699ea575c7937fa5f0f454aee"
+  "redirect_uri": "https://bank.example.org/payment-status/091535f699ea575c7937fa5f0f454aee",
+  "payment_status_uri": "https://bank.example.org/api/payment-status/091535f699ea575c7937fa5f0f454aee"
 }
 ```
 
-The redirect URI can subsequently be utilized to query the payment status, as it must adhere to the payment status endpoint specified in the [A2Pay API specification](eudi-payment-api.yml). The payment status is represented using [ISO 20022](https://www.iso20022.org/catalogue-messages/additional-content-messages/external-code-sets) payment status codes.
+The `payment_status_uri` can subsequently be utilized to query the payment status, as it must adhere to the payment status endpoint specified in the [A2Pay API specification](eudi-payment-api.yml). The payment status is represented using [ISO 20022](https://www.iso20022.org/catalogue-messages/additional-content-messages/external-code-sets) payment status codes.
 
 | Type |               Name              |                                                            Explanation                                                           |
 |:----:|:-------------------------------:|:--------------------------------------------------------------------------------------------------------------------------------:|
@@ -291,11 +294,11 @@ After reviewing, the user provides their approval to proceed with the transactio
 5.	Wallet sends A2Pay' to PSP:
 The wallet presents the A2Pay' including the `transaction_data_hashes` along with the authorisation response to the PSP as requested.
 6.	PSP acknowledges receipt of A2Pay':
-The PSP confirms that the authorization response with the A2Pay' has been received successfully and sends back the `redirect_uri` to the wallet.
+The PSP confirms that the authorization response with the A2Pay' has been received successfully and sends back the `redirect_uri` and the `payment_status_uri` to the wallet.
 7.	PSP verifies A2Pay and executes the transaction:
 The PSP validates the authenticity and integrity of the A2Pay'. If valid, the PSP proceeds to execute the payment transaction.
 8.	Wallet queries payment status:
-The wallet initiates a query to the PSP using the `redirect_uri` to retrieve the current status of the payment.
+The wallet initiates a query to the PSP using the `payment_status_uri` to retrieve the current status of the payment.
 9.	PSP provides payment status to wallet:
 The PSP responds to the wallet with the payment status, indicating whether the transaction was successful or if any issues occurred.
 10.	Wallet updates user with payment status:
@@ -349,19 +352,19 @@ After reviewing the transaction details, the user confirms the request in the wa
 5.	Wallet sends A2Pay' to PSP':
 The wallet presents the A2Pay' including the `transaction_data_hashes` along with the authorisation response to PSP' as requested.
 6.	PSP' acknowledges receipt of A2Pay':
-PSP’ confirms that the A2Pay has been successfully received and sends back the `redirect_uri` to the wallet.
+PSP’ confirms that the A2Pay has been successfully received and sends back the `redirect_uri` and `payment_status_uri` to the wallet.
 7.	Wallet updates user on status presentation:
 The wallet provides the user with a status update, indicating that the A2Pay has been successfully sent.
 8.	PSP' forwards A2Pay to issuing PSP:
 PSP’ sends a [payment authorization object](#payment-authorization-object) including the the A2Pay' and the original payment request object to the user’s PSP for verification and/or execution of the payment using the A2Pay Direct endpoint.
 9.	Issuing PSP acknowledges receipt of A2Pay:
-The user’s PSP confirms receipt of the forwarded A2Pay' and sends back the `redirect_uri` to the PSP'.
+The user’s PSP confirms receipt of the forwarded A2Pay' and sends back the `payment_status_uri` to the PSP'.
 10.	Issuing PSP verifies A2Pay' and executes the transaction:
 The user’s PSP validates the authenticity and integrity of the A2Pay'. If valid, it executes the payment transaction.
 11.	Wallet queries payment status from PSP':
-The wallet initiates a query to PSP' using the `redirect_uri` to retrieve the current status of the payment.
+The wallet initiates a query to PSP' using the `payment_status_uri` to retrieve the current status of the payment.
 12.	PSP' queries payment status from issuing PSP:
-PSP' initiates a query to PSP using the `redirect_uri` to retrieve the current status of the payment.
+PSP' initiates a query to PSP using the `payment_status_uri` to retrieve the current status of the payment.
 13.	Issuing PSP responds with payment status to PSP':
 The user’s PSP sends the payment status back to PSP'.
 14.	PSP' forwards payment status to wallet:
@@ -390,6 +393,7 @@ In order for a PSP to support the Extended PaymentAuth Flow using the A2Pay Dire
 Details for this endpoint are described in the [A2Pay API specification](eudi-payment-api.yml)
 
 ###### Payment Authorization Object
+
 The Payment Authorization Object is defined as a JWT according to [rfc7519](https://datatracker.ietf.org/doc/html/rfc7519) having the following claims:
 
 * `payment-request` REQUIRED: Original base64url encoded transaction data object of the [payment request](payment-request-schema.json) as it was included in the authorization request.
@@ -431,13 +435,15 @@ Same-device screenflow of the payment process:
 
 ![Screenflow](screenflow.png)
 
-1. PSP' app initiates the process by requesting the presentation of an A2Pay including the payment request.
-2. Redirect to wallet. Wallet asking the payer to approve the presentation of A2Pay including transaction details.
-    - Consent must include biometrics or PIN.
-3. Purchase is completed.
+1. Mechant app initiates the process by requesting the presentation of an A2Pay.
+2. Activate the EUDI Wallet and authenticate user.
+3. Review payment details and 
+4. Approve the transaction by providing biometrics.
+5. Query status of the payment.
+6. Final payment status on the wallet.
+7. Final payment status on merchant app.
 
 
-[^xs2a]: [NextGenPSD2 XS2A Framework Implementation Guidelines](https://www.berlin-group.org/_files/ugd/c2914b_fec1852ec9c640568f5c0b420acf67d2.pdf)
 openFinance API Framework](https://www.berlin-group.org/_files/ugd/c2914b_f8cab18ec71e476a9685c9a5f5260fda.pdf)
 [^openid4vp]: [OpenID4VP](https://openid.net/specs/openid-4-verifiable-presentations-1_0.html)
 [^openid4vci]: [OpenID4VCI](https://openid.github.io/OpenID4VCI/openid-4-verifiable-credential-issuance-wg-draft.html)
