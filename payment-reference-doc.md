@@ -48,11 +48,11 @@ The ARF emphasizes:
 
 A key aspect of the ARF[^arf] is managing trust throughout the lifecycle of a relying party, ensuring that entities like banks, government portals, or e-commerce sites can reliably interact with the wallet to authenticate users, verify Electronic Attestations of Attributes (EAA, see ARF Annex 1[^arf_annex1]), and process transactions.
 
-The European Identity Wallet relies on modern, standardized protocols to manage the secure issuance and presentation of attestations. Two crucial protocols extensions of the OAuth2 framework tailored for verifiable attestations.
+The European Identity Wallet relies on modern, standardized protocols to manage the secure issuance and presentation of attestations.
 
 **OpenID4VCI** for securely issuing verifiable credentials to a user’s digital wallet, enabling cryptographically protected, tamper-proof storage and future use of those credentials for authentication or sharing.
 
-**OpenID4VP** enables users to securely present verifiable attestation from their digital wallet to relying parties, ensuring cryptographic verification and selective disclosure of information.
+**OpenID4VP** for enabling users to securely present verifiable attestation from their digital wallet to relying parties, ensuring cryptographic verification and selective disclosure of information.
  
 This document focuses on presenting a structured approach to leverage the existing technical standards alongside the eIDAS 2.0 trust infrastructure. The goal is not only to develop and standardize a solution for Strong Customer Authentication (SCA) and electronic payments utilizing the European Identity Wallet but also to integrate payments with other forms of attestations as referenced in ARF, section A.2.3.20 Topic 20[^arf_annex2]. By doing so, it seeks to unlock the vast potential of the eIDAS ecosystem, enabling seamless interoperability, enhanced trust, and innovative use cases that extend beyond traditional payment processes.
 
@@ -401,7 +401,7 @@ The Payment Authorization Object is defined as a JWT according to [rfc7519](http
 The JWT must be signed by the PSP' using the key belonging to the relying party access certificate issued by a Relying Party Access Certificate Authority (CA) described in ARF section 6.4[^arf] and ARF Annex 2 A.2.3.27 Topic 27[^arf_annex2].
 
 
-Example of the JWT payload:
+Example of a Payment Authorization Object payload:
 ```json
 POST /post HTTP/1.1
 Host: bank.example.com/payment-initiation
