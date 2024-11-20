@@ -435,8 +435,8 @@ Same-device screenflow of the payment process:
 
 1. Mechant app initiates the process by requesting the presentation of an A2Pay.
 2. Activate the EUDI Wallet and authenticate user.
-3. Review payment details and 
-4. Approve the transaction by providing biometrics.
+3. Review payment details
+4. Authorize the transaction by providing biometrics.
 5. Query status of the payment.
 6. Final payment status on the wallet.
 7. Final payment status on merchant app.
@@ -448,8 +448,6 @@ openFinance API Framework](https://www.berlin-group.org/_files/ugd/c2914b_f8cab1
 [^arf]:[Architecture Reference Framework](https://github.com/eu-digital-identity-wallet/eudi-doc-architecture-and-reference-framework/blob/main/docs/arf.md)
 [^arf_annex1]: [ARF Annex 1](https://github.com/eu-digital-identity-wallet/eudi-doc-architecture-and-reference-framework/blob/main/docs/annexes/annex-1/annex-1-definitions.md)
 [^arf_annex2]: [ARF Annex 2](https://github.com/eu-digital-identity-wallet/eudi-doc-architecture-and-reference-framework/blob/main/docs/annexes/annex-2/annex-2-high-level-requirements.md)
-[^jar]:[ JWT-Secured Authorization Request](https://www.rfc-editor.org/rfc/rfc9101.html#name-jws-signed-request-object)
-[^bg_sec]: [openFinance API Framework Implementation Guidelines, Protocol Functions and Security Measures](https://c2914bdb-1b7a-4d22-b792-c58ac5d6648e.usrfiles.com/archives/c2914b_db4be6e61a4e4581897d5758d2a4c8de.zip)
 [^openid4vc_hip]: [OpenID4VC High Assurance Interoperability Profile with SD-JWT VC ](https://openid.net/specs/openid4vc-high-assurance-interoperability-profile-sd-jwt-vc-1_0.html)
 [^sd-jwt-vc]: [SD-JWT-based Verifiable Credentials](https://datatracker.ietf.org/doc/draft-ietf-oauth-sd-jwt-vc/05/)
 [^sd-jwt]: [Selective Disclosure for JWTs](https://datatracker.ietf.org/doc/draft-ietf-oauth-selective-disclosure-jwt/13/)
