@@ -50,16 +50,6 @@
           "pattern": "^[A-Z0-9]+$",
           "maxLength": 30
         },
-        "pan": {
-          "type": "string",
-          "description": "Primary Account Number (PAN) of a card, may be tokenized by the ASPSP due to PCI DSS requirements.",
-          "maxLength": 35
-        },
-        "maskedPan": {
-          "type": "string",
-          "description": "Primary Account Number (PAN) of a card in a masked form.",
-          "maxLength": 35
-        },
         "msisdn": {
           "type": "string",
           "description": "Alias to access a payment account via a registered mobile phone number.",
@@ -103,11 +93,6 @@
         {
           "required": [
             "bban"
-          ]
-        },
-        {
-          "required": [
-            "pan"
           ]
         },
         {
@@ -169,5 +154,5 @@
     }
   },
   "additionalProperties": false,
-  "required": ["id", "currency", "name", "account-reference"]
+  "required": ["id", "currency", "account-reference"]
 }
