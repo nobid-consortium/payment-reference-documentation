@@ -429,7 +429,7 @@ Relying on the presentation flows described above and also the requirements defi
 
 Same-device screenflow of the payment process:
 
-![Screenflow](screenflow.svg)
+![Screenflow](screenflow.png)
 
 1. PSP' app initiates the process by requesting the presentation of an A2Pay including the payment request.
 2. Redirect to wallet. Wallet asking the payer to approve the presentation of A2Pay including transaction details.
