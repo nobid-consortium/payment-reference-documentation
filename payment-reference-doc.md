@@ -1,4 +1,4 @@
-# Strong-customer-authentication for electronic payments done with the European Digital Identity Wallet
+# Electronic payments with the European Digital Identity Wallet
 
 ## Background
 Strong Customer Authentication (SCA) is a security protocol required under the European Union’s PSD2 directive to protect electronic payments. Its purpose is to reduce fraud by ensuring that electronic transactions are conducted securely and only by authorized users. SCA relies on a combination of two out of three independent authentication factors:
@@ -80,8 +80,6 @@ Access to the private key is always safeguarded by an additional authentication 
 These security measures collectively ensure that the private key remains protected and can only be accessed by the authorized wallet holder, thus meeting the multi-factor requirements of SCA.
 
 See also requirement specification ARF Annex 2 A.2.3.6 Topic 6 - User Approval RBA10[^arf_annex2] for details. 
-
-![Registration](wallet_onboarding.svg)
 
 ### A2Pay - Attestation to pay
 
@@ -382,7 +380,7 @@ To enable the Extended PaymentAuth Flow and allow a PSP' to properly route an au
 
 The transport of the A2Pay' and the related payment request is done using the [A2Pay Direct endpoint](#a2pay-direct-endpoint) and / or an according payment rail or scheme (OpenBanking, domestic schemes e.g.), which must implement additional support for processing the A2Pay data structures, signatures etc., and may also include additional actors like payment platforms or aquirers e.g..
 
-![Payment](wallet_payment.svg)
+![Payment](high-level-overview.png)
 
 ##### A2Pay Direct Endpoint
 
