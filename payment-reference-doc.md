@@ -1,4 +1,4 @@
-# Electronic payments with the European Digital Identity Wallet
+# Electronic payments enabled by the European Digital Identity Wallet
 
 ## Background
 Strong Customer Authentication (SCA) is a security protocol required under the European Union’s PSD2 directive to protect electronic payments. Its purpose is to reduce fraud by ensuring that electronic transactions are conducted securely and only by authorized users. SCA relies on a combination of two out of three independent authentication factors:
@@ -423,7 +423,7 @@ Content-Type: application/x-www-form-urlencoded
 
 ### Combined presentations
 
-Relying on the presentation flows described above and also the requirements defined for the wallet in ARF Annex 2 section A.2.3.18 Topic 18[^arf_annex2], the PSP' may combine the request for an A2Pay' with additional attributes that may reside in the wallet. Therby they can leverage the additional information to build more advanced use-case like combining payment with proof of age e.g..
+Relying on the presentation flows described above and also the requirements defined for the wallet in ARF Annex 2 section A.2.3.18 Topic 18[^arf_annex2], a PSP may combine the request for an A2Pay' with additional attributes that may reside in the wallet. Therby they can leverage the additional information to build more advanced use-case like combining payment with proof of age e.g..
 
 ### Screenflow
 
