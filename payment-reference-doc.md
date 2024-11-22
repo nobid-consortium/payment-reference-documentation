@@ -1,6 +1,6 @@
 # Electronic payments enabled by the European Digital Identity Wallet
 
-[!NOTE]  
+>[!NOTE]  
 > This document is a work in progress and is subject to change. The information contained herein is preliminary and may be updated, revised, or modified without prior notice. It should not be considered final or complete and may not reflect the most current developments or decisions. Please use this document with the understanding that its content is dynamic and intended for ongoing refinement.
 
 ## Background
