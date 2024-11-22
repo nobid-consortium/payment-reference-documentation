@@ -83,7 +83,7 @@ See also requirement specification ARF Annex 2 A.2.3.6 Topic 6 - User Approval R
 
 ### A2Pay - Attestation to pay
 
-The A2Pay (Attestation to Pay) serves as a key component for identifying the wallet holder’s Payment Service Provider (PSP) and the specific account to which the attestation is linked. Beyond merely associating the holder with their PSP and account, the A2Pay can also specify a payment rail—the network or system used to process the payment—along with the associated metadata. This metadata can be utilized by relying parties, such as merchants, to initiate and process payment transactions seamlessly.
+The A2Pay (Attestation to Pay) serves as a key component for identifying the wallet holder’s Payment Service Provider (PSP) and the specific account to which the attestation is linked. Beyond merely associating the holder with their PSP and account, the A2Pay can also specify a `payment-product` — the network or system used to process the payment- along with the additional properties, which can be utilized by relying parties, such as merchants, to initiate and process payment transactions seamlessly.
 
 The structure and detailed specifications of the A2Pay are defined in the JSON schema file [a2pay-schema.json](a2pay-schema.json), which outlines all required attributes and their formats. This schema ensures interoperability and standardization of the attestation across different implementations and use cases.
 
@@ -92,20 +92,18 @@ Non-normative example of an A2Pay payload:
 ```json
 {
     "_sd": [],
-    "iss": "https://bank.com/issuer",
+    "iss": "https://bank.example.com/issuer",
     "exp": 1883000000,
     "nbf": 1718198433,
     "iat": 1718198433,
     "vct": "https://credentials.example.com/a2pay",
     "_sd_alg": "sha-256",
+    "sub": "DE75512108001245126199",
     "id": "8D8AC610-566D-4EF0-9C22-186B2A5ED793",
     "payment-product": "sct-inst-eu",
-    "accountReference":{
-        "iban": "DE75512108001245126199"
-    },
+    "init-uri": "https://bank.example.com/pay/7dfe5484g78/init",
     "currency": "EUR",
-    "name": "Account John Smith",
-    "display-name": "My Account",
+    "name": "My Account",
     "cnf": {
       "jwk": {
         "crv": "P-256",
@@ -120,7 +118,7 @@ Non-normative example of an A2Pay payload:
 Non-normative example of an A2Pay as `sd-jwt-vc` according to SD-JWT-based Verifiable Credentials[^sd-jwt-vc]
 
 ```
-eyJ0eXAiOiJzZCtqd3QiLCJhbGciOiJFUzI1NiJ9.eyJpc3MiOiJodHRwczovL2JhbmsuY29tL2lzc3VlciIsImV4cCI6MTg4MzAwMDAwMCwibmJmIjoxNzE4MTk4NDMzLCJpYXQiOjE3MTgxOTg0MzMsInZjdCI6Imh0dHBzOi8vY3JlZGVudGlhbHMuZXhhbXBsZS5jb20vYTJwYXkiLCJpZCI6IjhEOEFDNjEwLTU2NkQtNEVGMC05QzIyLTE4NkIyQTVFRDc5MyIsInBheW1lbnQtcHJvZHVjdCI6InNjdC1pbnN0LWV1IiwiaW5pdGlhdGlvbi11cmwiOiJodHRwczovL2JhbmsuY29tL3BheS83ZGZlNTQ4NGc3OC9pbml0IiwiYWNjb3VudC1yZWZlcmVuY2UiOnsiaWJhbiI6IkRFNzU1MTIxMDgwMDEyNDUxMjYxOTkifSwiY3VycmVuY3kiOiJFVVIiLCJuYW1lIjoiQWNjb3VudCBKb2huIFNtaXRoIiwiZGlzcGxheS1uYW1lIjoiTXkgQWNjb3VudCIsImNuZiI6eyJqd2siOnsiY3J2IjoiUC0yNTYiLCJrdHkiOiJFQyIsIngiOiJOQVNKMkFEdWFnT3ZyYUxmN080VnhjQk1iYW50ekw5ZGQwanB2TUxuQmZzIiwieSI6Ik9KWTZwcUNxUkl6cEV0NzhPWGFzV0hHZ3FWNVpHcmVfM2NIdHBOSDgyZ2cifX19.vOwJu9CY40M84-_0oamO5oNMCymhzje9wYT6dxmt5SilzA11MIz-Bjn6tqhuCYQeQN0ZQLRGU5ilufP1b5mgAA~
+eyJ0eXAiOiJzZCtqd3QiLCJhbGciOiJFUzI1NiJ9.eyJpc3MiOiJodHRwczovL2JhbmsuZXhhbXBsZS5jb20vaXNzdWVyIiwiZXhwIjoxODgzMDAwMDAwLCJuYmYiOjE3MTgxOTg0MzMsImlhdCI6MTcxODE5ODQzMywidmN0IjoiaHR0cHM6Ly9jcmVkZW50aWFscy5leGFtcGxlLmNvbS9hMnBheSIsIl9zZF9hbGciOiJTSEEtMjU2Iiwic3ViIjoiREU3NTUxMjEwODAwMTI0NTEyNjE5OSIsImlkIjoiOEQ4QUM2MTAtNTY2RC00RUYwLTlDMjItMTg2QjJBNUVENzkzIiwicGF5bWVudC1wcm9kdWN0Ijoic2N0LWluc3QtZXUiLCJpbml0LXVyaSI6Imh0dHBzOi8vYmFuay5leGFtcGxlLmNvbS9wYXkvN2RmZTU0ODRnNzgvaW5pdCIsImN1cnJlbmN5IjoiRVVSIiwibmFtZSI6Ik15IEFjY291bnQiLCJjbmYiOnsiandrIjp7ImNydiI6IlAtMjU2Iiwia3R5IjoiRUMiLCJ4IjoiTkFTSjJBRHVhZ092cmFMZjdPNFZ4Y0JNYmFudHpMOWRkMGpwdk1MbkJmcyIsInkiOiJPSlk2cHFDcVJJenBFdDc4T1hhc1dIR2dxVjVaR3JlXzNjSHRwTkg4MmdnIn19fQ.zsOOWjP0VJiToK4m8elglBPlbgyVcD_xPD7decD3Z2QjrrvaHUX9ojbwr2BZ-D6Avy9SlRHwuNfvDKBO4M1v2w~
 ```
 
 ## Payment
@@ -246,6 +244,8 @@ Cache-Control: no-store
 ### Verification
 
 The successfull verification of the A2Pay' signals the PSP to proceed with executing the authorized payment transaction. The verification of the A2Pay is done following the guidlines given in Self Disclosure for JWT[^sd-jwt] section 7 and specifically 7.3. To verfiy the authentication code ensuring the A2Pay' is bound to the intended payment transaction, the PSP must calculate the hash of the base64url encoded transcation data object of the [payment request](payment-request-schema.json) with the chosen `transaction_data_hashes_alg`. For a successful verification, the resulting hash must equal the hash in the `transaction_data_hashes` array included in the key-binding JWT. 
+
+The PSP may also use the `payment-id` within the payment request to ensure the payment is processed only once.
 
 ### Flows 
 
@@ -374,9 +374,9 @@ PSP' provides an additional confirmation of the payment status to the user, ensu
 To enable the Extended PaymentAuth Flow and allow a PSP' to properly route an authorized payment request, the A2Pay must include the following mandatory details as defined in the [A2Pay schema](a2pay-schema.json):
 
 - `payment-product`: Specifies the payment instrument or scheme to be utilized for the transaction.
-- `account-reference`: Identifies the account or account alias linked to the A2Pay. This can be represented by an IBAN/BIC, a PAN (Primary Account Number), or even a mobile phone number.
+- `sub`: Account identifier or account alias linked to the A2Pay. This can be represented by an IBAN or mobile phone number for example.
 
-The transport of the A2Pay' and the related payment request is done using the [A2Pay Direct endpoint](#a2pay-direct-endpoint) and / or an according payment rail or scheme (OpenBanking, domestic schemes e.g.), which must implement additional support for processing the A2Pay data structures, signatures etc., and may also include additional actors like payment platforms or aquirers e.g..
+The transport of the A2Pay' and the related payment request is done using the [A2Pay Direct endpoint](#a2pay-direct-endpoint) and / or an according payment rail or scheme like OpenBanking APIs, or domestic schemes e.g., which must implement additional support for processing the A2Pay format, data structures and signatures and may also include additional actors like payment platforms or aquirers e.g..
 
 ![Payment](high-level-overview.png)
 
@@ -384,7 +384,7 @@ The transport of the A2Pay' and the related payment request is done using the [A
 
 Assuming a PSP is obliged to support the [Basic PaymentAuth flow](#direct-payment-flow) to comply with the eIDAS 2.0 regulation with respect to SCA, they must support the `direct_post` endpoint defined by OpenID4VP, Section 7.2[^openid4vp] as it is required by the HAIP[^openid4vc_hip]. A2Pay Direct extends this endpoint for the `direct_post` mode to support a [Payment Authorization Object](#payment-authorization-object) besides the Authorization Response Object as payload in order to simplify implementation efforts for PSPs. 
 
-In order for a PSP to support the Extended PaymentAuth Flow using the A2Pay Direct endpoint, they must include the `init-url` property within the A2Pay during [registration](#registration). The value must be the URL a PSP' can use to send the Payment Authorization Object to.
+In order for a PSP to support the Extended PaymentAuth Flow using the A2Pay Direct endpoint, they must include the `init-uri` property within the A2Pay during [registration](#registration). The value must be the URL a PSP' can use to send the Payment Authorization Object to.
 
 Details for this endpoint are described in the [A2Pay API specification](eudi-payment-api.yml)
 
