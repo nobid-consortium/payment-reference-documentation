@@ -1,11 +1,10 @@
-# Electronic payments enabled by the European Digital Identity Wallet
+# A EUDI way to pay - electronic payments enabled by the European Digital Identity Wallet
 
-## Background
 Strong Customer Authentication (SCA) is a security protocol required under the European Union’s PSD2 directive to protect electronic payments. Its purpose is to reduce fraud by ensuring that electronic transactions are conducted securely and only by authorized users. SCA relies on a combination of two out of three independent authentication factors:
 
 1. Something the customer knows, such as a password or PIN.
-2.	Something the customer possesses, such as a smartphone, card reader, or token.
-3.	Something the customer is, like a fingerprint, facial recognition, or other biometric data.
+2. Something the customer possesses, such as a smartphone, card reader, or token.
+3. Something the customer is, like a fingerprint, facial recognition, or other biometric data.
 
 The process requires that these factors are independent of one another, ensuring a higher level of security for online payments. While some payments, such as recurring subscriptions or low-value transactions, may be exempt from SCA, most will trigger its implementation.
 
@@ -138,7 +137,7 @@ To fulfill the requirement for dynamic linking, the A2Pay' must include the tran
 
 The OpenID4VP protocol [^openid4vp] supports the inclusion of dynamic transaction data in the authorization process using the `transaction_data` parameter. The flow operates as follows:
 
-1.	The relying party includes the transaction-specific details (e.g., payment amount, payee information) in the authorization request using the transaction_data parameter.
+1.	The relying party includes the transaction-specific details (e.g., payment amount, payee information) in the authorization request using the `transaction_data` parameter.
 2. The wallet processes the `transaction_data` values and computes a cryptographic hash of this data. This hash is embedded into the key-binding JWT of the A2Pay', which is then sent back to the PSP along with the authorization response.
 3.	Authentication Code Generation: The computed hash serves as the authentication code required under PSD2 for dynamic linking, tieing the authorization response to the specific payment transaction details.
 4.	User Approval Dialogue: To ensure transparency and user consent, the payment request details must be presented to the user within the wallet’s approval interface. This allows the user to review and approve the specific payment details. The user approval dialogue must comply with the requirements specified in ARF Section 6.6.3.4 [^arf] and ARF Annex 2, Section A.2.3.6 Topic 6 [^arf_annex2].
@@ -198,7 +197,7 @@ Non-normative example of the `transaction_data` parameter within the authorizati
 
 ### Payment status
 
-The A2Pay is transmitted to the PSP via an HTTP POST request, as specified by the `direct_post` response mode in OpenID4VP[^openid4vp]. The PSP must  respond with a JSON object containing  the `redirect_uri` property as descibed in section 7.2, which allows the PSP to continue the interaction with the End-User on the device where the Wallet resides after the Wallet has sent the Authorization Response.
+The A2Pay is transmitted to the PSP via an HTTP POST request, as specified by the `direct_post` response mode in OpenID4VP[^openid4vp]. The PSP must respond with a JSON object containing  the `redirect_uri` property as descibed in section 7.2, which allows the PSP to continue the interaction with the End-User on the device where the Wallet resides after the Wallet has sent the Authorization Response.
 
 To communicate the actual status of the payment, the PSP must include an additional `payment_status_uri` parameter.  
 
@@ -396,8 +395,11 @@ The Payment Authorization Object is defined as a JWT according to [rfc7519](http
 * `transaction_data_hashes_alg` OPTIONAL: String representing the hash algorithm identifier used to calculate the hash of the payment request.  "Hash Name String" column in the [IANA "Named Information Hash Algorithm"](https://www.iana.org/assignments/named-information/named-information.xhtml). Default value is `sha-256`.
 * `a2pay` REQUIRED: A2Pay' as base64 URL encoded SD-JWT containing the matching hash of the payment request given in `payment-request` claim within the key-binding JWT (see OpenID4VP section B4.5 [^openid4vp]). 
 
-The JWT must be signed by the PSP' using the key belonging to the relying party access certificate issued by a Relying Party Access Certificate Authority (CA) described in ARF section 6.4[^arf] and ARF Annex 2 A.2.3.27 Topic 27[^arf_annex2].
+The JWT must be signed by the PSP' including a certificate that reliably identifies the PSP' as it is required by article 34 of [Commission Delegated Regulation (EU) 2018/389](https://eba.europa.eu/regulation-and-policy/payment-services-and-electronic-money/regulatory-technical-standards-on-strong-customer-authentication-and-secure-communication-under-psd2). Existing qualified eIDAS certificates already used by Third Party Providers (TPPs) or the relying party access certificate issued by a Relying Party Access Certificate Authority (CA) described in ARF section 6.4[^arf] and ARF Annex 2 A.2.3.27 Topic 27[^arf_annex2] may be used.
 
+The JWT must be digitally signed by the PSP, including a certificate that clearly and reliably identifies the PSP. This requirement aligns with Article 34 of [Commission Delegated Regulation (EU) 2018/389](https://eba.europa.eu/regulation-and-policy/payment-services-and-electronic-money/regulatory-technical-standards-on-strong-customer-authentication-and-secure-communication-under-psd2), which outlines obligations for secure communication and authentication in the context of PSD2.
+
+To fulfill this requirement, PSPs can leverage existing qualified eIDAS certificates, which are already widely used by Third Party Providers (TPPs) for PSD2 compliance. Alternatively, PSPs might also be able to use a Relying Party Access Certificate issued by a Relying Party Access Certificate Authority (CA) described in ARF section 6.4[^arf] and ARF Annex 2 A.2.3.27 Topic 27[^arf_annex2]. 
 
 Example of a Payment Authorization Object payload:
 ```json
