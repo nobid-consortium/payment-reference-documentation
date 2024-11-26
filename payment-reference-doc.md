@@ -100,7 +100,7 @@ Non-normative example of an A2Pay payload:
     "sub": "DE75512108001245126199",
     "id": "8D8AC610-566D-4EF0-9C22-186B2A5ED793",
     "payment-product": "sct-inst-eu",
-    "init-uri": "https://bank.example.com/pay/7dfe5484g78/init",
+    "payment-uri": "https://bank.example.com/pay/7dfe5484g78",
     "currency": "EUR",
     "name": "My Account",
     "cnf": {
@@ -117,7 +117,7 @@ Non-normative example of an A2Pay payload:
 Non-normative example of an A2Pay as `sd-jwt-vc` according to SD-JWT-based Verifiable Credentials[^sd-jwt-vc]
 
 ```
-eyJ0eXAiOiJzZCtqd3QiLCJhbGciOiJFUzI1NiJ9.eyJpc3MiOiJodHRwczovL2JhbmsuZXhhbXBsZS5jb20vaXNzdWVyIiwiZXhwIjoxODgzMDAwMDAwLCJuYmYiOjE3MTgxOTg0MzMsImlhdCI6MTcxODE5ODQzMywidmN0IjoiaHR0cHM6Ly9jcmVkZW50aWFscy5leGFtcGxlLmNvbS9hMnBheSIsIl9zZF9hbGciOiJTSEEtMjU2Iiwic3ViIjoiREU3NTUxMjEwODAwMTI0NTEyNjE5OSIsImlkIjoiOEQ4QUM2MTAtNTY2RC00RUYwLTlDMjItMTg2QjJBNUVENzkzIiwicGF5bWVudC1wcm9kdWN0Ijoic2N0LWluc3QtZXUiLCJpbml0LXVyaSI6Imh0dHBzOi8vYmFuay5leGFtcGxlLmNvbS9wYXkvN2RmZTU0ODRnNzgvaW5pdCIsImN1cnJlbmN5IjoiRVVSIiwibmFtZSI6Ik15IEFjY291bnQiLCJjbmYiOnsiandrIjp7ImNydiI6IlAtMjU2Iiwia3R5IjoiRUMiLCJ4IjoiTkFTSjJBRHVhZ092cmFMZjdPNFZ4Y0JNYmFudHpMOWRkMGpwdk1MbkJmcyIsInkiOiJPSlk2cHFDcVJJenBFdDc4T1hhc1dIR2dxVjVaR3JlXzNjSHRwTkg4MmdnIn19fQ.zsOOWjP0VJiToK4m8elglBPlbgyVcD_xPD7decD3Z2QjrrvaHUX9ojbwr2BZ-D6Avy9SlRHwuNfvDKBO4M1v2w~
+eyJ0eXAiOiJzZCtqd3QiLCJhbGciOiJFUzI1NiJ9.eyJpc3MiOiJodHRwczovL2JhbmsuZXhhbXBsZS5jb20vaXNzdWVyIiwiZXhwIjoxODgzMDAwMDAwLCJuYmYiOjE3MTgxOTg0MzMsImlhdCI6MTcxODE5ODQzMywidmN0IjoiaHR0cHM6Ly9jcmVkZW50aWFscy5leGFtcGxlLmNvbS9hMnBheSIsIl9zZF9hbGciOiJTSEEtMjU2Iiwic3ViIjoiREU3NTUxMjEwODAwMTI0NTEyNjE5OSIsImlkIjoiOEQ4QUM2MTAtNTY2RC00RUYwLTlDMjItMTg2QjJBNUVENzkzIiwicGF5bWVudC1wcm9kdWN0Ijoic2N0LWluc3QtZXUiLCJwYXltZW50LXVyaSI6Imh0dHBzOi8vYmFuay5leGFtcGxlLmNvbS9wYXkvN2RmZTU0ODRnNzgiLCJjdXJyZW5jeSI6IkVVUiIsIm5hbWUiOiJNeSBBY2NvdW50IiwiY25mIjp7Imp3ayI6eyJjcnYiOiJQLTI1NiIsImt0eSI6IkVDIiwieCI6Ik5BU0oyQUR1YWdPdnJhTGY3TzRWeGNCTWJhbnR6TDlkZDBqcHZNTG5CZnMiLCJ5IjoiT0pZNnBxQ3FSSXpwRXQ3OE9YYXNXSEdncVY1WkdyZV8zY0h0cE5IODJnZyJ9fX0.4hv178s6B98WcthUTKj90mkMny2Obg64kvuuQNzI6vL-HgT7_0VRbJT_-SwDwc-vy-g7YVCYKe93Yg-PIGp7yw~
 ```
 
 ## Payment
@@ -144,9 +144,9 @@ The OpenID4VP protocol [^openid4vp] supports the inclusion of dynamic transactio
 
 This process ensures compliance with PSD2’s requirement for dynamic linking by securely binding the transaction details to the authentication process. By incorporating the transaction hash into the key-binding JWT of the A2Pay', the wallet guarantees that any tampering with the transaction data invalidates the authentication. The reliance on OpenID4VP `transaction_data` feature ensures a standardized and secure implementation of this critical SCA requirement.
 
-### Payment request
+### Payment request object
 
-The data schema for the payment request is specified in the JSON schema file, [payment-request-schema.json](payment-request-schema.json). 
+The payment request object is included with in the `transaction_data` array and contains all the details describing the intended payment transaction. The data schema for the payment request is specified in the JSON schema file, [payment-request-schema.json](payment-request-schema.json). 
 
 Non-normative example of a payment request:
 
@@ -172,7 +172,7 @@ Based on the OpenID4VP [^openid4vp] section 5.1, additional properties must be a
 ```json
 {
   "type": "PaymentRequest",
-  "credential_ids": "A2Pay",
+  "credential_ids": ["A2Pay"],
   "transaction_data_hashes_alg": "sha-256",
   "payment-id": "7D8AC610-566D-3EF0-9C22-186B2A5ED793",
   "creditor-account": {
@@ -189,7 +189,7 @@ Non-normative example of the `transaction_data` parameter within the authorizati
 
 ```json
 {
-  "transaction_data": ["ew0KICAidHlwZSI6ICJBMlBheSIsDQogICJjcmVkZW50aWFsX2lkcyI6ICJBMlBheSIsDQogICJ0cmFuc2FjdGlvbl9kYXRhX2hhc2hlc19hbGciOiAic2hhLTI1NiIsDQogICJwYXltZW50LWlkIjogIjdEOEFDNjEwLTU2NkQtM0VGMC05QzIyLTE4NkIyQTVFRDc5MyIsDQogICJjcmVkaXRvci1hY2NvdW50Ijogew0KICAgICJpYmFuIjogIkRFNzU1MTIxMDgwMDEyNDUxMjYxOTkiDQogIH0sDQogICJpbnN0cnVjdGVkLWFtb3VudCI6ICIxNS40OSIsDQogICJjdXJyZW5jeSI6ICJFVVIiLA0KICAiY3JlZGl0b3ItbmFtZSI6ICJNZXJjaGFudCBBIiwNCiAgInB1cnBvc2UiOiAiU2hvcHBpbmcgYXQgTWVyY2hhbnQgQSINCn0"],
+  "transaction_data": ["ewogICJ0eXBlIjogIlBheW1lbnRSZXF1ZXN0IiwKICAiY3JlZGVudGlhbF9pZHMiOiBbIkEyUGF5Il0sCiAgInRyYW5zYWN0aW9uX2RhdGFfaGFzaGVzX2FsZyI6ICJzaGEtMjU2IiwKICAicGF5bWVudC1pZCI6ICI3RDhBQzYxMC01NjZELTNFRjAtOUMyMi0xODZCMkE1RUQ3OTMiLAogICJjcmVkaXRvci1hY2NvdW50IjogewogICAgImliYW4iOiAiREU3NTUxMjEwODAwMTI0NTEyNjE5OSIKICB9LAogICJpbnN0cnVjdGVkLWFtb3VudCI6ICIxNS40OSIsCiAgImN1cnJlbmN5IjogIkVVUiIsCiAgImNyZWRpdG9yLW5hbWUiOiAiTWVyY2hhbnQgQSIsCiAgInB1cnBvc2UiOiAiU2hvcHBpbmcgYXQgTWVyY2hhbnQgQSIKfQ=="],
   ...
 }
 
@@ -287,7 +287,7 @@ sequenceDiagram
 Out-of-band payment initiation:
 The payment process is initiated through an out-of-band mechanism, such as a mobile app, online banking portal, or third-party provider.
 1.	Authorization Request requesting A2Pay:
-The Payment Service Provider (PSP) sends an OpenID4VP authorization request including the `transaction_data` with the payment request to the user’s wallet to obtain the A2Pay credential required for the transaction. Note: *Details of passing the authorization request by reference are omitted for readability reasons.*
+The Payment Service Provider (PSP) sends an OpenID4VP authorization request including the `transaction_data` with the payment request to the user’s wallet to obtain the A2Pay credential required for the transaction. Note: *Details of passing the authorization request by reference are omitted for readability reasons.* This step is done either by link for a same-device flow or by QR-code for cross-device flow.
 2.	Wallet asks user for approval:
 The wallet prompts the user to review and approve the transaction.
 3.	User reviews the transaction:
@@ -295,7 +295,7 @@ The user evaluates the details of the transaction to ensure its accuracy and val
 4.	User approves the presentation:
 After reviewing, the user provides their approval to proceed with the transaction by confirming it in the wallet.
 5.	Authorization Response sending A2Pay' to PSP:
-The wallet presents the A2Pay' including the `transaction_data_hashes` along with the OpenID4VP authorization response to the PSP as requested.
+The wallet presents the A2Pay' including the `transaction_data_hashes` along with the OpenID4VP authorization response to the PSP as HTTP POST request.
 6.	PSP acknowledges receipt of A2Pay':
 The PSP confirms that the authorization response with the A2Pay' has been received successfully and sends back the `redirect_uri` and the `payment_status_uri` to the wallet.
 7.	PSP verifies A2Pay and executes the transaction:
@@ -348,7 +348,7 @@ sequenceDiagram
 ```
 
 1.	Authorization Request requesting A2Pay:
-The merchant’s PSP (PSP') sends an openID4VP authorization request including the `transaction_data` with the payment request to the user’s wallet to obtain the A2Pay issued by the user’s PSP. *Note: Details of passing the authorization request by reference are omitted for readability reasons.*
+The merchant’s PSP (PSP') sends an openID4VP authorization request including the `transaction_data` with the payment request to the user’s wallet to obtain the A2Pay issued by the user’s PSP. *Note: Details of passing the authorization request by reference are omitted for readability reasons.* This step is done either by link for a same-device flow or by QR-code for cross-device flow.
 2.	Wallet asks user for approval:
 The wallet prompts the user to review the payment request and approve the presentation of the A2Pay.
 3.	User reviews the transaction:
@@ -356,7 +356,7 @@ The user evaluates the details of the payment request to ensure its accuracy and
 4.	User approves the presentation:
 After reviewing the transaction details, the user confirms the request in the wallet, granting approval to present the A2Pay.
 5.	Authorization Response sends A2Pay' to PSP':
-The wallet presents the A2Pay' including the `transaction_data_hashes` along with the OpenID4VP authorisation response to PSP' as requested.
+The wallet presents the A2Pay' including the `transaction_data_hashes` along with the OpenID4VP authorisation response to PSP' as HTTP POST request.
 6.	PSP' acknowledges receipt of A2Pay':
 PSP’ confirms that the A2Pay has been successfully received and sends back the `redirect_uri` and `payment_status_uri` to the wallet.
 7.	Wallet updates user on status presentation:
@@ -391,19 +391,18 @@ The transport of the A2Pay' and the related payment request may be done using th
 
 ##### A2Pay Direct Endpoint
 
-Assuming a PSP is obliged to support the [Basic PaymentAuth flow](#direct-payment-flow) to comply with the eIDAS 2.0 regulation with respect to SCA, they must support the `direct_post` endpoint defined by OpenID4VP, Section 7.2[^openid4vp] as it is required by the HAIP[^openid4vc_hip]. A2Pay Direct extends this endpoint for the `direct_post` mode to support a [Payment Authorization Object](#payment-authorization-object) besides the Authorization Response Object as payload in order to simplify implementation efforts for PSPs. 
+Assuming a PSP is obliged to support the [Basic PaymentAuth flow](#direct-payment-flow) to comply with the eIDAS 2.0 regulation with respect to SCA, they must support the `direct_post` endpoint defined by OpenID4VP, Section 7.2[^openid4vp] as it is required by the HAIP[^openid4vc_hip]. To simplify integration efforts, A2Pay Direct defines an endpoint very similar to the one required for the `direct_post` mode. Instead of a `vp_token`, this endpoint must accept an JWT encoded [Payment Authorization Object](#payment-authorization-object).
 
-In order for a PSP to support the Extended PaymentAuth Flow using the A2Pay Direct endpoint, they must include the `init-uri` property within the A2Pay during [registration](#registration). The value must be the URL a PSP' can use to send the Payment Authorization Object to.
+In order for a PSP to support the Extended PaymentAuth Flow using the A2Pay Direct endpoint, they must include the `payment-uri` property within the A2Pay during [registration](#registration). The value must be the URL a PSP' can use to send the Payment Authorization Object to.
 
-Details for this endpoint are described in the [A2Pay API specification](a2pay-api.yml)
+Details for the `a2pay-direct` endpoint are described in the [A2Pay API specification](a2pay-api.yml)
 
 ###### Payment Authorization Object
 
 The Payment Authorization Object is defined as a JWT according to [rfc7519](https://datatracker.ietf.org/doc/html/rfc7519) having the following claims:
 
 * `payment-request` REQUIRED: Original base64url encoded transaction data object of the [payment request](payment-request-schema.json) as it was included in the authorization request.
-* `transaction_data_hashes_alg` OPTIONAL: String representing the hash algorithm identifier used to calculate the hash of the payment request.  "Hash Name String" column in the [IANA "Named Information Hash Algorithm"](https://www.iana.org/assignments/named-information/named-information.xhtml). Default value is `sha-256`.
-* `a2pay` REQUIRED: A2Pay' as base64 URL encoded SD-JWT containing the matching hash of the payment request given in `payment-request` claim within the key-binding JWT (see OpenID4VP section B4.5 [^openid4vp]). 
+* `a2pay` REQUIRED: A2Pay'(SD-JWT VC presentation) containing the matching hash of the payment request given in `payment-request` claim within the key-binding JWT (see OpenID4VP section B4.5 [^openid4vp]). 
 
 The JWT must be signed by the PSP' including a certificate that reliably identifies the PSP' as it is required by article 34 of [Commission Delegated Regulation (EU) 2018/389](https://eba.europa.eu/regulation-and-policy/payment-services-and-electronic-money/regulatory-technical-standards-on-strong-customer-authentication-and-secure-communication-under-psd2). Existing qualified eIDAS certificates already used by Third Party Providers (TPPs) or the relying party access certificate issued by a Relying Party Access Certificate Authority (CA) described in ARF section 6.4[^arf] and ARF Annex 2 A.2.3.27 Topic 27[^arf_annex2] may be used.
 
@@ -413,23 +412,9 @@ To fulfill this requirement, PSPs can leverage existing qualified eIDAS certific
 
 Example of a [Payment Authorization Object](#payment-authorization-object) payload:
 ```json
-POST /post HTTP/1.1
-Host: bank.example.com/payment-initiation
-Content-Type: application/x-www-form-urlencoded
-
 {
-  "payment-request": {
-    "payment-id": "7D8AC610-566D-3EF0-9C22-186B2A5ED793",
-    "creditor-account": {
-      "iban": "DE75512108001245126199"
-    },
-    "instructed-amount": "15.49",
-    "currency": "EUR",
-    "creditor-name": "Merchant A",
-    "purpose": "Shopping at Merchant A"
-  },
-  "transaction_data_hashes_alg": "sha-256",
-  "a2pay": "ew0KIC..."
+  "payment-request": "ewogICJ0eXBlIjogIlBheW1lbnRSZXF1ZXN0IiwKICAiY3JlZGVudGlhbF9pZHMiOiBbIkEyUGF5Il0sCiAgInRyYW5zYWN0aW9uX2RhdGFfaGFzaGVzX2FsZyI6ICJzaGEtMjU2IiwKICAicGF5bWVudC1pZCI6ICI3RDhBQzYxMC01NjZELTNFRjAtOUMyMi0xODZCMkE1RUQ3OTMiLAogICJjcmVkaXRvci1hY2NvdW50IjogewogICAgImliYW4iOiAiREU3NTUxMjEwODAwMTI0NTEyNjE5OSIKICB9LAogICJpbnN0cnVjdGVkLWFtb3VudCI6ICIxNS40OSIsCiAgImN1cnJlbmN5IjogIkVVUiIsCiAgImNyZWRpdG9yLW5hbWUiOiAiTWVyY2hhbnQgQSIsCiAgInB1cnBvc2UiOiAiU2hvcHBpbmcgYXQgTWVyY2hhbnQgQSIKfQ==",
+  "a2pay": "eyJ0eXAiOiJzZCtqd3QiLCJhbGciOiJFUzI1NiJ9.eyJpc3MiOiJodHRwczovL2JhbmsuZXhhbXBsZS5jb20vaXNzdWVyIiwiZXhwIjoxODgzMDAwMDAwLCJuYmYiOjE3MTgxOTg0MzMsImlhdCI6MTcxODE5ODQzMywidmN0IjoiaHR0cHM6Ly9jcmVkZW50aWFscy5leGFtcGxlLmNvbS9hMnBheSIsIl9zZF9hbGciOiJTSEEtMjU2Iiwic3ViIjoiREU3NTUxMjEwODAwMTI0NTEyNjE5OSIsImlkIjoiOEQ4QUM2MTAtNTY2RC00RUYwLTlDMjItMTg2QjJBNUVENzkzIiwicGF5bWVudC1wcm9kdWN0Ijoic2N0LWluc3QtZXUiLCJwYXltZW50LXVyaSI6Imh0dHBzOi8vYmFuay5leGFtcGxlLmNvbS9wYXkvN2RmZTU0ODRnNzgiLCJjdXJyZW5jeSI6IkVVUiIsIm5hbWUiOiJNeSBBY2NvdW50IiwiY25mIjp7Imp3ayI6eyJjcnYiOiJQLTI1NiIsImt0eSI6IkVDIiwieCI6Ik5BU0oyQUR1YWdPdnJhTGY3TzRWeGNCTWJhbnR6TDlkZDBqcHZNTG5CZnMiLCJ5IjoiT0pZNnBxQ3FSSXpwRXQ3OE9YYXNXSEdncVY1WkdyZV8zY0h0cE5IODJnZyJ9fX0.4hv178s6B98WcthUTKj90mkMny2Obg64kvuuQNzI6vL-HgT7_0VRbJT_-SwDwc-vy-g7YVCYKe93Yg-PIGp7yw~eyJ0eXAiOiJrYitqd3QiLCJhbGciOiJFUzI1NiJ9.eyJpYXQiOjE3MTAwNjk3MjIsImF1ZCI6ImRpZDpleGFtcGxlOjEyMyIsIm5vbmNlIjoiazh2ZGYwbmQ2IiwidHJhbnNhY3Rpb25fZGF0YV9oYXNoZXMiOlsiNzI3MjcxNTZkMThiZDMxM2MwMmRlNTc1MTQ5YjNmNTZkZDVhNjgyZWNkOTZlY2M3Y2RhNjYwMjAyNzg2MGVlMyJdLCJzZF9oYXNoIjoibzkxTmpRM0lWaHlTY2ZJa2RxMVNfOXQtbnZZVktyaUhBQXRDeVR2T0xTNCJ9.DFb_JvNKKiMmWnPfvGRNeOkRHAUR0gVRSbwXjtU_-xqVSpZJAnwbZBHCCGQaNZ5xB4Av3VRmzWN17ZMN0sWuZw"
 }
 ```
 

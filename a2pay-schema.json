@@ -61,7 +61,7 @@
         "bancomat-pay"
       ]
     },
-    "init-uri": {
+    "payment-uri": {
       "type": "string",
       "maxLength": 200,
       "description": "URI to send the signed A2Pay presentation too.",

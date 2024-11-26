@@ -13,29 +13,36 @@ tags:
   - name: payment initiation
     description: Payment Initiation
 paths:
-  /payment-initiation/{id}:
+  /direct-post/{transaction-id}:
     post:
       tags:
         - payment initiation
-      summary: Post a payment request that has been authorized through the wallet.
-      operationId: initPaymentAuth
+      summary: direct_post enpoint for receiving OpenID4VP Authorization response
+      operationId: direct-post
       parameters:
         - in: path
-          name: id
+          name: transaction-id
           schema:
             type: string
           required: true
-          description: ID of the issued A2Pay.
+          description: Random generated ID of the transaction.
       requestBody:
-        description: Payment initiation request
+        description: UTF URL encoded parameters of the Authorization request.
         content:
           application/x-www-form-urlencoded:
             schema:
-              type: "string"
+              type: "object"
+              properties: 
+                vp_token:
+                  type: string
+                state:
+                  type: string
+                presentation_submission:
+                  type: string
         required: true
       responses:
         '200':
-          description:  Payment request received.
+          description:  Authorization  request received.
           content:
             application/json:
               schema:
@@ -45,6 +52,47 @@ paths:
                     type: string
                     examples:
                       - "https://bank.example.org/payment-status/id=091535f699ea575c7937fa5f0f454aee"
+                  payment_status_uri:
+                    type: string
+                    examples:
+                      - "https://bank.example.org/api/payment-status/id=091535f699ea575c7937fa5f0f454aee"
+  /a2pay-direct/{id}:
+    post:
+      tags:
+        - payment initiation
+      summary: A2Pay Direct endpoint
+      operationId: a2pay-direct
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+          description: ID of the issued A2Pay.
+      requestBody:
+        description: Base64url encoded JSON Web token containing all the properties required to verify a payment request. 
+        content:
+          application/jwt:
+            schema:
+              type: "string"
+        required: true
+      responses:
+        '200':
+          description:  Payment Authorization received.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  redirect_uri:
+                    type: string
+                    examples:
+                      - "https://bank.example.org/payment-status/id=091535f699ea575c7937fa5f0f454aee"
+                  payment_status_uri:
+                    type: string
+                    examples:
+                      - "https://bank.example.org/api/payment-status/id=091535f699ea575c7937fa5f0f454aee"
+
   /payment-status/{id}:
     get:
       tags:
