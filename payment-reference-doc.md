@@ -265,31 +265,37 @@ sequenceDiagram
     participant psp as PSP
 
     Note over psp: Out-of-band payment initiation
-    psp ->> wallet: requesting A2Pay
-    wallet ->> user: ask for approval
+    rect rgb(100, 150, 100)
+    note over wallet, psp: OpenID4VP
+    psp ->> wallet: Authorization Request(transaction_data)
+    activate wallet
+    wallet ->> user: SHOW approval dialoge
     user ->> user: review transaction
     user ->> wallet: approves presentation
-    wallet -->> psp: sending A2Pay'
-    psp -->> wallet: receiving A2Pay' OK
+    wallet -->> psp: POST Authorization Response(A2Pay')
+    psp -->> wallet: RESP receiving A2Pay' OK
+    end
+    wallet -->> user: SHOW presentation status
+    deactivate wallet
     psp ->> psp: verify A2Pay' and execute transaction
-    wallet ->> psp: query payment status
-    psp -->> wallet: payment status 
-    wallet -->> user: payment status
-    psp -->> user: payment status
+    wallet ->> psp: GET payment status
+    psp -->> wallet: RESP payment status 
+    wallet -->> user: SHOW payment status
+    psp -->> user: SHOW payment status
 ```
 
 Out-of-band payment initiation:
 The payment process is initiated through an out-of-band mechanism, such as a mobile app, online banking portal, or third-party provider.
-1.	PSP requests A2Pay:
-The Payment Service Provider (PSP) sends an authorization request including the `transaction_data` with the payment request to the user’s wallet to obtain the A2Pay credential required for the transaction. Note: *Details of passing the authorization request by reference are omitted for readability reasons.*
+1.	Authorization Request requesting A2Pay:
+The Payment Service Provider (PSP) sends an OpenID4VP authorization request including the `transaction_data` with the payment request to the user’s wallet to obtain the A2Pay credential required for the transaction. Note: *Details of passing the authorization request by reference are omitted for readability reasons.*
 2.	Wallet asks user for approval:
 The wallet prompts the user to review and approve the transaction.
 3.	User reviews the transaction:
 The user evaluates the details of the transaction to ensure its accuracy and validity.
 4.	User approves the presentation:
 After reviewing, the user provides their approval to proceed with the transaction by confirming it in the wallet.
-5.	Wallet sends A2Pay' to PSP:
-The wallet presents the A2Pay' including the `transaction_data_hashes` along with the authorisation response to the PSP as requested.
+5.	Authorization Response sending A2Pay' to PSP:
+The wallet presents the A2Pay' including the `transaction_data_hashes` along with the OpenID4VP authorization response to the PSP as requested.
 6.	PSP acknowledges receipt of A2Pay':
 The PSP confirms that the authorization response with the A2Pay' has been received successfully and sends back the `redirect_uri` and the `payment_status_uri` to the wallet.
 7.	PSP verifies A2Pay and executes the transaction:
@@ -298,9 +304,9 @@ The PSP validates the authenticity and integrity of the A2Pay'. If valid, the PS
 The wallet initiates a query to the PSP using the `payment_status_uri` to retrieve the current status of the payment.
 9.	PSP provides payment status to wallet:
 The PSP responds to the wallet with the payment status, indicating whether the transaction was successful or if any issues occurred.
-10.	Wallet updates user with payment status:
+10.	Wallet shows payment status to user:
 The wallet communicates the payment status to the user, providing confirmation or detailing any errors.
-11.	PSP updates user with payment status:
+11.	PSP shows payment status to user:
 As an additional step, the PSP also informs the user of the payment status, offering direct confirmation from their side.
 
 #### Extended PaymentAuth flow
@@ -315,37 +321,42 @@ sequenceDiagram
     participant wallet as Wallet
     participant psp2 as PSP'
     participant psp as PSP
-
-    psp2 ->> wallet: requesting A2Pay
-    wallet ->> user: ask for approval
+    rect rgb(100, 150, 100)
+    note over wallet, psp2: OpenID4VP
+    psp2 ->> wallet: Authorization Request(transaction_data)
+    activate wallet
+    wallet ->> user: SHOW approval dialoge
     user ->> user: review transaction
     user ->> wallet: approves presentation
-    wallet -->> psp2: sending A2Pay'
-    psp2 -->> wallet: receiving A2Pay' OK
-    wallet -->> user: status presentation
-    critical payment rails implementation
+    wallet -->> psp2: Authorization Response(A2Pay')
+    psp2 -->> wallet: RESP receiving A2Pay' OK
+    end
+    wallet -->> user: SHOW presentation status
+    deactivate wallet
+    rect rgb(200, 100, 100)
+    note over psp, psp2: implemented by payment rail 
     psp2 ->> psp: forwarding A2Pay'
     psp -->> psp2: receiving A2Pay' OK
-    psp ->> psp: verify A2Pay' and execute transaction
     end
-    wallet ->> psp2: query payment status
-    psp2 ->> psp: query payment status
-    psp -->> psp2: payment status 
-    psp2 -->> wallet: payment status
-    wallet -->> user: payment status
-    psp2 -->> user: payment status
+    psp ->> psp: verify A2Pay' and execute transaction
+    wallet ->> psp2: GET payment-status(payment-id)
+    psp2 ->> psp: GET payment-status(payment-id)
+    psp -->> psp2: RESP payment-status 
+    psp2 -->> wallet: RESP payment-status
+    wallet -->> user: SHOW payment status
+    psp2 -->> user: SHOW payment status
 ```
 
-1.	PSP' requests A2Pay:
-The merchant’s PSP (PSP') sends an authorization request including the `transaction_data` with the payment request to the user’s wallet to obtain the A2Pay issued by the user’s PSP. *Note: Details of passing the authorization request by reference are omitted for readability reasons.*
+1.	Authorization Request requesting A2Pay:
+The merchant’s PSP (PSP') sends an openID4VP authorization request including the `transaction_data` with the payment request to the user’s wallet to obtain the A2Pay issued by the user’s PSP. *Note: Details of passing the authorization request by reference are omitted for readability reasons.*
 2.	Wallet asks user for approval:
 The wallet prompts the user to review the payment request and approve the presentation of the A2Pay.
 3.	User reviews the transaction:
 The user evaluates the details of the payment request to ensure its accuracy and validity.
 4.	User approves the presentation:
 After reviewing the transaction details, the user confirms the request in the wallet, granting approval to present the A2Pay.
-5.	Wallet sends A2Pay' to PSP':
-The wallet presents the A2Pay' including the `transaction_data_hashes` along with the authorisation response to PSP' as requested.
+5.	Authorization Response sends A2Pay' to PSP':
+The wallet presents the A2Pay' including the `transaction_data_hashes` along with the OpenID4VP authorisation response to PSP' as requested.
 6.	PSP' acknowledges receipt of A2Pay':
 PSP’ confirms that the A2Pay has been successfully received and sends back the `redirect_uri` and `payment_status_uri` to the wallet.
 7.	Wallet updates user on status presentation:
@@ -364,9 +375,9 @@ PSP' initiates a query to PSP using the `payment_status_uri` to retrieve the cur
 The user’s PSP sends the [payment status](#payment-status) back to PSP'.
 14.	PSP' forwards [payment status](#payment-status) to wallet:
 PSP' relays the payment status received from the issuing PSP to the wallet.
-15.	Wallet updates user with payment status:
+15.	Wallet shows payment status to user:
 The wallet provides the user with the payment status, indicating whether the transaction was successful or if any issues occurred.
-16.	PSP' updates user with payment status:
+16.	PSP' shows payment status to user:
 PSP' provides an additional confirmation of the payment status to the user, ensuring they are informed directly using a channel linked to the PSP' like a merchant / bank app or website.
 
 To enable the Extended PaymentAuth Flow and allow a PSP' to properly route an authorized payment request, the A2Pay must include the following mandatory details as defined in the [A2Pay schema](a2pay-schema.json):
