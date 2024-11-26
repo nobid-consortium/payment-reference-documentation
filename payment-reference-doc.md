@@ -420,7 +420,10 @@ Example of a [Payment Authorization Object](#payment-authorization-object) paylo
 
 ### Combined presentations
 
-Relying on the presentation flows described above and also the requirements defined for the wallet in ARF Annex 2 section A.2.3.18 Topic 18[^arf_annex2], a PSP may combine the request for an A2Pay' with additional attributes that may reside in the wallet. Therby they can leverage the additional information to build more advanced use-case like combining payment with proof of age e.g..
+Relying on the presentation flows described above and also the requirements defined for the wallet in ARF Annex 2 section A.2.3.18 Topic 18[^arf_annex2], a PSP may combine the request for an A2Pay' with additional attestations that may reside in the wallet. Therby they can leverage the additional information to build more advanced use-case like combining payment with proof of age e.g..
+
+>[!CAUTION]
+>The capability to request multiple attestations also introduces the potential for multiple A2Pay requests, which could result in the user unintentionally authorizing the same payment transaction multiple times. To mitigate this risk, the wallet must implement safeguards to ensure that each payment request is uniquely associated with a single presentation. Once a payment request is linked to a presentation, the wallet should prevent it from being reused, thereby guaranteeing that the same transaction cannot be authorized more than once.
 
 ### Screenflow
 
