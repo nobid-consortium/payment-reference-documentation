@@ -122,11 +122,11 @@ eyJ0eXAiOiJzZCtqd3QiLCJhbGciOiJFUzI1NiJ9.eyJpc3MiOiJodHRwczovL2JhbmsuZXhhbXBsZS5
 
 ## Payment
 
-The process of authenticating and authorizing a payment is carried out by presenting the A2Pay (called A2Pay' hereafter) to the Payment Service Provider (PSP) using the OpenID4VP protocol [^openid4vp]. This is implemented following Section 5 of the OpenID4VC High Assurance Interoperability Profile (HAIP) with SD-JWT VC [^openid4vc_hip], which specifies the following key requirements:
+The process of authenticating and authorizing a payment is carried out by presenting the A2Pay (called A2Pay' hereafter) to the Payment Service Provider (PSP) using the OpenID4VP protocol [^openid4vp]. This is implemented following Section 5 of the OpenID4VC High Assurance Interoperability Profile (HAIP) with SD-JWT VC [^openid4vc_hip], which implies the following:
 
 1.	Presentation Format: A2Pay' is formatted as a Self-Disclosure JWT (SD-JWT) presentation, adhering to the standards defined by Self Diclosure for JWTs[^sd-jwt].
 2.	Delivery Mechanism: The A2Pay' is transmitted to the PSP using an HTTP POST request with the `response_mode` set to `direct_post`. Details regarding the payment initiation endpoint and how the HTTP POST request is structured can be found in the [A2Pay API specification](a2pay-api.yml) and in Section 7.2 of OpenID4VP [^openid4vp].
-3.	Response Handling by PSP: Upon successful receipt and processing of the Authorization Request, the PSP responds with an `HTTP 200` status. The response includes a JSON object containing the `redirect_uri` property. The given URI may be used to query the [payment status](#payment-status).
+3.	Response Handling by PSP: Upon successful receipt and processing of the Authorization Response, the PSP responds with an `HTTP 200` status. The response includes a JSON object containing the `redirect_uri` property. The given URI may be used to indicate the [payment status](#payment-status) to the user.
 
 The required trust relations between the wallet and the PSP during this process is established as outlined in ARF Section 6.6.3 [^arf], which elaborates on the mechanisms for mutual authentication and the secure exchange of information. 
 
@@ -138,7 +138,7 @@ To fulfill the requirement for dynamic linking, the A2Pay' must include the tran
 The OpenID4VP protocol [^openid4vp] supports the inclusion of dynamic transaction data in the authorization process using the `transaction_data` parameter. The flow operates as follows:
 
 1.	The relying party includes the transaction-specific details (e.g., payment amount, payee information) in the authorization request using the `transaction_data` parameter.
-2. The wallet processes the `transaction_data` values and computes a cryptographic hash of this data. This hash is embedded into the key-binding JWT of the A2Pay', which is then sent back to the PSP along with the authorization response.
+2. The wallet processes the `transaction_data` values and computes a cryptographic hash of this data. This hash is embedded into the key-binding JWT of the A2Pay', which is then sent back to the PSP as part of the authorization response.
 3.	Authentication Code Generation: The computed hash serves as the authentication code required under PSD2 for dynamic linking, tieing the authorization response to the specific payment transaction details.
 4.	User Approval Dialogue: To ensure transparency and user consent, the payment request details must be presented to the user within the wallet’s approval interface. This allows the user to review and approve the specific payment details. The user approval dialogue must comply with the requirements specified in ARF Section 6.6.3.4 [^arf] and ARF Annex 2, Section A.2.3.6 Topic 6 [^arf_annex2].
 
