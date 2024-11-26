@@ -72,11 +72,11 @@ The private key serves as the primary element for implementing Strong Customer A
 1.	Binding to the Wallet’s Secure Cryptographic Device (WSCD):
 The private key used to sign payment transactions is securely bound to the WSCD of the wallet and cannot be extracted. This ensures that the private key inherently provides the possession factor required for SCA, as it is uniquely tied to the holder’s wallet.
 2.	Access Protection:
-Access to the private key is always safeguarded by an additional authentication layer, which may include:
+Using the private key for signing is always safeguarded by an additional authentication layer, which may include:
     - A PIN, known only to the holder, providing the knowledge factor for SCA, or
     - Biometric verification, such as fingerprint or facial recognition, fulfilling the inherence factor for SCA.
 
-These security measures collectively ensure that the private key remains protected and can only be accessed by the authorized wallet holder, thus meeting the multi-factor requirements of SCA.
+These security measures collectively ensure that the private key remains protected and can only be used by the authorized wallet holder, thus meeting the multi-factor requirements of SCA.
 
 See also requirement specification ARF Annex 2 A.2.3.6 Topic 6 - User Approval RBA10[^arf_annex2] for details. 
 
