@@ -33,7 +33,7 @@
     },
     "currency": {
       "type": "string",
-      "description": "ISO 4217 Alpha 3 currency code (e.g., USD, EUR).",
+      "description": "ISO 4217 Alpha 3 currency code.",
       "pattern": "^[A-Z]{3}$",
       "minLength": 3,
       "maxLength": 3,
@@ -79,6 +79,48 @@
         }
       },
       "required": ["iban"]
+    },
+    "start-date": {
+      "type": "string",
+      "format": "date",
+      "description": "Start of a recurring payment.",
+      "examples": [
+        "2018-11-13"
+      ]
+    },
+    "end-date": {
+      "type": "string",
+      "format": "date",
+      "description": "End of a recurring payment.",
+      "examples": [
+        "2018-11-13"
+      ]
+    },
+    "frequency": {
+      "type": "string",
+      "description": "End of a recurring payment indicated as EventFrequency7Code of ISO 20022",
+      "enum": ["Daily", "Weekly", "EveryTwoWeeks", "Monthly","EveryTwoMonths", "Quarterly", "SemiAnnual", "Annual", "MonthlyVariable"],
+      "examples": [
+        "Daily"
+      ]
+    },
+    "execution-day": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 31,
+      "description": "Day of execution.",
+      "examples": [
+        12
+      ]
+    },
+    "execution-month": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 12,
+      "description": "Month of execution.",
+      "examples": [
+        3
+      ]
     }
   },
   "additionalProperties": false,
