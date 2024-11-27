@@ -260,9 +260,9 @@ In this flow, the relying party is the PSP (usually a bank) of the holder themse
 
 sequenceDiagram
     autonumber
-    actor user as User
-    participant wallet as Wallet
-    participant psp as PSP
+    actor user as User<br/>aka Holder
+    participant wallet as Wallet 
+    participant psp as PSP<br/>aka Verifier
 
     Note over psp: Out-of-band payment initiation
     rect rgb(100, 150, 100)
@@ -321,10 +321,10 @@ In this flow, the relying party is a third party, such as a merchant or the merc
 
 sequenceDiagram
     autonumber
-    actor user as User
+    actor user as User<br/>aka Holder
     participant wallet as Wallet
-    participant psp2 as PSP'
-    participant psp as PSP
+    participant psp2 as PSP'<br/>aka Verifier
+    participant psp as PSP<br/>aka Issuer
     rect rgb(100, 150, 100)
     note over wallet, psp2: OpenID4VP
     psp2 ->> wallet: Authorization Request(transaction_data)
