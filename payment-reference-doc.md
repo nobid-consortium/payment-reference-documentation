@@ -278,8 +278,10 @@ sequenceDiagram
     wallet -->> user: SHOW presentation status
     deactivate wallet
     psp ->> psp: verify A2Pay' and execute transaction
+    loop
     wallet ->> psp: GET payment status
     psp -->> wallet: RESP payment status 
+    end
     wallet -->> user: SHOW payment status
     psp -->> user: SHOW payment status
 ```
@@ -341,10 +343,12 @@ sequenceDiagram
     psp -->> psp2: receiving A2Pay' OK
     end
     psp ->> psp: verify A2Pay' and execute transaction
+    loop
     wallet ->> psp2: GET payment-status(payment-id)
     psp2 ->> psp: GET payment-status(payment-id)
     psp -->> psp2: RESP payment-status 
     psp2 -->> wallet: RESP payment-status
+    end
     wallet -->> user: SHOW payment status
     psp2 -->> user: SHOW payment status
 ```
