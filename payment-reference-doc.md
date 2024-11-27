@@ -253,7 +253,7 @@ Cache-Control: no-store
 
 ### Verification
 
-The successfull verification of the P2Pay signals the PSP to proceed with executing the authorized payment transaction. The verification of the A2Pay is done following the guidlines given in Self Disclosure for JWT[^sd-jwt] section 7 and specifically 7.3 and also section 6.3 of the ARF[^arf]. To verfiy the authentication code ensuring the P2Pay is bound to the intended payment transaction, the PSP must calculate the hash of the base64url encoded transcation data object of the [payment request](payment-request-schema.json) with the chosen `transaction_data_hashes_alg`. For a successful verification, the resulting hash must equal the hash in the `transaction_data_hashes` array included in the key-binding JWT. 
+The successfull verification of the P2Pay signals the PSP to proceed with executing the authorized payment transaction. The verification is done following the guidlines given in Self Disclosure for JWT[^sd-jwt] section 7 and specifically 7.3 and also section 6.3 of the ARF[^arf]. To verifiy the authentication code ensuring the P2Pay is bound to the intended payment transaction, the PSP must calculate the hash of the base64url encoded transcation data object of the [payment request](payment-request-schema.json) with the chosen `transaction_data_hashes_alg`. For a successful verification, the resulting hash must equal the hash in the `transaction_data_hashes` array included in the key-binding JWT. 
 
 The PSP may also use the `payment-id` within the payment request to ensure the payment is processed only once.
 
