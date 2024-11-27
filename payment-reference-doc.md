@@ -55,16 +55,27 @@ The European Identity Wallet relies on modern, standardized protocols to manage 
  
 This document focuses on presenting a structured approach to leverage the existing technical standards alongside the eIDAS 2.0 trust infrastructure. The goal is not only to develop and standardize a solution for Strong Customer Authentication (SCA) and electronic payments utilizing the European Identity Wallet but also to integrate payments with other forms of attestations as referenced in ARF, section A.2.3.20 Topic 20[^arf_annex2]. By doing so, it seeks to unlock the vast potential of the eIDAS ecosystem, enabling seamless interoperability, enhanced trust, and innovative use cases that extend beyond traditional payment processes.
 
-## Registration
-Before the wallet can be used to authorize payments, a registration process must be completed. The registration process, which typically occurs as a one-time setup, establishes a link between the user’s wallet instance and their Payment Service Provider (PSP) responsible for managing the payment account. This process is crucial as it allows the PSP to authenticate the wallet and verify its legitimacy, thereby establishing a secure and trusted relationship between the two entities. The details of this verification process and the mechanisms for building this trust are further outlined in the Architecture Reference Framework (ARF), Section 6.6.2[^arf].
+## Terminology
 
-During the registration process, the Payment Service Provider (PSP), also referred to as the issuer, issues dedicated Electronic Attestations of Attributes (EAA) required to facilitate payments and SCA (called Attestation to Pay or A2Pay hereafter) to the wallet. This is achieved using the OpenID4VCI protocol [^openid4vci] in accordance with the OpenID4VC High Assurance Interoperability Profile (HAIP) with SD-JWT VC (Selective Disclosure JSON Web Token Verifiable Credential) [^openid4vc_hip]. OpenID4VCI enables the issuer to issue the A2Pay within an authenticated and authorized context. While the exact method of establishing this context is determined by the issuer and is outside the scope of this document, it can be achieved through mechanisms such as:
+This document defines the following terms:
+
+- **ASPSP**: Account Servicing Payment Service Provider managing payment accounts of the holder.
+- **TPP**: Third Party Payment Service Provider or Merchant requesting and processing payments.
+- **PSP**: Payment Service Provider. Depending on the context, both ASPSP and TPP can be  referred to as payment service provider. 
+- **A2Pay**: SD-JWT VC credential / attestation issued by an ASPSP to a holder referencing an account for payments.  
+- **P2Pay**: Presentation of the A2Pay SD-JWT VC credential that is used to authorize a payment.
+
+
+## Registration
+Before the wallet can be used to authorize payments, a registration process must be completed. The registration process, which typically occurs as a one-time setup, establishes a link between the user’s wallet instance and their Account Servicing Payment Service Provider (ASPSP) responsible for managing the payment account. This process is crucial as it allows the ASPSP to authenticate the wallet and verify its legitimacy, thereby establishing a secure and trusted relationship between the two entities. The details of this verification process and the mechanisms for building this trust are further outlined in the Architecture Reference Framework (ARF), Section 6.6.2[^arf].
+
+During the registration process, the ASPSP, also referred to as the issuer, issues dedicated Electronic Attestations of Attributes (EAA) required to facilitate payments and SCA (called Attestation to Pay or A2Pay hereafter) to the wallet. This is achieved using the OpenID4VCI protocol [^openid4vci] in accordance with the OpenID4VC High Assurance Interoperability Profile (HAIP) with SD-JWT VC (Selective Disclosure JSON Web Token Verifiable Credential) [^openid4vc_hip]. OpenID4VCI enables the issuer to issue the A2Pay within an authenticated and authorized context. While the exact method of establishing this context is determined by the issuer and is outside the scope of this document, it can be achieved through mechanisms such as:
 
 * Login credentials (e.g., Online Banking credentials),
 * One-Time Passwords (OTPs),
 * Two-Factor Authentication (2FA) apps, including proprietary banking applications.
 
-As outlined in ARF sections 6.6.6.3 and 6.6.3.7 [^arf] as well as Annex 2, Section A.2.3.9 Topic 9 [^arf_annex2], the issued A2Pay is cryptographically tied to a private key safeguarded by the wallet’s Secure Cryptographic Applications (WSCA) and Secure Cryptographic Devices (WSCD). During the credential issuance process, the corresponding public key is securely transmitted to the PSP, which must store it along with the holder’s account details. This public key is essential for verifying payment transactions that the wallet holder authorizes or digitally signs using their private key.
+As outlined in ARF sections 6.6.6.3 and 6.6.3.7 [^arf] as well as Annex 2, Section A.2.3.9 Topic 9 [^arf_annex2], the issued A2Pay is cryptographically tied to a private key safeguarded by the wallet’s Secure Cryptographic Applications (WSCA) and Secure Cryptographic Devices (WSCD). During the credential issuance process, the corresponding public key is securely transmitted to the ASPSP, which must store it along with the holder’s account details. This public key is essential for verifying payment transactions that the wallet holder authorizes or digitally signs using their private key.
 
 
 The private key serves as the primary element for implementing Strong Customer Authentication (SCA) within the wallet. Its security is based on the following assumptions:
@@ -82,7 +93,7 @@ See also requirement specification ARF Annex 2 A.2.3.6 Topic 6 - User Approval R
 
 ### A2Pay - Attestation to pay
 
-The A2Pay (Attestation to Pay) serves as a key component for identifying the wallet holder’s Payment Service Provider (PSP) and the specific account to which the attestation is linked. Beyond merely associating the holder with their PSP and account, the A2Pay can also specify a `payment-product` — the network or system used to process the payment- along with the additional properties, which can be utilized by relying parties, such as merchants, to initiate and process payment transactions seamlessly.
+The A2Pay (Attestation to Pay) serves as a key component for identifying the wallet holder’s Payment Service Provider (PSP) and the specific account to which the attestation is linked. Beyond merely associating the holder with their ASPSP and account, the A2Pay can also specify a `payment-product` — the network or system used to process the payment- along with the additional properties, which can be utilized by relying parties, such as merchants, to initiate and process payment transactions seamlessly.
 
 The structure and detailed specifications of the A2Pay are defined in the JSON schema file [a2pay-schema.json](a2pay-schema.json), which outlines all required attributes and their formats. This schema ensures interoperability and standardization of the attestation across different implementations and use cases.
 
@@ -124,8 +135,8 @@ eyJ0eXAiOiJzZCtqd3QiLCJhbGciOiJFUzI1NiJ9.eyJpc3MiOiJodHRwczovL2JhbmsuZXhhbXBsZS5
 
 The process of authenticating and authorizing a payment is carried out by presenting the A2Pay to the Payment Service Provider (PSP) using the OpenID4VP protocol [^openid4vp]. This is implemented following Section 5 of the OpenID4VC High Assurance Interoperability Profile (HAIP) with SD-JWT VC [^openid4vc_hip], which implies the following:
 
-1.	Credential Format: As credential format for the A2Pay SD-JWT VC must be used[^sd-jwt-vc]. The presentation of an A2Pay towards a PSP will henceforth be referred to as **A2Pay'**. 
-2.	Delivery Mechanism: The A2Pay' is transmitted to the PSP using an HTTP POST request with the `response_mode` set to `direct_post`. Details regarding the payment initiation endpoint and how the HTTP POST request is structured can be found in the [A2Pay API specification](a2pay-api.yml) and in Section 7.2 of OpenID4VP [^openid4vp].
+1.	Credential Format: As credential format for the A2Pay SD-JWT VC must be used[^sd-jwt-vc]. The presentation of an A2Pay towards a PSP will henceforth be referred to as **P2Pay**. 
+2.	Delivery Mechanism: The P2Pay is transmitted to the PSP using an HTTP POST request with the `response_mode` set to `direct_post`. Details regarding the payment initiation endpoint and how the HTTP POST request is structured can be found in the [A2Pay API specification](a2pay-api.yml) and in Section 7.2 of OpenID4VP [^openid4vp].
 3.	Response Handling by PSP: Upon successful receipt and processing of the Authorization Response, the PSP responds with an `HTTP 200` status. The response includes a JSON object containing the `redirect_uri` property. The given URI may be used to indicate the [payment status](#payment-status) to the user.
 
 The required trust relations between the wallet and the PSP during this process is established as outlined in ARF Section 6.6.3 [^arf], which elaborates on the mechanisms for mutual authentication and the secure exchange of information. 
@@ -133,16 +144,16 @@ The required trust relations between the wallet and the PSP during this process 
 
 ### Dynamic linking
 
-To fulfill the requirement for dynamic linking, the A2Pay' must include the transaction details of the payment (referred to as payment request), signed by the wallet. This ensures that the authentication process is securely tied to the specific payment transaction, as mandated by PSD2.
+To fulfill the requirement for dynamic linking, the P2Pay must include the transaction details of the payment (referred to as payment request), signed by the wallet. This ensures that the authentication process is securely tied to the specific payment transaction, as mandated by PSD2.
 
 The OpenID4VP protocol [^openid4vp] supports the inclusion of dynamic transaction data in the authorization process using the `transaction_data` parameter. The flow operates as follows:
 
 1.	The relying party includes the transaction-specific details (e.g., payment amount, payee information) in the authorization request using the `transaction_data` parameter.
-2. The wallet processes the `transaction_data` values and computes a cryptographic hash of this data. This hash is embedded into the key-binding JWT of the A2Pay', which is then sent back to the PSP as part of the authorization response.
+2. The wallet processes the `transaction_data` values and computes a cryptographic hash of this data. This hash is embedded into the key-binding JWT of the P2Pay, which is then sent back to the PSP as part of the authorization response.
 3.	Authentication Code Generation: The computed hash serves as the authentication code required under PSD2 for dynamic linking, tieing the authorization response to the specific payment transaction details.
 4.	User Approval Dialogue: To ensure transparency and user consent, the payment request details must be presented to the user within the wallet’s approval interface. This allows the user to review and approve the specific payment details. The user approval dialogue must comply with the requirements specified in ARF Section 6.6.3.4 [^arf] and ARF Annex 2, Section A.2.3.6 Topic 6 [^arf_annex2].
 
-This process ensures compliance with PSD2’s requirement for dynamic linking by securely binding the transaction details to the authentication process. By incorporating the transaction hash into the key-binding JWT of the A2Pay', the wallet guarantees that any tampering with the transaction data invalidates the authentication.
+This process ensures compliance with PSD2’s requirement for dynamic linking by securely binding the transaction details to the authentication process. By incorporating the transaction hash into the key-binding JWT of the P2Pay, the wallet guarantees that any tampering with the transaction data invalidates the authentication.
 
 ### Payment request object
 
@@ -242,17 +253,17 @@ Cache-Control: no-store
 
 ### Verification
 
-The successfull verification of the A2Pay' signals the PSP to proceed with executing the authorized payment transaction. The verification of the A2Pay is done following the guidlines given in Self Disclosure for JWT[^sd-jwt] section 7 and specifically 7.3 and also section 6.3 of the ARF[^arf]. To verfiy the authentication code ensuring the A2Pay' is bound to the intended payment transaction, the PSP must calculate the hash of the base64url encoded transcation data object of the [payment request](payment-request-schema.json) with the chosen `transaction_data_hashes_alg`. For a successful verification, the resulting hash must equal the hash in the `transaction_data_hashes` array included in the key-binding JWT. 
+The successfull verification of the P2Pay signals the PSP to proceed with executing the authorized payment transaction. The verification of the A2Pay is done following the guidlines given in Self Disclosure for JWT[^sd-jwt] section 7 and specifically 7.3 and also section 6.3 of the ARF[^arf]. To verfiy the authentication code ensuring the P2Pay is bound to the intended payment transaction, the PSP must calculate the hash of the base64url encoded transcation data object of the [payment request](payment-request-schema.json) with the chosen `transaction_data_hashes_alg`. For a successful verification, the resulting hash must equal the hash in the `transaction_data_hashes` array included in the key-binding JWT. 
 
 The PSP may also use the `payment-id` within the payment request to ensure the payment is processed only once.
 
 ### Flows 
 
-The presentation process outlined above can be adapted to various payment use cases, depending on the specific role of the relying party requesting the A2Pay'.
+The presentation process outlined above can be adapted to various payment use cases, depending on the specific role of the relying party requesting the P2Pay.
 
 #### Basic PaymentAuth flow
 
-In this flow, the relying party is the PSP (usually a bank) of the holder themself. The holder is requesting a payment transaction using an out-of-band mechanism like the banks mobile app, online banking portal or even a third party provider for payment initiation according to PSD2 (PISP). The holders PSP is initiating the flow by requesting the A2Pay' they have previously issued to the wallet themself in the prior [registration flow](#registration). 
+In this flow, the relying party is the ASPSP (usually a bank) of the holder themself. The holder is requesting a payment transaction using an out-of-band mechanism like the banks mobile app, online banking portal or even a third party provider for payment initiation according to PSD2 (PISP). The ASPSP is initiating the flow by requesting the P2Pay they have previously issued to the wallet themself in the prior [registration flow](#registration). 
 
 **This scenario applies to the obligations for PSPs to accept the wallet for SCA with regards to the eIDAS2 regulation.**
 
@@ -262,7 +273,7 @@ sequenceDiagram
     autonumber
     actor user as User<br/>aka Holder
     participant wallet as Wallet 
-    participant psp as PSP<br/>aka Issuer & Verifier
+    participant psp as ASPSP<br/>aka Issuer & Verifier
 
     Note over psp: Out-of-band payment initiation
     rect rgb(100, 150, 100)
@@ -272,12 +283,12 @@ sequenceDiagram
     wallet ->> user: SHOW approval dialoge
     user ->> user: review transaction
     user ->> wallet: approves presentation
-    wallet -->> psp: POST Authorization Response(A2Pay')
-    psp -->> wallet: RESP receiving A2Pay' OK
+    wallet -->> psp: POST Authorization Response(P2Pay)
+    psp -->> wallet: RESP receiving P2Pay OK
     end
     wallet -->> user: SHOW presentation status
     deactivate wallet
-    psp ->> psp: verify A2Pay' and execute transaction
+    psp ->> psp: verify P2Pay and execute transaction
     loop
     wallet ->> psp: GET payment status
     psp -->> wallet: RESP payment status 
@@ -291,31 +302,31 @@ The payment process is initiated through an out-of-band mechanism, such as a mob
 1. Authorization Request requesting A2Pay:
 The Payment Service Provider (PSP) sends an OpenID4VP authorization request including the `transaction_data` with the payment request to the user’s wallet to obtain the A2Pay credential required for the transaction. Note: *Details of passing the authorization request by reference are omitted for readability reasons.* This step is done either by link for a same-device flow or by QR-code for cross-device flow.
 2. Wallet asks user for approval:
-The wallet authenticates the PSP' (ARF[^arf], section 6.6.3.2) and prompts the user to review the payment request and approve the presentation of the A2Pay.
+The wallet authenticates the TPP (ARF[^arf], section 6.6.3.2) and prompts the user to review the payment request and approve the presentation of the A2Pay.
 3. User reviews the transaction:
 The user evaluates the details of the transaction to ensure its accuracy and validity.
 4. User approves the presentation:
 After reviewing the transaction details, the user confirms the request in the wallet, granting approval to present the A2Pay (ARF[^arf], section 6.6.3.4).
-5. Authorization Response sending A2Pay' to PSP:
-The wallet presents the A2Pay' including the `transaction_data_hashes` along with the OpenID4VP authorization response to the PSP as HTTP POST request.
-6. PSP acknowledges receipt of A2Pay':
-The PSP confirms that the authorization response with the A2Pay' has been received successfully and sends back the `redirect_uri` and the `payment_status_uri` to the wallet.
+5. Authorization Response sending P2Pay to ASPSP:
+The wallet presents the P2Pay including the `transaction_data_hashes` along with the OpenID4VP authorization response to the ASPSP as HTTP POST request.
+6. ASPSP acknowledges receipt of P2Pay:
+The ASPSP confirms that the authorization response with the P2Pay has been received successfully and sends back the `redirect_uri` and the `payment_status_uri` to the wallet.
 7. Wallet updates user on status presentation:
 The wallet provides the user with a status update, indicating that the A2Pay has been successfully sent.
-8. PSP [verifies](#verification) A2Pay' and executes the transaction:
-The PSP validates the authenticity and integrity of the A2Pay'. If valid, the PSP proceeds to execute the payment transaction.
+8. ASPSP [verifies](#verification) P2Pay and executes the transaction:
+The ASPSP validates the authenticity and integrity of the P2Pay. If valid, the ASPSP proceeds to execute the payment transaction.
 9. Wallet queries payment status:
-The wallet initiates a query to the PSP using the `payment_status_uri` to retrieve the current status of the payment.
-10. PSP provides payment status to wallet:
-The PSP responds to the wallet with the payment status, indicating whether the transaction was successful or if any issues occurred.
+The wallet initiates a query to the ASPSP using the `payment_status_uri` to retrieve the current status of the payment.
+10. ASPSP provides payment status to wallet:
+The ASPSP responds to the wallet with the payment status, indicating whether the transaction was successful or if any issues occurred.
 11.	Wallet shows payment status to user:
 The wallet communicates the payment status to the user, providing confirmation or detailing any errors.
-12.	PSP shows payment status to user:
-As an additional step, the PSP also informs the user of the payment status, offering direct confirmation from their side.
+12. ASPSP shows payment status to user:
+As an additional step, the ASPSP also informs the user of the payment status, offering direct confirmation from their side.
 
 #### Extended PaymentAuth flow
 
-In this flow, the relying party is a third party, such as a merchant or the merchant’s Payment Service Provider (referred to as **PSP'** hereafter). PSP' initiates the process by requesting an A2Pay issued by the holder’s PSP. Once the PSP' receives the A2Pay', it must forward it, along with the original payment request object, to the issuing PSP. The issuing PSP then performs the necessary [verification](#verification) and executes the payment transaction.
+In this flow, the relying party is a third party, such as a merchant or the merchant’s Payment Service Provider (referred to as **TPP** hereafter). TPP initiates the process by requesting an A2Pay issued by an ASPSP. Once the TPP receives the P2Pay, it must forward it, along with the original payment request object, to the ASPSP. The ASPSP then performs the necessary [verification](#verification) and executes the payment transaction.
 
 ```mermaid
 
@@ -323,8 +334,8 @@ sequenceDiagram
     autonumber
     actor user as User<br/>aka Holder
     participant wallet as Wallet
-    participant psp2 as PSP'<br/>aka Verifier
-    participant psp as PSP<br/>aka Issuer
+    participant psp2 as TPP<br/>aka Verifier
+    participant psp as ASPSP<br/>aka Issuer
     rect rgb(100, 150, 100)
     note over wallet, psp2: OpenID4VP
     psp2 ->> wallet: Authorization Request(transaction_data)
@@ -332,17 +343,17 @@ sequenceDiagram
     wallet ->> user: SHOW approval dialoge
     user ->> user: review transaction
     user ->> wallet: approves presentation
-    wallet -->> psp2: Authorization Response(A2Pay')
-    psp2 -->> wallet: RESP receiving A2Pay' OK
+    wallet -->> psp2: Authorization Response(P2Pay)
+    psp2 -->> wallet: RESP receiving P2Pay OK
     end
     wallet -->> user: SHOW presentation status
     deactivate wallet
     rect rgb(200, 100, 100)
     note over psp, psp2: implemented by payment rail 
-    psp2 ->> psp: forwarding A2Pay'
-    psp -->> psp2: receiving A2Pay' OK
+    psp2 ->> psp: forwarding P2Pay
+    psp -->> psp2: receiving P2Pay OK
     end
-    psp ->> psp: verify A2Pay' and execute transaction
+    psp ->> psp: verify P2Pay and execute transaction
     loop
     wallet ->> psp2: GET payment-status(payment-id)
     psp2 ->> psp: GET payment-status(payment-id)
@@ -354,44 +365,44 @@ sequenceDiagram
 ```
 
 1.	Authorization Request requesting A2Pay:
-The PSP' sends an OpenID4VP authorization request including the `transaction_data` with the payment request to the user’s wallet to obtain the A2Pay issued by the user’s PSP. *Note: Details of passing the authorization request by reference are omitted for readability reasons.* This step is done either by link for a same-device flow or by QR-code for cross-device flow.
+The TPP sends an OpenID4VP authorization request including the `transaction_data` with the payment request to the user’s wallet to obtain the A2Pay issued by the user’s ASPSP. *Note: Details of passing the authorization request by reference are omitted for readability reasons.* This step is done either by link for a same-device flow or by QR-code for cross-device flow.
 2.	Wallet asks user for approval:
-The wallet authenticates the PSP' (ARF[^arf], section 6.6.3.2) and prompts the user to review the payment request and approve the presentation of the A2Pay.
+The wallet authenticates the TPP (ARF[^arf], section 6.6.3.2) and prompts the user to review the payment request and approve the presentation of the A2Pay.
 3.	User reviews the transaction:
 The user evaluates the details of the payment request to ensure its accuracy and validity.
 4.	User approves the presentation:
 After reviewing the transaction details, the user confirms the request in the wallet, granting approval to present the A2Pay (ARF[^arf], section 6.6.3.4).
-5.	Authorization Response sends A2Pay' to PSP':
-The wallet presents the A2Pay' including the `transaction_data_hashes` along with the OpenID4VP authorisation response to PSP' as HTTP POST request.
-6.	PSP' acknowledges receipt of A2Pay':
-PSP’ confirms that the A2Pay has been successfully received and sends back the `redirect_uri` and `payment_status_uri` to the wallet.
+5.	Authorization Response sends P2Pay to TPP:
+The wallet presents the P2Pay including the `transaction_data_hashes` along with the OpenID4VP authorisation response to TPP as HTTP POST request.
+6.	TPP acknowledges receipt of P2Pay:
+TPP confirms that the A2Pay has been successfully received and sends back the `redirect_uri` and `payment_status_uri` to the wallet.
 7.	Wallet updates user on status presentation:
 The wallet provides the user with a status update, indicating that the A2Pay has been successfully sent.
-8.	PSP' forwards A2Pay to issuing PSP:
-PSP’ sends a [payment authorization object](#payment-authorization-object) including the the A2Pay' and the original payment request object to the user’s PSP for verification and/or execution of the payment using a supported payment rail and/or the [A2Pay Direct endpoint](#a2pay-direct-endpoint).
-9.	Issuing PSP acknowledges receipt of A2Pay:
-The user’s PSP confirms receipt of the forwarded A2Pay' as defined [here](#payment-status) and sends back the `payment_status_uri` to the PSP'.
-10.	Issuing PSP [verifies A2Pay'](#verification) and executes the transaction:
-The user’s PSP validates the authenticity and integrity of the A2Pay'. If valid, it executes the payment transaction.
-11.	Wallet queries [payment status](#payment-status) from PSP':
-The wallet initiates a query to PSP' using the `payment_status_uri` to retrieve the current status of the payment.
-12.	PSP' queries [payment status](#payment-status) from issuing PSP:
-PSP' initiates a query to PSP using the `payment_status_uri` to retrieve the current status of the payment.
-13.	Issuing PSP responds with [payment status](#payment-status) to PSP':
-The user’s PSP sends the [payment status](#payment-status) back to PSP'.
-14.	PSP' forwards [payment status](#payment-status) to wallet:
-PSP' relays the payment status received from the issuing PSP to the wallet.
+8.	TPP forwards A2Pay to issuing ASPSP:
+TPP sends a [payment authorization object](#payment-authorization-object) including the the P2Pay and the original payment request object to the ASPSP for verification and/or execution of the payment using a supported payment rail and/or the [A2Pay Direct endpoint](#a2pay-direct-endpoint).
+9.	ASPSP acknowledges receipt of A2Pay:
+ASPSP confirms receipt of the forwarded P2Pay as defined [here](#payment-status) and sends back the `payment_status_uri` to the TPP.
+10.	ASPSP [verifies P2Pay](#verification) and executes the transaction:
+ASPSP validates the authenticity and integrity of the P2Pay. If valid, it executes the payment transaction.
+11.	Wallet queries [payment status](#payment-status) from TPP:
+The wallet initiates a query to TPP using the `payment_status_uri` to retrieve the current status of the payment.
+12.	TPP queries [payment status](#payment-status) from ASPSP:
+TPP initiates a query to ASPSP using the `payment_status_uri` to retrieve the current status of the payment.
+13.	ASPSP responds with [payment status](#payment-status) to TPP:
+ASPSP sends the [payment status](#payment-status) back to TPP.
+14.	TPP forwards [payment status](#payment-status) to wallet:
+TPP relays the payment status received from the ASPSP to the wallet.
 15.	Wallet shows payment status to user:
 The wallet provides the user with the payment status, indicating whether the transaction was successful or if any issues occurred.
-16.	PSP' shows payment status to user:
-PSP' provides an additional confirmation of the payment status to the user, ensuring they are informed directly using a channel linked to the PSP' like a merchant / bank app or website.
+16.	TPP shows payment status to user:
+TPP provides an additional confirmation of the payment status to the user, ensuring they are informed directly using a channel linked to the TPP like a merchant / bank app or website.
 
-To enable the Extended PaymentAuth Flow and allow a PSP' to properly route an authorized payment request, the A2Pay must include the following mandatory details as defined in the [A2Pay schema](a2pay-schema.json):
+To enable the Extended PaymentAuth Flow and allow a TPP to properly route an authorized payment request, the A2Pay must include the following mandatory details as defined in the [A2Pay schema](a2pay-schema.json):
 
 - `payment-product`: Specifies the payment instrument or scheme to be utilized for the transaction.
 - `sub`: Account identifier or account alias linked to the A2Pay. This can be represented by an IBAN or mobile phone number for example.
 
-The transport of the A2Pay' and the related payment request may be done using the [A2Pay Direct endpoint](#a2pay-direct-endpoint) and / or an according payment rail or scheme like OpenBanking APIs or existing European / domestic schemes e.g., which must implement additional support for processing the A2Pay format, data structures and signatures and may also include additional actors like payment platforms or aquirers e.g.. The specific technical implementation details for extending individual payment rails fall outside the scope of this document.
+The transport of the P2Pay and the related payment request may be done using the [A2Pay Direct endpoint](#a2pay-direct-endpoint) and / or an according payment rail or scheme like OpenBanking APIs or existing European / domestic schemes e.g., which must implement additional support for processing the A2Pay format, data structures and signatures and may also include additional actors like payment platforms or aquirers e.g.. The specific technical implementation details for extending individual payment rails fall outside the scope of this document.
 
 ![Payment](high-level-overview.png)
 
@@ -399,7 +410,7 @@ The transport of the A2Pay' and the related payment request may be done using th
 
 Assuming a PSP is obliged to support the [Basic PaymentAuth flow](#direct-payment-flow) to comply with the eIDAS 2.0 regulation with respect to SCA, they must support the `direct_post` endpoint defined by OpenID4VP, Section 7.2[^openid4vp] as it is required by the HAIP[^openid4vc_hip]. To simplify integration efforts, A2Pay Direct defines an endpoint very similar to the one required for the `direct_post` mode. Instead of a `vp_token`, this endpoint must accept an JWT encoded [Payment Authorization Object](#payment-authorization-object).
 
-In order for a PSP to support the Extended PaymentAuth Flow using the A2Pay Direct endpoint, they must include the `payment-uri` property within the A2Pay issued during [registration](#registration). The value must be the URI a PSP' can use to send the Payment Authorization Object to.
+In order for a PSP to support the Extended PaymentAuth Flow using the A2Pay Direct endpoint, they must include the `payment-uri` property within the A2Pay issued during [registration](#registration). The value must be the URI a TPP can use to send the Payment Authorization Object to.
 
 Details for the `a2pay-direct` endpoint are described in the [A2Pay API specification](a2pay-api.yml)
 
@@ -408,9 +419,9 @@ Details for the `a2pay-direct` endpoint are described in the [A2Pay API specific
 The Payment Authorization Object is defined as a JWT according to [rfc7519](https://datatracker.ietf.org/doc/html/rfc7519) having the following claims:
 
 * `payment-request` REQUIRED: Original base64url encoded transaction data object of the [payment request](payment-request-schema.json) as it was included in `transaction_data` array of the authorization request.
-* `a2pay` REQUIRED: A2Pay'(SD-JWT VC presentation) containing the matching hash of the payment request given in `payment-request` claim within the key-binding JWT (see OpenID4VP section B4.5 [^openid4vp]). 
+* `a2pay` REQUIRED: P2Pay(SD-JWT VC presentation) containing the matching hash of the payment request given in `payment-request` claim within the key-binding JWT (see OpenID4VP section B4.5 [^openid4vp]). 
 
-The JWT must be signed by the PSP' including a certificate that reliably identifies the PSP' as it is required by article 34 of [Commission Delegated Regulation (EU) 2018/389](https://eba.europa.eu/regulation-and-policy/payment-services-and-electronic-money/regulatory-technical-standards-on-strong-customer-authentication-and-secure-communication-under-psd2). Existing qualified eIDAS certificates already used by Third Party Providers (TPPs) or the relying party access certificate issued by a Relying Party Access Certificate Authority (CA) described in ARF section 6.4[^arf] and ARF Annex 2 A.2.3.27 Topic 27[^arf_annex2] may be used.
+The JWT must be signed by the TPP including a certificate that reliably identifies the TPP as it is required by article 34 of [Commission Delegated Regulation (EU) 2018/389](https://eba.europa.eu/regulation-and-policy/payment-services-and-electronic-money/regulatory-technical-standards-on-strong-customer-authentication-and-secure-communication-under-psd2). Existing qualified eIDAS certificates already used by Third Party Providers (TPPs) or the relying party access certificate issued by a Relying Party Access Certificate Authority (CA) described in ARF section 6.4[^arf] and ARF Annex 2 A.2.3.27 Topic 27[^arf_annex2] may be used.
 
 The JWT must be digitally signed by the PSP, including a certificate that clearly and reliably identifies the PSP. This requirement aligns with Article 34 of [Commission Delegated Regulation (EU) 2018/389](https://eba.europa.eu/regulation-and-policy/payment-services-and-electronic-money/regulatory-technical-standards-on-strong-customer-authentication-and-secure-communication-under-psd2), which outlines obligations for secure communication and authentication in the context of PSD2.
 
@@ -426,7 +437,7 @@ Example of a [Payment Authorization Object](#payment-authorization-object) paylo
 
 ### Combined presentations
 
-Relying on the presentation flows described above and also the requirements defined for the wallet in ARF Annex 2 section A.2.3.18 Topic 18[^arf_annex2], a PSP may combine the request for an A2Pay' with additional attestations that may reside in the wallet. Therby they can leverage the additional information to build more advanced use-case like combining payment with proof of age or loyalty cards e.g..
+Relying on the presentation flows described above and also the requirements defined for the wallet in ARF Annex 2 section A.2.3.18 Topic 18[^arf_annex2], a PSP may combine the request for an P2Pay with additional attestations that may reside in the wallet. Therby they can leverage the additional information to build more advanced use-case like combining payment with proof of age or loyalty cards e.g..
 
 >[!CAUTION]
 >The capability to request multiple attestations also introduces the potential for multiple A2Pay requests, which could result in the user unintentionally authorizing the same payment transaction multiple times. To mitigate this risk, the wallet must implement safeguards to ensure that each payment request is uniquely associated with a single presentation. Once a payment request is linked to a presentation, the wallet should prevent it from being reused, thereby guaranteeing that the same transaction cannot be authorized more than once.
