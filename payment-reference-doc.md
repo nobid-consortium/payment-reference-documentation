@@ -262,7 +262,7 @@ sequenceDiagram
     autonumber
     actor user as User<br/>aka Holder
     participant wallet as Wallet 
-    participant psp as PSP<br/>aka Verifier
+    participant psp as PSP<br/>aka Issuer & Verifier
 
     Note over psp: Out-of-band payment initiation
     rect rgb(100, 150, 100)
