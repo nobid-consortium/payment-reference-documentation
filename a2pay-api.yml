@@ -84,10 +84,6 @@ paths:
               schema:
                 type: object
                 properties:
-                  redirect_uri:
-                    type: string
-                    examples:
-                      - "https://bank.example.org/payment-status/id=091535f699ea575c7937fa5f0f454aee"
                   payment_status_uri:
                     type: string
                     examples:
