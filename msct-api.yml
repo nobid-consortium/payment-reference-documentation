@@ -1,0 +1,47 @@
+openapi: 3.1.0
+info:
+  title: MSCT API
+  description: |-
+    API for optaining an OpenID4VP Authorization request based on a MSCT URL.
+  version: 0.0.1
+externalDocs:
+  description: Find out more on GitHub
+  url: https://github.com/nobid-consortium/payment-reference-documentation
+servers:
+  - url: https://msct.example.com
+tags:
+  - name: token exchange
+    description: Token exchange
+paths:
+  /msct/{id}:
+    post:
+      tags:
+        - token exchange
+      summary: MSCT token exchange endpoint
+      operationId: token-exchange
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+          description: ID of the issued A2Pay to use for the payment.
+      requestBody:
+        description: MSCT URL
+        content:
+          application/text:
+            schema:
+              type: "string"
+              format: uri
+              examples:
+                - "https://p.bcmt.it/1/m/?<payload>"
+        required: true
+      responses:
+        '200':
+          description: OpenID4VP authorization request object
+          content:
+            application/jwt:
+              schema:
+                type: string
+
+  

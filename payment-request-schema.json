@@ -124,5 +124,5 @@
     }
   },
   "additionalProperties": false,
-  "required": ["payment-id", "instructed-amount", "purpose", "currency", "creditor-name", "creditor-account"]
+  "required": ["payment-id", "instructed-amount", "purpose", "currency", "creditor-name"]
 }

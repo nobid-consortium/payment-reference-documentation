@@ -255,7 +255,6 @@ Cache-Control: no-store
 
 The successfull verification of the P2Pay signals the PSP to proceed with executing the authorized payment transaction. The verification is done following the guidlines given in Self Disclosure for JWT[^sd-jwt] section 7 and specifically 7.3 and also section 6.3 of the ARF[^arf]. To verifiy the authentication code ensuring the P2Pay is bound to the intended payment transaction, the PSP must calculate the hash of the base64url encoded transcation data object of the [payment request](payment-request-schema.json) with the chosen `transaction_data_hashes_alg`. For a successful verification, the resulting hash must equal the hash in the `transaction_data_hashes` array included in the key-binding JWT. 
 
-The PSP may also use the `payment-id` within the payment request to ensure the payment is processed only once.
 
 ### Flows 
 
@@ -404,6 +403,10 @@ To enable the Extended PaymentAuth Flow and allow a TPP to properly route an aut
 
 The transport of the P2Pay and the related payment request may be done using the [A2Pay Direct endpoint](#a2pay-direct-endpoint) and / or an according payment rail or scheme like OpenBanking APIs or existing European / domestic schemes e.g., which must implement additional support for processing the A2Pay format, data structures and signatures and may also include additional actors like payment platforms or aquirers e.g.. The specific technical implementation details for extending individual payment rails fall outside the scope of this document.
 
+### Security considerations
+
+To mitigate replay scenarios where the same P2Pay request is submitted to the ASPSP multiple times, the ASPSP should maintain a record of every processed P2Pay. This can be achieved by storing a hash of each P2Pay until its corresponding KB-JWT expires. To support this mechanism, the wallet should include the `exp` claim within the KB-JWT, specifying a validity period of 24 hours. This ensures that the ASPSP can effectively track and reject duplicate submissions during the lifespan of the KB-JWT.
+
 ![Payment](high-level-overview.png)
 
 ##### A2Pay Direct Endpoint
@@ -419,7 +422,8 @@ Details for the `a2pay-direct` endpoint are described in the [A2Pay API specific
 The Payment Authorization Object is defined as a JWT according to [rfc7519](https://datatracker.ietf.org/doc/html/rfc7519) having the following claims:
 
 * `payment-request` REQUIRED: Original base64url encoded transaction data object of the [payment request](payment-request-schema.json) as it was included in `transaction_data` array of the authorization request.
-* `a2pay` REQUIRED: P2Pay(SD-JWT VC presentation) containing the matching hash of the payment request given in `payment-request` claim within the key-binding JWT (see OpenID4VP section B4.5 [^openid4vp]). 
+* `a2pay` REQUIRED: P2Pay(SD-JWT VC presentation) containing the matching hash of the payment request given in `payment-request` claim within the key-binding JWT (see OpenID4VP section B4.5 [^openid4vp]).
+* `creditor-account` CONDITIONAL: String describing the account of the creditor (IBAN e.g.). Might also be contained within the payment request. 
 
 The JWT must be signed by the TPP including a certificate that reliably identifies the TPP as it is required by article 34 of [Commission Delegated Regulation (EU) 2018/389](https://eba.europa.eu/regulation-and-policy/payment-services-and-electronic-money/regulatory-technical-standards-on-strong-customer-authentication-and-secure-communication-under-psd2). Existing qualified eIDAS certificates already used by Third Party Providers (TPPs) or the relying party access certificate issued by a Relying Party Access Certificate Authority (CA) described in ARF section 6.4[^arf] and ARF Annex 2 A.2.3.27 Topic 27[^arf_annex2] may be used.
 
@@ -434,6 +438,85 @@ Example of a [Payment Authorization Object](#payment-authorization-object) paylo
   "a2pay": "eyJ0eXAiOiJzZCtqd3QiLCJhbGciOiJFUzI1NiJ9.eyJpc3MiOiJodHRwczovL2JhbmsuZXhhbXBsZS5jb20vaXNzdWVyIiwiZXhwIjoxODgzMDAwMDAwLCJuYmYiOjE3MTgxOTg0MzMsImlhdCI6MTcxODE5ODQzMywidmN0IjoiaHR0cHM6Ly9jcmVkZW50aWFscy5leGFtcGxlLmNvbS9hMnBheSIsIl9zZF9hbGciOiJTSEEtMjU2Iiwic3ViIjoiREU3NTUxMjEwODAwMTI0NTEyNjE5OSIsImlkIjoiOEQ4QUM2MTAtNTY2RC00RUYwLTlDMjItMTg2QjJBNUVENzkzIiwicGF5bWVudC1wcm9kdWN0Ijoic2N0LWluc3QtZXUiLCJwYXltZW50LXVyaSI6Imh0dHBzOi8vYmFuay5leGFtcGxlLmNvbS9wYXkvN2RmZTU0ODRnNzgiLCJjdXJyZW5jeSI6IkVVUiIsIm5hbWUiOiJNeSBBY2NvdW50IiwiY25mIjp7Imp3ayI6eyJjcnYiOiJQLTI1NiIsImt0eSI6IkVDIiwieCI6Ik5BU0oyQUR1YWdPdnJhTGY3TzRWeGNCTWJhbnR6TDlkZDBqcHZNTG5CZnMiLCJ5IjoiT0pZNnBxQ3FSSXpwRXQ3OE9YYXNXSEdncVY1WkdyZV8zY0h0cE5IODJnZyJ9fX0.4hv178s6B98WcthUTKj90mkMny2Obg64kvuuQNzI6vL-HgT7_0VRbJT_-SwDwc-vy-g7YVCYKe93Yg-PIGp7yw~eyJ0eXAiOiJrYitqd3QiLCJhbGciOiJFUzI1NiJ9.eyJpYXQiOjE3MTAwNjk3MjIsImF1ZCI6ImRpZDpleGFtcGxlOjEyMyIsIm5vbmNlIjoiazh2ZGYwbmQ2Iiwic2RfaGFzaCI6Im85MU5qUTNJVmh5U2NmSWtkcTFTXzl0LW52WVZLcmlIQUF0Q3lUdk9MUzQiLCJ0cmFuc2FjdGlvbl9kYXRhX2hhc2hlcyI6WyI3MjcyNzE1NmQxOGJkMzEzYzAyZGU1NzUxNDliM2Y1NmRkNWE2ODJlY2Q5NmVjYzdjZGE2NjAyMDI3ODYwZWUzIl19._Ssn-DojR6cN1kUROzmrQk-Y80UW8_VP_RiZKF-cSUOEG66hmb9-LR6KwhyYfamzs7T2RpHjOK5dYZjOm0NWeQ"
 }
 ```
+
+##### MSCT Payments
+ 
+In order to leverage payment solution based on Mobile Initiated SEPA (Instant) Credit Transfers (MSCT), the wallet must be enabled to process [MSCT URLs](https://www.europeanpaymentscouncil.eu/sites/default/files/kb/file/2022-06/EPC024-22v1.0%20Standardisation%20of%20QR-codes%20for%20MSCTs_0.pdf) as defined by the [EPC](https://www.europeanpaymentscouncil.eu/what-we-do/other-sepa-payments/sepa-goes-mobile/ad-hoc-multi-stakeholder-group-mobile-initiated), which can be used in an interoperability framework in domestic environment or between payment schemes and where the information contained in the URL must be used to obtain an actual OpenID4VP authorization request. This process relates to the payee-presented QR code containing a Token/MerchantID. Other scenarios where the MSCT URL contains any payment details in "clear" are not supported.
+ 
+The following rules apply for the support of MSCT payments:
+ 
+- The `payment-product` property of the A2Pay should be used to identify the MSCT interoperability framework or scheme
+- The A2Pay must also include a `msct-uri`, which refers to an endpoint the wallet must use to optain the actual OpenID4VP authorization request for a MSCT URL not in openID format.  
+- While scanning / processing an MSCT URL, the wallet must check for an compatible A2Pay based on the `payment-product` property. If multiple A2Pays are available, the user must select one. If there are no A2Pays available, the wallet must indicate to the customer that the A2Pay method must be enrolled first.
+- The wallet must exchange the token given in the MSCT URL for an OpenID4VP authorization request using the endpoint given in the `msct-uri` property of the prior selected A2Pay. The endpoint must implement the token exchange endpoint defined in [MSCT API specification](msct-api.yml)
+ 
+Example of an MSCT URL:
+ 
+```
+https://p.bcmt.it/1/m/?<payload>
+https://go.bluecode.biz/1/m/oa/?oa=<payload>
+https://xy.empsa.org/1/m/?<payload>
+```
+ 
+Example of an A2Pay supporting MSCT:
+ 
+```json
+{
+    "_sd": [],
+    "iss": "https://msct.example.com/issuer",
+    "exp": 1883000000,
+    "nbf": 1718198433,
+    "iat": 1718198433,
+    "vct": "https://credentials.example.com/a2pay",
+    "_sd_alg": "sha-256",
+    "sub": "IT12A1234512345123456789012",
+    "id": "8D8AC610-566D-4EF0-9C22-186B2A5ED793",
+    "payment-product": "Bancomat",
+    "msct-uri": "https://msct.example.com/exchange",
+    "currency": "EUR",
+    "name": "My Account",
+    "cnf": {
+      "jwk": {
+        "crv": "P-256",
+        "kty": "EC",
+        "x": "NASJ2ADuagOvraLf7O4VxcBMbantzL9dd0jpvMLnBfs",
+        "y": "OJY6pqCqRIzpEt78OXasWHGgqV5ZGre_3cHtpNH82gg"
+        }
+    }
+}
+```
+ 
+
+```mermaid
+ 
+sequenceDiagram
+    autonumber
+    actor user as User<br/>aka Holder
+    participant wallet as Wallet
+    participant psp as TPP<br/>aka Verifier
+    participant msct as MSCT<br/>Gateway
+    psp ->> msct: intiate transaction
+    msct -->> psp: MSCT URL
+    psp ->> wallet: SHOW MSCT URL as QR code
+    wallet ->> psp: scan QR code
+    opt multiple compatible A2Pay available
+    wallet ->> user: ask for A2pay
+    user -->> wallet: selects A2Pay
+    end
+    wallet ->> wallet: process token with A2Pay
+    wallet  ->> msct: POST token, A2Pay ID
+    msct -->> wallet : Authorization Request
+    note over wallet,msct: ... extended PaymentAuth Flow continues
+```
+1. TPP initiates a payment by sending the payment transaction details to an MSCT token provider to request a token.
+2. Token providers tokenizes the transaction details and returns an MSCT URL including a token to the TPP.
+3. The TPP shows the MSCT URL as QR code.
+4. Wallet scans the QR code and checks if it is holding a MSCT supporting A2Pay.
+5. If the wallet hold multiple compatible A2Pays, it must ask the user to select one.
+6. User selects the A2Pay to use.
+7. Wallet processes the payment using the `msct-uri` of the selected A2Pay.
+8. Wallet sends the MSCT URL to the MSCT provider using the `msct-uri` of the selected A2Pay.
+9. MSCT provider responds with an OpenID4VP authorization request.
 
 ### Combined presentations
 
