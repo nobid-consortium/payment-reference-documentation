@@ -223,20 +223,20 @@ Cache-Control: no-store
 }
 ```
 
-The `payment_status_uri` can subsequently be utilized to query the payment status, as it must adhere to the payment status endpoint specified in the [A2Pay API specification](a2pay-api.yml). The payment status is represented using [ISO 20022](https://www.iso20022.org/catalogue-messages/additional-content-messages/external-code-sets) payment status codes.
+The `payment_status_uri` can subsequently be utilized to query the payment status, as it must adhere to the payment status endpoint specified in the [A2Pay API specification](a2pay-api.yml). The payment status is represented using a subset of the payment status code defined in [ISO 20022](https://www.iso20022.org/catalogue-messages/additional-content-messages/external-code-sets).
 
 | Type |               Name              |                                                            Explanation                                                           |
 |:----:|:-------------------------------:|:--------------------------------------------------------------------------------------------------------------------------------:|
-| RCVD | Received                        | The payment has been received and is awaiting Strong Customer Authentication                                                     |
-| ACCP | AcceptedCustomerProfile         | The preceding check of technical validation was successful. The customer profile check was also successful.                      |
+| RCVD | Received                        | unused |
+| ACCP | AcceptedCustomerProfile         | unused |
 | ACSP | Accepted Settlement In Progress | The payment has been sent by the bank but is not yet settled in the creditor account.                                            |
 | ACSC | Accepted Settlement Completed   | The payment has been sent by the bank and settled in the creditor's account.                                                     |
-| NAUT | NotAuthorized                   | The end-user has cancelled the payment authorization.                                                                            |
+| NAUT | NotAuthorized                   | unused |
 | RJCT | Rejected                        | The payment has failed due to insufficient funds in the debtor's account                                                         |
-| PDNG | Pending                         | The debtor account holder has edited the payment in their online banking and a new Strong Customer Authentication is now pending |
-| CANC | Cancelled                       | The payment has been deleted by the end-user                                                                                     |
+| PDNG | Pending                         | unused |
+| CANC | Cancelled                       | unused |
 | PRSY | OnHold                          | The payment initiation was put on hold by the bank                                                                               |
-| PATC | Partially Accepted              | The payment requires a second authorization                                                                                      |                                                                               |   |   |
+| PATC | Partially Accepted              | unused |
 
 Example of a payment status response:
 
