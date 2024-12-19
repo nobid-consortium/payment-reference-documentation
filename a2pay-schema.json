@@ -12,6 +12,15 @@
         "https://bank.example.com/"
       ]
     },
+    "psp": {
+      "type": "string",
+      "maxLength": 250,
+      "description": "Identifier of the the PSP",
+      "format": "uri",
+      "examples": [
+        "https://bank.example.com/"
+      ]
+    },
     "iat": {
       "type": "integer",
       "examples": [
@@ -61,27 +70,6 @@
         "bancomat-pay"
       ]
     },
-    "payment-uri": {
-      "type": "string",
-      "maxLength": 200,
-      "description": "URI to send the signed A2Pay presentation too.",
-      "minLength": 1,
-      "format": "uri",
-      "examples": [
-        "https://bank.example.com/pay/7dfe5484g78/init"
-      ]
-    },
-    "currency": {
-      "type": "string",
-      "description": "ISO 4217 Alpha 3 currency code (e.g., USD, EUR).",
-      "pattern": "^[A-Z]{3}$",
-      "minLength": 3,
-      "maxLength": 3,
-      "examples": [
-        "EUR",
-        "NOK"
-      ]
-    },
     "name": {
       "type": "string",
       "description": "Name of the account.",
@@ -92,5 +80,5 @@
     }
   },
   "additionalProperties": true,
-  "required": ["iss", "iat", "nbf", "exp", "sub", "id", "currency"]
+  "required": ["iss", "iat", "nbf", "exp", "sub", "id", "psp"]
 }
