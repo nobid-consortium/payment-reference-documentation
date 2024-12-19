@@ -504,7 +504,6 @@ HTTP/1.1 200 OK
 Content-Type: application/json
 
 {
-  "payment_id": "469e7496-0399-423b-b303-22f12f057400",
   "payment_status": "ACSC"
 }
 ```
