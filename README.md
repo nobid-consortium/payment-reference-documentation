@@ -10,7 +10,7 @@ This repository contains documents developed within the [NOBID consortium](https
 - [A2Pay API OpenAPI specification](a2pay-api.yml) - *[view in swagger editor](https://editor-next.swagger.io/?url=https://raw.githubusercontent.com/nobid-consortium/payment-reference-documentation/refs/heads/main/a2pay-api.yml)*
 - [A2Pay JSON schema](a2pay-schema.json)
 - [Payment request JSON schema](payment-request-schema.json)
-- [MSCT API OpenAPI specification](msct-api.yml) - *[view in swagger editor](https://editor-next.swagger.io/?url=https://raw.githubusercontent.com/*nobid-consortium/payment-reference-documentation/refs/heads/main/msct-api.yml)*
+- [MSCT API OpenAPI specification](msct-api.yml) - *[view in swagger editor](https://editor-next.swagger.io/?url=https://raw.githubusercontent.com/nobid-consortium/payment-reference-documentation/refs/heads/main/msct-api.yml)*
 - [CHANGE LOG](CHANGELOG)
 
 Published under [Creative Commons Attribution 4.0 International License](https://creativecommons.org/licenses/by/4.0/legalcode.en).
