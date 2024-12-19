@@ -341,7 +341,7 @@ sequenceDiagram
     user ->> user: review transaction
     user ->> wallet: approves presentation
     wallet -->> psp: POST Authorization Response(P2Pay)
-    psp -->> wallet: RESP receiving P2Pay,redirect_uri OK
+    psp -->> wallet: RESP OK, redirect_uri
     end
     wallet -->> user: SHOW presentation status
     deactivate wallet
@@ -360,8 +360,7 @@ sequenceDiagram
 
 Out-of-band payment initiation:
 The payment process is initiated through an out-of-band mechanism, such as a mobile app, online banking portal, or third-party provider.
-1. Authorization Request requesting A2Pay:
-The Payment Service Provider (PSP) sends an OpenID4VP authorization request including the `transaction_data` with the payment request to the user’s wallet to obtain the A2Pay credential required for the transaction. Note: *Details of passing the authorization request by reference are omitted for readability reasons.* This step is done either by link for a same-device flow or by QR-code for cross-device flow.
+1. Authorization Request Object including the `transaction_data` with the payment request. This step is is initiated either by link for a same-device flow or by QR-code for cross-device flow.
 2. Wallet asks user for approval:
 The wallet authenticates the TPP (ARF[^arf], section 6.6.3.2) and prompts the user to review the payment request and approve the presentation of the A2Pay.
 3. User reviews the transaction:
@@ -404,7 +403,7 @@ sequenceDiagram
     user ->> user: review transaction
     user ->> wallet: approves presentation
     wallet ->> psp2: POST Authorization Response(P2Pay)
-    psp2 -->> wallet: RESP receiving P2Pay, redirect_uri OK
+    psp2 -->> wallet: RESP OK, redirect_uri
     end
     wallet -->> user: SHOW presentation status
     deactivate wallet
@@ -426,8 +425,7 @@ sequenceDiagram
     wallet ->> psp2: GET follow redirect_uri
 ```
 
-1.	Authorization Request requesting A2Pay:
-The TPP sends an OpenID4VP authorization request including the `transaction_data` with the payment request to the user’s wallet to obtain the A2Pay issued by the user’s ASPSP. *Note: Details of passing the authorization request by reference are omitted for readability reasons.* This step is done either by link for a same-device flow or by QR-code for cross-device flow.
+1. Authorization Request Object including the `transaction_data` with the payment request. This step is is initiated either by link for a same-device flow or by QR-code for cross-device flow.
 2.	Wallet asks user for approval:
 The wallet authenticates the TPP (ARF[^arf], section 6.6.3.2) and prompts the user to review the payment request and approve the presentation of the A2Pay.
 3.	User reviews the transaction:
