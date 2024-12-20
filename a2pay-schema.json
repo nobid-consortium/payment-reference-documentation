@@ -80,5 +80,5 @@
     }
   },
   "additionalProperties": true,
-  "required": ["iss", "iat", "nbf", "exp", "sub", "id", "psp"]
+  "required": ["iss", "iat", "nbf", "exp", "sub", "id"]
 }

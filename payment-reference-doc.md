@@ -94,8 +94,8 @@ See also requirement specification ARF Annex 2 A.2.3.6 Topic 6 - User Approval R
 
 The A2Pay (Attestation to Pay) serves as a key component for identifying the wallet holder’s Payment Service Provider (PSP) and the specific account to which the attestation is linked to. An A2Pay defines the following claims:
 
-* `psp` REQUIRED: Identifier of the PSP. The value must be a URI and may be identical with the identifier of the issuer.
 * `id` REQUIRED: Unique identifier of the issued A2Pay.
+* `psp` OPTIONAL: Identifier of the PSP if different from `iss`. The value must be a case-sensitive URL using the HTTPS scheme that contains scheme, host and, optionally, port number and path components, but no query or fragment components.
 * `payment-product` OPTIONAL: Payment product or scheme the account is connected 
 to (e.g. sct-eu, sct-inst-eu, domestic such as bancomat-pay), that a TPP may use to process the payment.
 * `name` OPTIONAL: Name of the account the A2Pay is connected to.
@@ -138,9 +138,9 @@ eyJ0eXAiOiJzZCtqd3QiLCJhbGciOiJFUzI1NiJ9.eyJpc3MiOiJodHRwczovL2JhbmsuZXhhbXBsZS5
 
 #### PSP Metadata 
 
-PSP Metadata may contain information on the PSP's technical capabilities and/or  supported payment rails. The PSP may publish metadata by making a JSON document available at the path formed by concatenating the string `/.well-known/psp` to the PSP Identifier. If the `psp` value contains a path component, any terminating `/` must be removed before appending `/.well-known/psp`.
+PSP Metadata may contain information on the PSP's technical capabilities and/or  supported payment rails. The PSP may publish metadata by making a JSON document available at the path formed by concatenating the string `/.well-known/psp` to the Credential Issuer Identifier `iss` or the PSP Identifier `psp` if present. If the value contains a path component, any terminating `/` must be removed before appending `/.well-known/psp`. 
 
-To fetch the PSP Metadata, the requester must send an HTTP request using the GET method and the path formed following the steps above. The Credential Issuer MUST return a JSON document compliant with this specification using the `application/json` media type and the HTTP Status Code 200.
+To fetch the PSP Metadata, the requester must send an HTTP request using the GET method and the path formed following the steps above. The PSP must return a JSON document compliant with this specification using the `application/json` media type and the HTTP Status Code 200.
 
 This document defines the following PSP metadata properties:
 
