@@ -148,19 +148,6 @@ This document defines the following PSP metadata properties:
 
 Non-normative example of a PSP's metadata:
 
-```json
-{
-  "bic":  "COLSDE33",
-  "payment-products": {  
-      "sct-inst-eu": {
-        "name": "SEPA Inst",
-        "payment_uri": "https://bank.example.com/a2pay",
-        "payment_status_uri" : "https://bank.example.com/a2pay/status"
-      }
-    }
-  }
-}
-```
 
 Example of the HTTP GET request to retrieve the PSP metadata:
 
@@ -177,11 +164,10 @@ Content-Type: application/json
 {
   "bic":  "COLSDE33",
   "payment-products": {  
-      "sct-inst-eu": {
+    "sct-inst-eu": {
         "name": "SEPA Inst",
         "payment_uri": "https://bank.example.com/a2pay",
         "payment_status_uri" : "https://bank.example.com/a2pay/status"
-      }
     }
   }
 }
@@ -209,8 +195,8 @@ To fulfill the requirement for dynamic linking, the P2Pay must include the trans
 The OpenID4VP protocol [^openid4vp] supports the inclusion of dynamic transaction data in the authorization process using the `transaction_data` parameter. The flow operates as follows:
 
 1.	The relying party includes the transaction-specific details (e.g., payment amount, payee information) in the authorization request using the `transaction_data` parameter.
-2. The wallet processes the `transaction_data` values and computes a cryptographic hash of this data. This hash is embedded into the key-binding JWT of the P2Pay, which is then sent back to the PSP as part of the authorization response.
-3.	Authentication Code Generation: The computed hash serves as the authentication code required under PSD2 for dynamic linking, tieing the authorization response to the specific payment transaction details.
+2. The wallet processes the `transaction_data` values and computes a cryptographic hash of this data. This hash is embedded into the key-binding JWT of the P2Pay, which is then send back to the PSP as part of the authorization response.
+3.	Authentication Code Generation: The computed hash serves as the authentication code required under PSD2 for dynamic linking, tying the authorization response to the specific payment transaction details.
 4.	User Approval Dialogue: To ensure transparency and user consent, the payment request details must be presented to the user within the wallet’s approval interface. This allows the user to review and approve the specific payment details. The user approval dialogue must comply with the requirements specified in ARF Section 6.6.3.4 [^arf] and ARF Annex 2, Section A.2.3.6 Topic 6 [^arf_annex2].
 
 This process ensures compliance with PSD2’s requirement for dynamic linking by securely binding the transaction details to the authentication process. By incorporating the transaction hash into the key-binding JWT of the P2Pay, the wallet guarantees that any tampering with the transaction data invalidates the authentication.

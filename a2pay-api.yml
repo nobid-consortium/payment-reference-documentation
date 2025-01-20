@@ -17,7 +17,7 @@ paths:
     post:
       tags:
         - payment initiation
-      summary: direct_post.jwt enpoint for receiving OpenID4VP authorization response
+      summary: direct_post.jwt endpoint for receiving OpenID4VP authorization response
       operationId: direct-post
       parameters:
         - in: path
@@ -62,7 +62,7 @@ paths:
     post:
       tags:
         - payment initiation
-      summary: A2Pay Direct endpoint
+      summary: endpoint for receiving a payment authorization object
       operationId: a2pay-direct
       parameters:
         - in: path
