@@ -98,7 +98,7 @@ The A2Pay (Attestation to Pay) serves as a key component for identifying the wal
 * `psp` OPTIONAL: Identifier of the PSP if different from `iss`. The value must be a case-sensitive URL using the HTTPS scheme that contains scheme, host and, optionally, port number and path components, but no query or fragment components.
 * `payment-product` OPTIONAL: Payment product or scheme the account is connected 
 to (e.g. sct-eu, sct-inst-eu, domestic such as bancomat-pay), that a TPP may use to process the payment.
-* `name` OPTIONAL: Name of the account the A2Pay is connected to.
+* `sub` OPTIONAL: Name or ID of the account the A2Pay is connected to.
 
 The structure and detailed specifications of the A2Pay are also defined in the JSON schema file [a2pay-schema.json](a2pay-schema.json), which outlines all required attributes and their formats.
 
@@ -114,10 +114,9 @@ Non-normative example of an A2Pay payload:
     "iat": 1718198433,
     "vct": "https://credentials.example.com/a2pay",
     "_sd_alg": "sha-256",
-    "sub": "DE75512108001245126199",
+    "sub": "Account DE75512108001245126199",
     "id": "8D8AC610-566D-4EF0-9C22-186B2A5ED793",
     "payment-product": "sct-inst-eu",
-    "name": "My Account",
     "cnf": {
       "jwk": {
         "crv": "P-256",
@@ -132,7 +131,7 @@ Non-normative example of an A2Pay payload:
 Non-normative example of an A2Pay as `sd-jwt-vc` according to SD-JWT-based Verifiable Credentials[^sd-jwt-vc]
 
 ```
-eyJ0eXAiOiJzZCtqd3QiLCJhbGciOiJFUzI1NiJ9.eyJpc3MiOiJodHRwczovL2JhbmsuZXhhbXBsZS5jb20vaXNzdWVyIiwicHNwIjoiaHR0cHM6Ly9iYW5rLmV4YW1wbGUuY29tL2lzc3VlciIsImV4cCI6MTg4MzAwMDAwMCwibmJmIjoxNzE4MTk4NDMzLCJpYXQiOjE3MTgxOTg0MzMsInZjdCI6Imh0dHBzOi8vY3JlZGVudGlhbHMuZXhhbXBsZS5jb20vYTJwYXkiLCJfc2RfYWxnIjoiU0hBLTI1NiIsInN1YiI6IkRFNzU1MTIxMDgwMDEyNDUxMjYxOTkiLCJpZCI6IjhEOEFDNjEwLTU2NkQtNEVGMC05QzIyLTE4NkIyQTVFRDc5MyIsInBheW1lbnQtcHJvZHVjdCI6InNjdC1pbnN0LWV1IiwibmFtZSI6Ik15IEFjY291bnQiLCJjbmYiOnsiandrIjp7ImNydiI6IlAtMjU2Iiwia3R5IjoiRUMiLCJ4IjoiTkFTSjJBRHVhZ092cmFMZjdPNFZ4Y0JNYmFudHpMOWRkMGpwdk1MbkJmcyIsInkiOiJPSlk2cHFDcVJJenBFdDc4T1hhc1dIR2dxVjVaR3JlXzNjSHRwTkg4MmdnIn19fQ.sMIO3_5xPqVWC-4dAl4y2GxWluHY5V5xoCXpkPfeFOReCrczkn4aSyN90wzpsRuYfoyGBlOgcNbaBMuWik0kDw~
+eyJ0eXAiOiJzZCtqd3QiLCJhbGciOiJFUzI1NiJ9.eyJfc2QiOltdLCJpc3MiOiJodHRwczovL2JhbmsuZXhhbXBsZS5jb20vaXNzdWVyIiwicHNwIjoiaHR0cHM6Ly9iYW5rLmV4YW1wbGUuY29tL2lzc3VlciIsImV4cCI6MTg4MzAwMDAwMCwibmJmIjoxNzE4MTk4NDMzLCJpYXQiOjE3MTgxOTg0MzMsInZjdCI6Imh0dHBzOi8vY3JlZGVudGlhbHMuZXhhbXBsZS5jb20vYTJwYXkiLCJfc2RfYWxnIjoiU0hBLTI1NiIsInN1YiI6IkFjY291bnQgREU3NTUxMjEwODAwMTI0NTEyNjE5OSIsImlkIjoiOEQ4QUM2MTAtNTY2RC00RUYwLTlDMjItMTg2QjJBNUVENzkzIiwicGF5bWVudC1wcm9kdWN0Ijoic2N0LWluc3QtZXUiLCJjbmYiOnsiandrIjp7ImNydiI6IlAtMjU2Iiwia3R5IjoiRUMiLCJ4IjoiTkFTSjJBRHVhZ092cmFMZjdPNFZ4Y0JNYmFudHpMOWRkMGpwdk1MbkJmcyIsInkiOiJPSlk2cHFDcVJJenBFdDc4T1hhc1dIR2dxVjVaR3JlXzNjSHRwTkg4MmdnIn19fQ.h4QphF6pf5rj0q3t44zP2nDoNupEk0yxtBobh2v7GK3s9YvLeCrNDkNV7nX0oDg1OIsuRM8QW7gd4ITdXJlDkA~
 ```
 
 #### PSP Metadata 
@@ -527,7 +526,6 @@ Example of an A2Pay supporting MSCT:
     "sub": "IT12A1234512345123456789012",
     "id": "fd3f70a7-53b0-453e-9317-c7fc41a2f7ec",
     "payment-product": "Bancomat",
-    "name": "My Account",
     "cnf": {
       "jwk": {
         "crv": "P-256",
@@ -553,11 +551,10 @@ Content-Type: application/json
 
 {
   "payment-products": {  
-      "bancomat-pay": {
-        "name": "Bancomat",
-        "payment_status_uri" : "https://bank.example.com/a2pay/status",
-        "msct_uri": "https://msct.example.com/exchange"
-      }
+    "bancomat-pay": {
+      "name": "Bancomat",
+      "payment_status_uri" : "https://bank.example.com/a2pay/status",
+      "msct_uri": "https://msct.example.com/exchange"
     }
   }
 }
