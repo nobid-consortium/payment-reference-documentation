@@ -95,10 +95,10 @@ See also requirement specification ARF Annex 2 A.2.3.6 Topic 6 - User Approval R
 The A2Pay (Attestation to Pay) serves as a key component for identifying the wallet holder’s Payment Service Provider (PSP) and the specific account to which the attestation is linked to. An A2Pay defines the following claims:
 
 * `id` REQUIRED: Unique identifier of the issued A2Pay.
+* `sub` REQUIRED: Name or ID of the account the A2Pay is connected to.
 * `psp` OPTIONAL: Identifier of the PSP if different from `iss`. The value must be a case-sensitive URL using the HTTPS scheme that contains scheme, host and, optionally, port number and path components, but no query or fragment components.
 * `payment-product` OPTIONAL: Payment product or scheme the account is connected 
 to (e.g. sct-eu, sct-inst-eu, domestic such as bancomat-pay), that a TPP may use to process the payment.
-* `sub` OPTIONAL: Name or ID of the account the A2Pay is connected to.
 
 The structure and detailed specifications of the A2Pay are also defined in the JSON schema file [a2pay-schema.json](a2pay-schema.json), which outlines all required attributes and their formats.
 
