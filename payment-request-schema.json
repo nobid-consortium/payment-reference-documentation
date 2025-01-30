@@ -3,7 +3,7 @@
   "title": "PaymentRequest",
   "type": "object",
   "properties": {
-    "payment-id": {
+    "payment_id": {
       "type": "string",
       "maxLength": 36,
       "description": "Unique identifier for the payment.",
@@ -12,7 +12,7 @@
         "8D8AC610-566D-4EF0-9C22-186B2A5ED793"
       ]
     },
-    "instructed-amount": {
+    "instructed_amount": {
       "type": "string",
       "minLength": 1,
       "maxLength": 8,
@@ -42,7 +42,7 @@
         "NOK"
       ]
     },
-    "creditor-name": {
+    "creditor": {
       "type": "string",
       "description": "Name of the creditor.",
       "maxLength": 140,
@@ -50,7 +50,7 @@
         "Merchant A"
       ]
     },
-    "creditor-account": {
+    "creditor_account": {
       "type": "object",
       "properties": {
         "iban": {
@@ -80,7 +80,7 @@
       },
       "required": ["iban"]
     },
-    "start-date": {
+    "start_date": {
       "type": "string",
       "format": "date",
       "description": "Start of a recurring payment.",
@@ -88,7 +88,7 @@
         "2018-11-13"
       ]
     },
-    "end-date": {
+    "end_date": {
       "type": "string",
       "format": "date",
       "description": "End of a recurring payment.",
@@ -104,7 +104,7 @@
         "Daily"
       ]
     },
-    "execution-day": {
+    "execution_day": {
       "type": "integer",
       "minimum": 1,
       "maximum": 31,
@@ -113,7 +113,7 @@
         12
       ]
     },
-    "execution-month": {
+    "execution_month": {
       "type": "integer",
       "minimum": 1,
       "maximum": 12,

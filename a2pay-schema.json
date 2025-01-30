@@ -42,9 +42,10 @@
     "sub": {
       "type": "string",
       "maxLength": 100,
-      "description": "Account reference",
+      "description": "Name or ID of the account the A2Pay is connected to",
       "minLength": 1,
       "examples": [
+        "IBAN ****6199",
         "DE75512108001245126199",
         "+491232233445566",
         "me@example.com"
@@ -59,23 +60,15 @@
         "8D8AC610-566D-4EF0-9C22-186B2A5ED793"
       ]
     },
-    "payment-product": {
+    "scheme": {
       "type": "string",
       "maxLength": 35,
-      "description": "Payment product / scheme the account is connected to (e.g. sct-eu, sct-inst-eu, domestic such as bancomat-pay).",
+      "description": "Scheme the account is connected to (e.g. sct-eu, sct-inst-eu, domestic such as bancomat-pay).",
       "minLength": 1,
       "examples": [
         "sct-eu",
         "sct-inst-eu",
         "bancomat-pay"
-      ]
-    },
-    "name": {
-      "type": "string",
-      "description": "Name of the account.",
-      "maxLength": 70,
-      "examples": [
-        "MyAccount"
       ]
     }
   },

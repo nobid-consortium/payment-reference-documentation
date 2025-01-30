@@ -1,6 +1,6 @@
 openapi: 3.1.0
 info:
-  title: A2Pay API
+  title: Payment API
   description: |-
     API supporting payment initation and authorization using the European Digital Identity Wallet.
   version: 0.0.1
@@ -58,12 +58,12 @@ paths:
                       - "90f24cbe-2d83-4f43-b9ff-a34c7de986c2"
                 required: 
                   - "redirect_uri"
-  /a2pay-direct/{id}:
+  /direct-pay/{id}:
     post:
       tags:
         - payment initiation
       summary: endpoint for receiving a payment authorization object
-      operationId: a2pay-direct
+      operationId: direct-pay
       parameters:
         - in: path
           name: id

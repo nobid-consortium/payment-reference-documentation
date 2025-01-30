@@ -1,5 +1,16 @@
 # Change Log
 
+## [v0.4] - 2025-01-30
+- Changed wording to align with the efforts of the joint EWC / Nobid ARF Payment Rulebook Working Group
+    - Basic PaymentAuth flow > ASPSP led SCA flow
+    - Extended PaymentAuth flow > TPP captured SCA flow
+- Renamed properties switching to `snake_case`
+- Renamed *A2Pay Direct* endpoint to *Direct Pay*
+- Renamed properties of payment authorization object to align with the authorization response
+- included a new high-level overview showing the different flows and actors
+- included option for logo urls in the psp metadata section
+
+
 ## [v0.3] - 2024-12-19
 - Changed OpenID4VP response mode from `direct_post` to `direct_post.jwt` as it is required following the current HAIP specs.
 - Introduced optional `psp` claim holding a PSP Identifier as URI.

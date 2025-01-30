@@ -97,8 +97,7 @@ The A2Pay (Attestation to Pay) serves as a key component for identifying the wal
 * `id` REQUIRED: Unique identifier of the issued A2Pay.
 * `sub` REQUIRED: Name or ID of the account the A2Pay is connected to.
 * `psp` OPTIONAL: Identifier of the PSP if different from `iss`. The value must be a case-sensitive URL using the HTTPS scheme that contains scheme, host and, optionally, port number and path components, but no query or fragment components.
-* `payment-product` OPTIONAL: Payment product or scheme the account is connected 
-to (e.g. sct-eu, sct-inst-eu, domestic such as bancomat-pay), that a TPP may use to process the payment.
+* `scheme` OPTIONAL: Scheme the account is connected to (e.g. sct-eu, sct-inst-eu, domestic such as bancomat-pay), that a TPP may use to process the payment.
 
 The structure and detailed specifications of the A2Pay are also defined in the JSON schema file [a2pay-schema.json](a2pay-schema.json), which outlines all required attributes and their formats.
 
@@ -114,9 +113,9 @@ Non-normative example of an A2Pay payload:
     "iat": 1718198433,
     "vct": "https://credentials.example.com/a2pay",
     "_sd_alg": "sha-256",
-    "sub": "Account DE75512108001245126199",
+    "sub": "IBAN ****6199",
     "id": "8D8AC610-566D-4EF0-9C22-186B2A5ED793",
-    "payment-product": "sct-inst-eu",
+    "scheme": "sct-inst-eu",
     "cnf": {
       "jwk": {
         "crv": "P-256",
@@ -131,7 +130,7 @@ Non-normative example of an A2Pay payload:
 Non-normative example of an A2Pay as `sd-jwt-vc` according to SD-JWT-based Verifiable Credentials[^sd-jwt-vc]
 
 ```
-eyJ0eXAiOiJzZCtqd3QiLCJhbGciOiJFUzI1NiJ9.eyJfc2QiOltdLCJpc3MiOiJodHRwczovL2JhbmsuZXhhbXBsZS5jb20vaXNzdWVyIiwicHNwIjoiaHR0cHM6Ly9iYW5rLmV4YW1wbGUuY29tL2lzc3VlciIsImV4cCI6MTg4MzAwMDAwMCwibmJmIjoxNzE4MTk4NDMzLCJpYXQiOjE3MTgxOTg0MzMsInZjdCI6Imh0dHBzOi8vY3JlZGVudGlhbHMuZXhhbXBsZS5jb20vYTJwYXkiLCJfc2RfYWxnIjoiU0hBLTI1NiIsInN1YiI6IkFjY291bnQgREU3NTUxMjEwODAwMTI0NTEyNjE5OSIsImlkIjoiOEQ4QUM2MTAtNTY2RC00RUYwLTlDMjItMTg2QjJBNUVENzkzIiwicGF5bWVudC1wcm9kdWN0Ijoic2N0LWluc3QtZXUiLCJjbmYiOnsiandrIjp7ImNydiI6IlAtMjU2Iiwia3R5IjoiRUMiLCJ4IjoiTkFTSjJBRHVhZ092cmFMZjdPNFZ4Y0JNYmFudHpMOWRkMGpwdk1MbkJmcyIsInkiOiJPSlk2cHFDcVJJenBFdDc4T1hhc1dIR2dxVjVaR3JlXzNjSHRwTkg4MmdnIn19fQ.h4QphF6pf5rj0q3t44zP2nDoNupEk0yxtBobh2v7GK3s9YvLeCrNDkNV7nX0oDg1OIsuRM8QW7gd4ITdXJlDkA~
+eyJ0eXAiOiJzZCtqd3QiLCJhbGciOiJFUzI1NiJ9.eyJpc3MiOiJodHRwczovL2JhbmsuZXhhbXBsZS5jb20vaXNzdWVyIiwicHNwIjoiaHR0cHM6Ly9iYW5rLmV4YW1wbGUuY29tL2lzc3VlciIsImV4cCI6MTg4MzAwMDAwMCwibmJmIjoxNzE4MTk4NDMzLCJpYXQiOjE3MTgxOTg0MzMsInZjdCI6Imh0dHBzOi8vY3JlZGVudGlhbHMuZXhhbXBsZS5jb20vYTJwYXkiLCJfc2RfYWxnIjoiU0hBLTI1NiIsInN1YiI6IklCQU4gKioqKjYxOTkiLCJpZCI6IjhEOEFDNjEwLTU2NkQtNEVGMC05QzIyLTE4NkIyQTVFRDc5MyIsInNjaGVtZSI6InNjdC1pbnN0LWV1IiwiY25mIjp7Imp3ayI6eyJjcnYiOiJQLTI1NiIsImt0eSI6IkVDIiwieCI6Ik5BU0oyQUR1YWdPdnJhTGY3TzRWeGNCTWJhbnR6TDlkZDBqcHZNTG5CZnMiLCJ5IjoiT0pZNnBxQ3FSSXpwRXQ3OE9YYXNXSEdncVY1WkdyZV8zY0h0cE5IODJnZyJ9fX0.2Lekq3N6XwkSwzqLtAvumHRmUdQyuH6Pv8rojmp42ioT0chdVG-m7K2OX0lVrn9j9VlEZqO9ud69PYzQs5xqUA~
 ```
 
 #### PSP Metadata 
@@ -142,8 +141,15 @@ To fetch the PSP Metadata, the requester must send an HTTP request using the GET
 
 This document defines the following PSP metadata properties:
 
+* `name` REQUIRED: Human-readable of the PSP
+* `logo_uri` OPTIONAL: URL string that references a logo of the PSP.
 * `bic` OPTIONAL: BIC of the PSP
-* `payment-products` OPTIONAL: Object containing a list of name/value pairs, where each name is a unique identifier of the supported `payment-product` being described. The value is an object that contains metadata about a specific payment product and must at least contain a `name` property. It may contain additional properties related to the specific payment product.
+* `schemes` OPTIONAL: Object containing a list of name/value pairs, where each name is a unique identifier of the supported `scheme` being described. The value is an object containing scheme specific properties. 
+
+* `name` REQUIRED: Human-readable name of the scheme.
+* `log_uri` OPTIONAL: URL string that references a logo for the payment product. 
+
+Additional properties might also be used if requiered by the TPP in order to facilitat the payment using the given product.
 
 Non-normative example of a PSP's metadata:
 
@@ -161,8 +167,10 @@ HTTP/1.1 200 OK
 Content-Type: application/json
 
 {
+  "name": "Super Bank",
   "bic":  "COLSDE33",
-  "payment-products": {  
+  "logo_uri": "https://bank.example.com/logo.png",
+  "schemes": {  
     "sct-inst-eu": {
         "name": "SEPA Inst",
         "payment_uri": "https://bank.example.com/a2pay",
@@ -208,13 +216,13 @@ Non-normative example of a payment request:
 
 ```json
 {
-    "payment-id": "45cc64f0-7190-4e3c-81e6-e791565be643",
-    "creditor-account": {
+    "payment_id": "45cc64f0-7190-4e3c-81e6-e791565be643",
+    "creditor_account": {
       "iban": "DE75512108001245126199"
     },
-    "instructed-amount": "15.49",
+    "instructed_amount": "15.49",
     "currency": "EUR",
-    "creditor-name": "Merchant A",
+    "creditor": "Merchant A",
     "purpose": "Shopping at Merchant A"
 }
 ```
@@ -230,13 +238,13 @@ Based on the OpenID4VP [^openid4vp] section 5.1, additional properties must be a
   "type": "PaymentRequest",
   "credential_ids": ["A2Pay"],
   "transaction_data_hashes_alg": "sha-256",
-  "payment-id": "45cc64f0-7190-4e3c-81e6-e791565be643",
-  "creditor-account": {
+  "payment_id": "45cc64f0-7190-4e3c-81e6-e791565be643",
+  "creditor_account": {
     "iban": "DE75512108001245126199"
   },
-  "instructed-amount": "15.49",
+  "instructed_amount": "15.49",
   "currency": "EUR",
-  "creditor-name": "Merchant A",
+  "creditor": "Merchant A",
   "purpose": "Shopping at Merchant A"
 }
 ```
@@ -302,7 +310,7 @@ The successfull verification of the P2Pay signals the PSP to proceed with execut
 
 The presentation process outlined above can be adapted to various payment use cases, depending on the specific role of the relying party requesting the P2Pay.
 
-#### Basic PaymentAuth flow
+#### ASPSP-led SCA flow
 
 In this flow, the relying party is the ASPSP (usually a bank) of the holder themself. The holder is requesting a payment transaction using an out-of-band mechanism like the banks mobile app, online banking portal or even a third party provider for payment initiation according to PSD2 (PISP). The ASPSP is initiating the flow by requesting the P2Pay they have previously issued to the wallet themself in the prior [registration flow](#registration). 
 
@@ -367,7 +375,7 @@ The ASPSP validates the authenticity and integrity of the P2Pay. If valid, the A
 The wallet communicates the payment status to the user, providing confirmation or detailing any errors.
 14. Wallet follows `redirect_uri`	to allow the TPP to continue interacting with the user.
 
-#### Extended PaymentAuth flow
+#### TPP-captured SCA flow
 
 In this flow, the relying party is a third party, such as a merchant or the merchant’s Payment Service Provider (referred to as **TPP** hereafter). TPP initiates the process by requesting an A2Pay issued by an ASPSP. Once the TPP receives the P2Pay, it must forward it, along with the original payment request object, to the ASPSP. The ASPSP then performs the necessary [verification](#verification) and executes the payment transaction.
 
@@ -394,7 +402,7 @@ sequenceDiagram
     psp2 ->> psp: GET PSP metadata
     psp -->> psp2: RESP PSP metadata, payment_status_uri, payment_uri
     rect rgb(200, 100, 100)
-    note over psp, psp2: implemented by payment rail<br>example using a2pay direct  
+    note over psp, psp2: implemented by payment rail<br>example using Direct Pay  
     psp2 ->> psp: POST SendPaymentAuthorizationRequest(a2pay-id)
     psp -->> psp2: RESP receiving payment_id OK 
     end
@@ -425,7 +433,7 @@ The wallet provides the user with a status update, indicating that the A2Pay has
 8. TPP request PSP metadata: The TPP requests the ASPSPs metadata using the PSP identifier given in the P2Pay
 9. ASPSP send PSP metadata: The ASPSP provides the PSP metadata object including the `payment_status_uri` endpoint
 10.	TPP forwards A2Pay to issuing ASPSP:
-TPP sends a [payment authorization object](#payment-authorization-object) including the the P2Pay and the original payment request object to the ASPSP for verification and/or execution of the payment using a supported payment rail and/or the [A2Pay Direct endpoint](#a2pay-direct-endpoint).
+TPP sends a [payment authorization object](#payment-authorization-object) including the the P2Pay and the original payment request object to the ASPSP for verification and/or execution of the payment using a supported payment rail and/or the [Direct Pay endpoint](#direct-pay).
 11.	ASPSP acknowledges receipt of A2Pay:
 ASPSP confirms receipt of the forwarded P2Pay.
 12.	ASPSP [verifies P2Pay](#verification) and executes the transaction:
@@ -438,42 +446,43 @@ ASPSP validates the authenticity and integrity of the P2Pay. If valid, it execut
 The wallet provides the user with the payment status, indicating whether the transaction was successful or if any issues occurred.
 18. Wallet follows `redirect_uri`	to allow the TPP to continue interacting with the user.
 
-To enable the Extended PaymentAuth Flow and allow a TPP to properly route an authorized payment request, the A2Pay must include the following mandatory details as defined in the [A2Pay schema](a2pay-schema.json):
+To enable the TPP-captured SCA flow and allow a TPP to properly route an authorized payment request, the A2Pay must include the following mandatory details as defined in the [A2Pay schema](a2pay-schema.json):
 
-- `payment-product`: Specifies the payment instrument or scheme to be utilized for the transaction.
+- `scheme`: Specifies the payment instrument or scheme to be utilized for the transaction.
 - `sub`: Account identifier or account alias linked to the A2Pay. This can be represented by an IBAN or mobile phone number for example.
 
-The transport of the P2Pay and the related payment request may be done using the [A2Pay Direct endpoint](#a2pay-direct-endpoint) and/or an according payment rail or scheme like OpenBanking APIs or existing European / domestic schemes e.g., which must implement additional support for processing the A2Pay format, data structures and signatures and may also include additional actors like payment platforms or aquirers e.g.. The specific technical and contractual implementation details for extending individual payment rails fall outside the scope of this document.
+The transport of the P2Pay and the related payment request may be done using the [Direct Pay method](#direct-pay) and/or an according payment rail or scheme like OpenBanking APIs or existing European / domestic schemes e.g., which must implement additional support for processing the A2Pay format, data structures and signatures and may also include additional actors like payment platforms or aquirers e.g.. The specific technical and contractual implementation details for extending individual payment rails fall outside the scope of this document.
 
-### Security considerations
+##### Security considerations
 
 To mitigate replay scenarios where the same P2Pay request is submitted to the ASPSP multiple times, the ASPSP should maintain a record of every processed P2Pay. This can be achieved by storing a hash of each P2Pay until its corresponding KB-JWT expires. To support this mechanism, the wallet should include the `exp` claim within the KB-JWT, specifying a validity period of 24 hours. This ensures that the ASPSP can effectively track and reject duplicate submissions during the lifespan of the KB-JWT.
 
 ![Payment](high-level-overview.png)
 
-##### A2Pay Direct Endpoint
+##### Direct Pay 
 
-Assuming a PSP is obliged to support the [Basic PaymentAuth flow](#direct-payment-flow) to comply with the eIDAS 2.0 regulation with respect to SCA, they must support the `direct_post.jwt` endpoint defined by OpenID4VP, Section 7.3.1[^openid4vp] as it is required by the HAIP[^openid4vc_hip]. To simplify integration efforts, A2Pay Direct defines an HTTP POST endpoint very similar to the one required for the `direct_post.jwt` mode. Instead of the authorization response, this endpoint must accept a [Payment Authorization Object](#payment-authorization-object) encoded as JWT.
+Assuming a PSP is obliged to support the [ASPSP-led SCA flow](#aspsp-led-sca-flow) to comply with the eIDAS 2.0 regulation with respect to SCA, they must support the `direct_post.jwt` endpoint defined by OpenID4VP, Section 7.3.1[^openid4vp] as it is required by the HAIP[^openid4vc_hip]. To simplify integration efforts, Direct Pay defines an HTTP POST endpoint very similar to the one required for the `direct_post.jwt` mode. Instead of the authorization response, this endpoint must accept a [Payment Authorization Object](#payment-authorization-object) encoded as JWT.
 
-In order for an ASPSP to support the Extended PaymentAuth Flow using the A2Pay Direct endpoint, they must include the `payment-uri` property within the [PSP metadata](#psp-metadata) for the given `payment product`. The value must be the URI a TPP can use to send the [Payment Authorization Object](#payment-authorization-object) to. Details for the `a2pay-direct` endpoint are described in the [A2Pay API specification](a2pay-api.yml)
+In order for an ASPSP to support the TPP-captured SCA Flow using the Direct Pay endpoint, they must include the `payment-uri` property within the [PSP metadata](#psp-metadata) for the given `scheme`. The value must be the URI a TPP can use to send the [Payment Authorization Object](#payment-authorization-object) to. Details for the Direct Pay endpoint are described in the [A2Pay API specification](a2pay-api.yml)
 
 ###### Payment Authorization Object
 
 The Payment Authorization Object defines the following claims:
 
-* `payment-request` REQUIRED: Original base64url encoded transaction data object of the [payment request](payment-request-schema.json) as it was included in `transaction_data` array of the authorization request.
-* `a2pay` REQUIRED: P2Pay(SD-JWT VC presentation) containing the matching hash of the payment request given in `payment-request` claim within the key-binding JWT (see OpenID4VP section B4.5 [^openid4vp]).
-* `creditor-account` CONDITIONAL: String describing the account of the creditor (IBAN e.g.). Might also be contained within the [payment request object](#payment-request-object). 
+* `transaction_data` REQUIRED: Original base64url encoded transaction data object of the [payment request](payment-request-schema.json) as it was included in `transaction_data` array of the authorization request send to the wallet.
+* `vp_token` REQUIRED: P2Pay(SD-JWT VC presentation) including the key-binding JWT (see OpenID4VP section B4.5 [^openid4vp]).
+
+Additional properties defined by an according scheme may also be included.
 
 The Payment Authorization Object must be encoded as a JWT according to [rfc7519](https://datatracker.ietf.org/doc/html/rfc7519) and must be signed by the PSP. This requirement aligns with Article 34 of [Commission Delegated Regulation (EU) 2018/389](https://eba.europa.eu/regulation-and-policy/payment-services-and-electronic-money/regulatory-technical-standards-on-strong-customer-authentication-and-secure-communication-under-psd2), which outlines obligations for secure communication and authentication in the context of PSD2.
 
-To sign the Payment Authorization Object, PSPs can leverage existing qualified eIDAS certificates, which are already widely used by TPPs for PSD2 compliance. Alternatively, PSPs might also be able to use a Relying Party Access Certificate issued by a Relying Party Access Certificate Authority (CA) described in ARF section 6.4[^arf] and ARF Annex 2 A.2.3.27 Topic 27[^arf_annex2]. 
+To sign the Payment Authorization Object, PSPs can leverage existing qualified eIDAS certificates, which are already widely used by TPPs for PSD2 compliance. Alternatively, TPP's might also be able to use Relying Party Registration Certificates. 
 
 Example of a [Payment Authorization Object](#payment-authorization-object) payload:
 ```json
 {
-  "payment-request": "ewogICJ0eXBlIjogIlBheW1lbnRSZXF1ZXN0IiwKICAiY3JlZGVudGlhbF9pZHMiOiBbIkEyUGF5Il0sCiAgInRyYW5zYWN0aW9uX2RhdGFfaGFzaGVzX2FsZyI6ICJzaGEtMjU2IiwKICAicGF5bWVudC1pZCI6ICI3RDhBQzYxMC01NjZELTNFRjAtOUMyMi0xODZCMkE1RUQ3OTMiLAogICJjcmVkaXRvci1hY2NvdW50IjogewogICAgImliYW4iOiAiREU3NTUxMjEwODAwMTI0NTEyNjE5OSIKICB9LAogICJpbnN0cnVjdGVkLWFtb3VudCI6ICIxNS40OSIsCiAgImN1cnJlbmN5IjogIkVVUiIsCiAgImNyZWRpdG9yLW5hbWUiOiAiTWVyY2hhbnQgQSIsCiAgInB1cnBvc2UiOiAiU2hvcHBpbmcgYXQgTWVyY2hhbnQgQSIKfQ==",
-  "a2pay": "eyJ0eXAiOiJzZCtqd3QiLCJhbGciOiJFUzI1NiJ9.eyJpc3MiOiJodHRwczovL2JhbmsuZXhhbXBsZS5jb20vaXNzdWVyIiwicHNwIjoiaHR0cHM6Ly9iYW5rLmV4YW1wbGUuY29tL2lzc3VlciIsImV4cCI6MTg4MzAwMDAwMCwibmJmIjoxNzE4MTk4NDMzLCJpYXQiOjE3MTgxOTg0MzMsInZjdCI6Imh0dHBzOi8vY3JlZGVudGlhbHMuZXhhbXBsZS5jb20vYTJwYXkiLCJfc2RfYWxnIjoiU0hBLTI1NiIsInN1YiI6IkRFNzU1MTIxMDgwMDEyNDUxMjYxOTkiLCJpZCI6IjhEOEFDNjEwLTU2NkQtNEVGMC05QzIyLTE4NkIyQTVFRDc5MyIsInBheW1lbnQtcHJvZHVjdCI6InNjdC1pbnN0LWV1IiwicGF5bWVudC11cmkiOiJodHRwczovL2JhbmsuZXhhbXBsZS5jb20vcGF5LzdkZmU1NDg0Zzc4IiwibmFtZSI6Ik15IEFjY291bnQiLCJjbmYiOnsiandrIjp7ImNydiI6IlAtMjU2Iiwia3R5IjoiRUMiLCJ4IjoiTkFTSjJBRHVhZ092cmFMZjdPNFZ4Y0JNYmFudHpMOWRkMGpwdk1MbkJmcyIsInkiOiJPSlk2cHFDcVJJenBFdDc4T1hhc1dIR2dxVjVaR3JlXzNjSHRwTkg4MmdnIn19fQ.ILZLvsUx5X-EjKmJmXVfBqa6ADInAwJeEFd5XmIDuKNU7UkJWFy9VCeCC8xbdZKmEjXcFx-mmcJYVBKiRJIKlQ~eyJ0eXAiOiJrYitqd3QiLCJhbGciOiJFUzI1NiJ9.eyJpYXQiOjE3MTAwNjk3MjIsImV4cCI6MTcxMDA3MzcyMiwiYXVkIjoiaHR0cHM6Ly9iYW5rLmV4YW1wbGUuY29tLyIsInNkX2hhc2giOiJFTkFrZUo0TjczMFRvQ21rZXMyc05SMkdTenBNazZfdDJ3a0lhbTUta0wwIiwidHJhbnNhY3Rpb25fZGF0YV9oYXNoZXMiOlsiNzI3MjcxNTZkMThiZDMxM2MwMmRlNTc1MTQ5YjNmNTZkZDVhNjgyZWNkOTZlY2M3Y2RhNjYwMjAyNzg2MGVlMyJdfQ.UkWOpguDo6KYfJ74SbYQ7EA-Aa-b7awo3WcNwVArjxwbGGlhXggf5geBGKe2MQyIrrgNYF63T7ZGZgA8rUyXcQ"
+  "transaction_data": "ewogICJ0eXBlIjogIlBheW1lbnRSZXF1ZXN0IiwKICAiY3JlZGVudGlhbF9pZHMiOiBbIkEyUGF5Il0sCiAgInRyYW5zYWN0aW9uX2RhdGFfaGFzaGVzX2FsZyI6ICJzaGEtMjU2IiwKICAicGF5bWVudC1pZCI6ICI3RDhBQzYxMC01NjZELTNFRjAtOUMyMi0xODZCMkE1RUQ3OTMiLAogICJjcmVkaXRvci1hY2NvdW50IjogewogICAgImliYW4iOiAiREU3NTUxMjEwODAwMTI0NTEyNjE5OSIKICB9LAogICJpbnN0cnVjdGVkLWFtb3VudCI6ICIxNS40OSIsCiAgImN1cnJlbmN5IjogIkVVUiIsCiAgImNyZWRpdG9yLW5hbWUiOiAiTWVyY2hhbnQgQSIsCiAgInB1cnBvc2UiOiAiU2hvcHBpbmcgYXQgTWVyY2hhbnQgQSIKfQ==",
+  "vp_token": "eyJ0eXAiOiJzZCtqd3QiLCJhbGciOiJFUzI1NiJ9.eyJpc3MiOiJodHRwczovL2JhbmsuZXhhbXBsZS5jb20vaXNzdWVyIiwicHNwIjoiaHR0cHM6Ly9iYW5rLmV4YW1wbGUuY29tL2lzc3VlciIsImV4cCI6MTg4MzAwMDAwMCwibmJmIjoxNzE4MTk4NDMzLCJpYXQiOjE3MTgxOTg0MzMsInZjdCI6Imh0dHBzOi8vY3JlZGVudGlhbHMuZXhhbXBsZS5jb20vYTJwYXkiLCJfc2RfYWxnIjoiU0hBLTI1NiIsInN1YiI6IkRFNzU1MTIxMDgwMDEyNDUxMjYxOTkiLCJpZCI6IjhEOEFDNjEwLTU2NkQtNEVGMC05QzIyLTE4NkIyQTVFRDc5MyIsInBheW1lbnQtcHJvZHVjdCI6InNjdC1pbnN0LWV1IiwicGF5bWVudC11cmkiOiJodHRwczovL2JhbmsuZXhhbXBsZS5jb20vcGF5LzdkZmU1NDg0Zzc4IiwibmFtZSI6Ik15IEFjY291bnQiLCJjbmYiOnsiandrIjp7ImNydiI6IlAtMjU2Iiwia3R5IjoiRUMiLCJ4IjoiTkFTSjJBRHVhZ092cmFMZjdPNFZ4Y0JNYmFudHpMOWRkMGpwdk1MbkJmcyIsInkiOiJPSlk2cHFDcVJJenBFdDc4T1hhc1dIR2dxVjVaR3JlXzNjSHRwTkg4MmdnIn19fQ.ILZLvsUx5X-EjKmJmXVfBqa6ADInAwJeEFd5XmIDuKNU7UkJWFy9VCeCC8xbdZKmEjXcFx-mmcJYVBKiRJIKlQ~eyJ0eXAiOiJrYitqd3QiLCJhbGciOiJFUzI1NiJ9.eyJpYXQiOjE3MTAwNjk3MjIsImV4cCI6MTcxMDA3MzcyMiwiYXVkIjoiaHR0cHM6Ly9iYW5rLmV4YW1wbGUuY29tLyIsInNkX2hhc2giOiJFTkFrZUo0TjczMFRvQ21rZXMyc05SMkdTenBNazZfdDJ3a0lhbTUta0wwIiwidHJhbnNhY3Rpb25fZGF0YV9oYXNoZXMiOlsiNzI3MjcxNTZkMThiZDMxM2MwMmRlNTc1MTQ5YjNmNTZkZDVhNjgyZWNkOTZlY2M3Y2RhNjYwMjAyNzg2MGVlMyJdfQ.UkWOpguDo6KYfJ74SbYQ7EA-Aa-b7awo3WcNwVArjxwbGGlhXggf5geBGKe2MQyIrrgNYF63T7ZGZgA8rUyXcQ"
 }
 ```
 
@@ -498,9 +507,9 @@ In order to leverage payment solution based on Mobile Initiated SEPA (Instant) C
  
 The following rules apply for the support of MSCT payments:
  
-- The `payment-product` property of the A2Pay should be used to identify the MSCT interoperability framework or scheme
-- The PSP metadata of for the given `payment-product` must also include a `msct_uri`, which refers to an endpoint the wallet must use to optain the actual OpenID4VP authorization request for a MSCT URL not in openID format.  
-- While scanning / processing an MSCT URL, the wallet must check for an compatible A2Pay based on the `payment-product` property. If multiple A2Pays are available, the user must select one. If there are no A2Pays available, the wallet must indicate to the customer that the A2Pay method must be enrolled first.
+- The `scheme` property of the A2Pay should be used to identify the MSCT interoperability framework or scheme
+- The PSP metadata of for the given `scheme` must also include a `msct_uri`, which refers to an endpoint the wallet must use to optain the actual OpenID4VP authorization request for a MSCT URL not in openID format.  
+- While scanning / processing an MSCT URL, the wallet must check for an compatible A2Pay based on the `scheme` property. If multiple A2Pays are available, the user must select one. If there are no A2Pays available, the wallet must indicate to the customer that the A2Pay method must be enrolled first.
 - The wallet must exchange the token given in the MSCT URL for an OpenID4VP authorization request using the endpoint given in the `msct_uri` property of the PSP metadata. The endpoint must implement the token exchange endpoint defined in [MSCT API specification](msct-api.yml)
  
 Example of an MSCT URL:
@@ -525,7 +534,7 @@ Example of an A2Pay supporting MSCT:
     "_sd_alg": "sha-256",
     "sub": "IT12A1234512345123456789012",
     "id": "fd3f70a7-53b0-453e-9317-c7fc41a2f7ec",
-    "payment-product": "Bancomat",
+    "scheme": "Bancomat",
     "cnf": {
       "jwk": {
         "crv": "P-256",
@@ -550,7 +559,7 @@ HTTP/1.1 200 OK
 Content-Type: application/json
 
 {
-  "payment-products": {  
+  "schemes": {  
     "bancomat-pay": {
       "name": "Bancomat",
       "payment_status_uri" : "https://bank.example.com/a2pay/status",
@@ -585,7 +594,7 @@ sequenceDiagram
     aspsp -->> wallet: RESP PSP metadata
     wallet  ->> msct: POST token, A2Pay ID
     msct -->> wallet : Authorization Request
-    note over wallet,msct: ... extended PaymentAuth Flow continues
+    note over wallet,msct: ... TPP-captured SCA flow continues
 ```
 1. TPP initiates a payment by sending the payment transaction details to an MSCT token provider to request a token.
 2. Token providers tokenizes the transaction details and returns an MSCT URL including a token to the TPP.
