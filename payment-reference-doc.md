@@ -208,6 +208,11 @@ The OpenID4VP protocol [^openid4vp] supports the inclusion of dynamic transactio
 
 This process ensures compliance with PSD2’s requirement for dynamic linking by securely binding the transaction details to the authentication process. By incorporating the transaction hash into the key-binding JWT of the P2Pay, the wallet guarantees that any tampering with the transaction data invalidates the authentication.
 
+#### Transaction data schema for consent dialog
+
+In order to avoid hard coding the   
+
+
 ### Payment request object
 
 The payment request object is included within the `transaction_data` array and contains all the details describing the intended payment transaction. The data schema for the payment request is specified in the JSON schema file, [payment-request-schema.json](payment-request-schema.json). 
@@ -223,7 +228,8 @@ Non-normative example of a payment request:
     "instructed_amount": "15.49",
     "currency": "EUR",
     "creditor": "Merchant A",
-    "purpose": "Shopping at Merchant A"
+    "purpose": "Shopping at Merchant A",
+    "creditor_logo": "https://merchant.com/logo"
 }
 ```
 
@@ -365,7 +371,7 @@ The wallet presents the P2Pay including the `transaction_data_hashes` along with
 The ASPSP confirms that the authorization response with the P2Pay has been received successfully and sends back the `redirect_uri` and the `payment_status_uri` to the wallet.
 7. Wallet updates user on status presentation:
 The wallet provides the user with a status update, indicating that the A2Pay has been successfully sent.
-8. TPP request PSP metadata: The TPP requests the ASPSPs metadata using the PSP identifier given in the P2Pay
+8. Wallet request PSP metadata: The TPP requests the ASPSPs metadata using the PSP identifier given in the P2Pay
 9. ASPSP send PSP metadata: The ASPSP provides the PSP metadata object including the `payment_status_uri` endpoint
 10. ASPSP [verifies](#verification) P2Pay and executes the transaction:
 The ASPSP validates the authenticity and integrity of the P2Pay. If valid, the ASPSP proceeds to execute the payment transaction.
@@ -399,6 +405,8 @@ sequenceDiagram
     end
     wallet -->> user: SHOW presentation status
     deactivate wallet
+    wallet ->> psp: GET PSP metadata
+    psp -->> wallet: RESP PSP metadata, payment_status_uri
     psp2 ->> psp: GET PSP metadata
     psp -->> psp2: RESP PSP metadata, payment_status_uri, payment_uri
     rect rgb(200, 100, 100)
@@ -430,21 +438,23 @@ The wallet presents the P2Pay including the `transaction_data_hashes` along with
 TPP confirms that the A2Pay has been successfully received and sends back the `redirect_uri` to the wallet.
 7.	Wallet updates user on status presentation:
 The wallet provides the user with a status update, indicating that the A2Pay has been successfully sent.
-8. TPP request PSP metadata: The TPP requests the ASPSPs metadata using the PSP identifier given in the P2Pay
+8. Wallet request PSP metadata: The TPP requests the ASPSPs metadata using the PSP identifier given in the P2Pay
 9. ASPSP send PSP metadata: The ASPSP provides the PSP metadata object including the `payment_status_uri` endpoint
-10.	TPP forwards A2Pay to issuing ASPSP:
+10. TPP request PSP metadata: The TPP requests the ASPSPs metadata using the PSP identifier given in the P2Pay
+11. ASPSP send PSP metadata: The ASPSP provides the PSP metadata object including the `payment_status_uri` endpoint
+12.	TPP forwards A2Pay to issuing ASPSP:
 TPP sends a [payment authorization object](#payment-authorization-object) including the the P2Pay and the original payment request object to the ASPSP for verification and/or execution of the payment using a supported payment rail and/or the [Direct Pay endpoint](#direct-pay).
-11.	ASPSP acknowledges receipt of A2Pay:
+13.	ASPSP acknowledges receipt of A2Pay:
 ASPSP confirms receipt of the forwarded P2Pay.
-12.	ASPSP [verifies P2Pay](#verification) and executes the transaction:
+14.	ASPSP [verifies P2Pay](#verification) and executes the transaction:
 ASPSP validates the authenticity and integrity of the P2Pay. If valid, it executes the payment transaction.
-13.	Wallet queries the [payment status](#payment-status) using the `payment_uri`, A2Pay `id` and the `payment-id`.
-14.	TPP queries the [payment status](#payment-status) using the `payment_uri`, A2Pay `id` and the `payment-id`.
-15.	ASPSP responds with [payment status](#payment-status) to TPP.
-16.	ASPSP responds with [payment status](#payment-status) to wallet.
-17.	Wallet shows payment status to user:
+15.	Wallet queries the [payment status](#payment-status) using the `payment_uri`, A2Pay `id` and the `payment-id`.
+16.	TPP queries the [payment status](#payment-status) using the `payment_uri`, A2Pay `id` and the `payment-id`.
+17.	ASPSP responds with [payment status](#payment-status) to TPP.
+18.	ASPSP responds with [payment status](#payment-status) to wallet.
+19.	Wallet shows payment status to user:
 The wallet provides the user with the payment status, indicating whether the transaction was successful or if any issues occurred.
-18. Wallet follows `redirect_uri`	to allow the TPP to continue interacting with the user.
+20. Wallet follows `redirect_uri`	to allow the TPP to continue interacting with the user.
 
 To enable the TPP-captured SCA flow and allow a TPP to properly route an authorized payment request, the A2Pay must include the following mandatory details as defined in the [A2Pay schema](a2pay-schema.json):
 

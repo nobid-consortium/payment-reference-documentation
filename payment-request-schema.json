@@ -31,6 +31,14 @@
         "Shopping at Merchant A"
       ]
     },
+    "creditor_logo": {
+      "type": "string",
+      "description": "URI to a a logo of the payye",
+      "maxLength": 240,
+      "examples": [
+        "https://merchant.com/logo"
+      ]
+    },
     "currency": {
       "type": "string",
       "description": "ISO 4217 Alpha 3 currency code.",
